@@ -89,7 +89,7 @@ Goober is a ride-share taxi service web application designed to connect riders w
 
 - [ ] **Phase 2: Backend Integration**
 
-  - [ ] Define Prisma data model
+  - [x] Define Prisma data model
   - [ ] Implement backend logic using Express.js or Next.js API routes
 
 - [ ] **Phase 3: Frontend Styling and UX**
@@ -107,6 +107,7 @@ Goober is a ride-share taxi service web application designed to connect riders w
   - [ ] Set up continuous integration for automated testing
 
 - [ ] **Phase 5: Documentation and Deployment**
+
   - [ ] Document code and API endpoints
   - [ ] Create a detailed README.md
   - [ ] Deploy the application to a hosting platform

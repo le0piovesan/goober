@@ -25,12 +25,12 @@ Goober is a ride-share taxi service web application designed to connect riders w
 - **UI Library:** [Chakra UI](https://chakra-ui.com/) (An off-the-shelf component library for React)
 - **State Management:** [React Context API](https://react.dev/reference/react/useContext) (for simpler state management in a smaller app)
 - **CSS Framework:** [Tailwind CSS](https://tailwindcss.com/)
-- **JavaScript Engine:** [T3](https://create.t3.gg/) and [T3 Turbo](https://github.com/supabase-community/create-t3-turbo)
+- **JavaScript Engine:** [T3](https://create.t3.gg/)/[T3 Turbo](https://github.com/supabase-community/create-t3-turbo)
 - **Type-checking:** [TypeScript](https://www.typescriptlang.org/)
 
 ### Backend
 
-- **Server Framework:** [Express.js](https://expressjs.com/pt-br/) (for simplicity, considering the MVP nature)
+- **Server Framework:** [tRPC](https://trpc.io/) (for simplicity, considering the MVP nature)
 - **Database:** [PostgreSQL](https://www.postgresql.org/)
 - **ORM:** [Prisma](https://www.prisma.io/)
 - **Real-time Features:** [Supabase](https://supabase.com/)
@@ -90,7 +90,8 @@ Goober is a ride-share taxi service web application designed to connect riders w
 - [ ] **Phase 2: Backend Integration**
 
   - [x] Define Prisma data model
-  - [ ] Implement backend logic using Express.js or Next.js API routes
+  - [x] Implement backend logic using tRPC
+  - [ ] Use Subscriptions / WebSockets
 
 - [ ] **Phase 3: Frontend Styling and UX**
 

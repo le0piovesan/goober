@@ -82,8 +82,8 @@ Goober is a ride-share taxi service web application designed to connect riders w
 - [ ] **Phase 1: Project Setup**
 
   - [x] Initialize Next.js project
-  - [ ] Configure Prisma with PostgreSQL
-  - [ ] Configure Supabase integration
+  - [x] Configure Prisma with PostgreSQL
+  - [x] Configure Supabase integration
   - [ ] Set up Tailwind CSS and Chakra UI
   - [ ] Implement basic frontend pages and components
 

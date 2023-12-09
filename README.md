@@ -6,7 +6,7 @@
 
 ## Overview
 
-Goober is a ride-share taxi service web application designed to connect riders with available drivers, providing a seamless experience for both user personas. The application is implemented as a TypeScript web app using React for the frontend, Node.js (Next.js) for the backend, and PostgreSQL as the preferred SQL database.
+Goober is a ride-share taxi service web application designed to connect riders with available drivers, providing a seamless experience for all users.
 
 ## Table of Contents
 
@@ -96,12 +96,14 @@ Goober is a ride-share taxi service web application designed to connect riders w
 
   - [x] Define Prisma data model
   - [x] Implement backend logic using tRPC
-  - [ ] Use Subscriptions / WebSockets
+  - [ ] Set up OneSignal for notification
 
 - [ ] **Frontend Styling and UX**
 
   - [ ] Design Figma responsive layout
   - [x] PWA implementation: write a serviceWorker, test with Lighthouse, etc
+  - [ ] Cleanup default layout
+  - [ ] Create initial components
   - [ ] Style frontend components with Tailwind CSS and Chakra UI
   - [ ] Implement user interactions and navigation
   - [ ] Optimize for responsive design

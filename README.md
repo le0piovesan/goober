@@ -22,18 +22,23 @@ Goober is a ride-share taxi service web application designed to connect riders w
 ### Frontend
 
 - **Framework:** [Next.js](https://nextjs.org/)
-- **UI Library:** [Chakra UI](https://chakra-ui.com/) (An off-the-shelf component library for React)
-- **State Management:** [React Context API](https://react.dev/reference/react/useContext) (for simpler state management in a smaller app)
+- **UI Library:** [Chakra UI](https://chakra-ui.com/)
+- **State Management:** [React Context API](https://react.dev/reference/react/useContext)
 - **CSS Framework:** [Tailwind CSS](https://tailwindcss.com/)
-- **JavaScript Engine:** [T3](https://create.t3.gg/)/[T3 Turbo](https://github.com/supabase-community/create-t3-turbo)
+- **JavaScript Engine:** [T3](https://create.t3.gg/)
 - **Type-checking:** [TypeScript](https://www.typescriptlang.org/)
 
 ### Backend
 
-- **Server Framework:** [tRPC](https://trpc.io/) (for simplicity, considering the MVP nature)
+- **Server Framework:** [tRPC](https://trpc.io/)
 - **Database:** [PostgreSQL](https://www.postgresql.org/)
 - **ORM:** [Prisma](https://www.prisma.io/)
 - **Real-time Features:** [Supabase](https://supabase.com/)
+
+### Infrastructure
+
+- **Deploy:** [Vercel](https://vercel.com/)
+- **Logging:** [Axiom](https://axiom.co/)
 
 ## Product Decisions
 
@@ -79,7 +84,7 @@ Goober is a ride-share taxi service web application designed to connect riders w
 
 ## Developer Roadmap
 
-- [ ] **Phase 1: Project Setup**
+- [ ] **Project Setup**
 
   - [x] Initialize Next.js project
   - [x] Configure Prisma with PostgreSQL
@@ -87,28 +92,29 @@ Goober is a ride-share taxi service web application designed to connect riders w
   - [ ] Set up Tailwind CSS and Chakra UI
   - [ ] Implement basic frontend pages and components
 
-- [ ] **Phase 2: Backend Integration**
+- [ ] **Backend Integration**
 
   - [x] Define Prisma data model
   - [x] Implement backend logic using tRPC
   - [ ] Use Subscriptions / WebSockets
 
-- [ ] **Phase 3: Frontend Styling and UX**
+- [ ] **Frontend Styling and UX**
 
   - [ ] Design Figma responsive layout
-  - [ ] PWA implementation: write a serviceWorker, test with Lighthouse, etc
+  - [x] PWA implementation: write a serviceWorker, test with Lighthouse, etc
   - [ ] Style frontend components with Tailwind CSS and Chakra UI
   - [ ] Implement user interactions and navigation
   - [ ] Optimize for responsive design
 
-- [ ] **Phase 4: Testing and Optimization**
+- [ ] **Testing and Optimization**
 
   - [ ] Implement unit tests
   - [ ] Conduct performance optimization
   - [ ] Set up continuous integration for automated testing
 
-- [ ] **Phase 5: Documentation and Deployment**
+- [ ] **Documentation and Deployment**
 
   - [ ] Document code and API endpoints
   - [ ] Create a detailed README.md
-  - [ ] Deploy the application to a hosting platform
+  - [x] Deploy the application to Vercel
+  - [x] Configure production log system with Axiom

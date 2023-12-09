@@ -8,20 +8,22 @@ datasource db {
 }
 
 model Rider {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String @unique
-  password String
-  rides    Ride[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  rides         Ride[]
+  notifications Notification[]
 }
 
 model Driver {
-  id       Int     @id @default(autoincrement())
-  name     String
-  email    String  @unique
-  password String
-  onTrip   Boolean @default(false)
-  rides    Ride[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  email         String         @unique
+  password      String
+  onTrip        Boolean        @default(false)
+  rides         Ride[]
+  notifications Notification[]
 }
 
 model Ride {
@@ -34,11 +36,22 @@ model Ride {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  rider    Rider   @relation(fields: [riderId], references: [id])
+  rider    Rider  @relation(fields: [riderId], references: [id])
   riderId  Int
-  driver   Driver? @relation(fields: [driverId], references: [id])
-  driverId Int?
+  driver   Driver @relation(fields: [driverId], references: [id])
+  driverId Int
 
   @@index([riderId])
   @@index([driverId])
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  message   String
+  createdAt DateTime @default(now())
+
+  rider    Rider?  @relation(fields: [riderId], references: [id])
+  riderId  Int
+  driver   Driver? @relation(fields: [driverId], references: [id])
+  driverId Int
 }

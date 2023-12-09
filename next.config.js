@@ -1,22 +1,39 @@
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
- * for Docker builds.
- */
-await import("./src/env.js");
+import withPWA from "next-pwa";
 
-/** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
-
-  /**
-   * If you are using `appDir` then you must comment the below `i18n` config out.
-   *
-   * @see https://github.com/vercel/next.js/issues/41980
-   */
-  i18n: {
-    locales: ["en"],
-    defaultLocale: "en",
-  },
 };
 
-export default config;
+const nextConfig = withPWA({
+  dest: "public",
+  register: true,
+  disable: process.env.NODE_ENV === "development",
+  skipWaiting: true,
+  runtimeCaching: [
+    {
+      urlPattern: /^https:\/\/domain\.com\/api/,
+      handler: "NetworkFirst",
+      options: {
+        cacheName: "api-cache",
+        expiration: {
+          maxEntries: 200,
+          maxAgeSeconds: 30 * 24 * 60 * 60,
+        },
+        networkTimeoutSeconds: 10,
+      },
+    },
+    {
+      urlPattern: /\.(?:png|jpg|jpeg|svg)$/,
+      handler: "CacheFirst",
+      options: {
+        cacheName: "image-cache",
+        expiration: {
+          maxEntries: 500,
+          maxAgeSeconds: 7 * 24 * 60 * 60,
+        },
+      },
+    },
+  ],
+})(config);
+
+export default nextConfig;

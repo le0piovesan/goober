@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, VStack } from "@chakra-ui/react";
 import { type NextPage } from "next";
-import ButtonLink from "~/components/ButtonLink";
+import ButtonComponent from "~/components/ButtonComponent";
 
 const Home: NextPage = () => {
   return (
@@ -25,10 +25,10 @@ const Home: NextPage = () => {
       </VStack>
 
       <Flex mb={4} direction="row" align="center" gap={4}>
-        <ButtonLink href="users/login">Log In</ButtonLink>
-        <ButtonLink href="users/signup" secondary>
+        <ButtonComponent href="users/login">Log In</ButtonComponent>
+        <ButtonComponent href="users/signup" outline>
           Sign Up
-        </ButtonLink>
+        </ButtonComponent>
       </Flex>
     </Flex>
   );

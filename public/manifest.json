@@ -4,9 +4,9 @@
     "display": "standalone",
     "scope": "/",
     "start_url": "/",
-    "name": "goober",
-    "short_name": "goober",
-    "description": "Goober is a ride-share taxi service web application designed to connect riders with available drivers, providing a seamless experience for all users.",
+    "name": "Goober",
+    "short_name": "Goober",
+    "description": "Goober is a ride-share taxi service web application designed to connect riders with available drivers.",
     "icons": [
         {
             "src": "/icon-192x192.png",

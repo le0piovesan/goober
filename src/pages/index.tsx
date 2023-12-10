@@ -20,10 +20,10 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="mb-4 flex flex-row items-center gap-4">
-        <Link href="users/register">
+        <Link href="users/signup">
           <button className="text-bold rounded border-2 p-2">Sign Up</button>
         </Link>
-        <Link href="/login">
+        <Link href="users/login">
           <button className="text-bold rounded border-2 p-2">Log In</button>
         </Link>
       </div>

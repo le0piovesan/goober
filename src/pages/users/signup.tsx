@@ -1,10 +1,23 @@
+import {
+  Box,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  Radio,
+  RadioGroup,
+  Stack,
+  useToast,
+  VStack,
+} from "@chakra-ui/react";
 import { type NextPage } from "next";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useRouter } from "next/router";
+import { useForm, Controller, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/utils/api";
 import { useState } from "react";
-import { useRouter } from "next/router";
+import ButtonComponent from "~/components/ButtonComponent";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -23,6 +36,7 @@ type FormInputsProps = z.infer<typeof schema>;
 const SignUp: NextPage = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
+  const toast = useToast();
   const rider = api.rider.createRider.useMutation();
   const driver = api.driver.createDriver.useMutation();
 
@@ -30,6 +44,7 @@ const SignUp: NextPage = () => {
     register,
     handleSubmit,
     getValues,
+    control,
     formState: { errors },
   } = useForm<FormInputsProps>({
     resolver: zodResolver(schema),
@@ -54,7 +69,13 @@ const SignUp: NextPage = () => {
         ? await rider.mutateAsync({ name, email, password })
         : await driver.mutateAsync({ name, email, password });
 
-      alert("Account created successfully!");
+      toast({
+        title: "Account created.",
+        description: "We've created your account.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
       await router.push("/users/login");
     } catch (error) {
       console.error(error);
@@ -64,71 +85,78 @@ const SignUp: NextPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
-      <form
+    <Box
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+      bg="gray.100"
+    >
+      <VStack
+        as="form"
         onSubmit={handleSubmit(onSubmit)}
-        className="mx-auto w-full max-w-md space-y-4"
+        spacing={4}
+        w="full"
+        maxW="md"
       >
-        <input
-          {...register("name")}
-          placeholder="Name"
-          className="w-full rounded-md border px-3 py-2"
-        />
-        {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+        <FormControl isInvalid={!!errors.name}>
+          <FormLabel>Name</FormLabel>
+          <Input {...register("name")} placeholder="Name" />
+          <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+        </FormControl>
 
-        <input
-          {...register("email")}
-          placeholder="Email"
-          type="email"
-          className="w-full rounded-md border px-3 py-2"
-        />
-        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+        <FormControl isInvalid={!!errors.email}>
+          <FormLabel>Email</FormLabel>
+          <Input {...register("email")} placeholder="Email" type="email" />
+          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+        </FormControl>
 
-        <input
-          {...register("password")}
-          placeholder="Password"
-          type="password"
-          className="w-full rounded-md border px-3 py-2"
-        />
-        {errors.password && (
-          <p className="text-red-500">{errors.password.message}</p>
-        )}
-
-        <input
-          {...register("confirmPassword")}
-          placeholder="Confirm Password"
-          type="password"
-          className="w-full rounded-md border px-3 py-2"
-        />
-
-        {errors.confirmPassword && (
-          <p className="text-red-500">{errors.confirmPassword.message}</p>
-        )}
-
-        <label>
-          <input
-            {...register("role")}
-            type="radio"
-            value="Rider"
-            defaultChecked
+        <FormControl isInvalid={!!errors.password}>
+          <FormLabel>Password</FormLabel>
+          <Input
+            {...register("password")}
+            placeholder="Password"
+            type="password"
           />
-          Rider
-        </label>
-        <label>
-          <input {...register("role")} type="radio" value="Driver" />
-          Driver
-        </label>
+          <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+        </FormControl>
 
-        {submitError && <p className="text-red-500">{submitError}</p>}
+        <FormControl isInvalid={!!errors.confirmPassword}>
+          <FormLabel>Confirm Password</FormLabel>
+          <Input
+            {...register("confirmPassword")}
+            placeholder="Confirm Password"
+            type="password"
+          />
+          <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>
+        </FormControl>
 
-        <button
-          type="submit"
-          className="w-full cursor-pointer rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
-        >
-          Create Account
-        </button>
-      </form>
-    </div>
+        <FormControl as="fieldset">
+          <FormLabel as="legend">Role</FormLabel>
+          <Controller
+            control={control}
+            name="role"
+            defaultValue="Rider"
+            render={({ field }) => (
+              <RadioGroup {...field}>
+                <Stack direction="row">
+                  <Radio value="Rider">Rider</Radio>
+                  <Radio value="Driver">Driver</Radio>
+                </Stack>
+              </RadioGroup>
+            )}
+          />
+        </FormControl>
+
+        {submitError && <FormErrorMessage>{submitError}</FormErrorMessage>}
+
+        <ButtonComponent type="submit">Create Account</ButtonComponent>
+        <ButtonComponent href="/" textOnly>
+          Go Back
+        </ButtonComponent>
+      </VStack>
+    </Box>
   );
 };
 

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
+import useAuthRedirect from "~/hooks/useAuthRedirect";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -21,6 +22,9 @@ const schema = z.object({
 type FormInputsProps = z.infer<typeof schema>;
 
 const SignUp: NextPage = () => {
+  const { isLoggedIn, redirectTo } = useAuthRedirect();
+  isLoggedIn ? redirectTo("/rides/feed") : redirectTo("/users/signup");
+
   const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
   const rider = api.rider.createRider.useMutation();
@@ -79,6 +83,7 @@ const SignUp: NextPage = () => {
         <input
           {...register("email")}
           placeholder="Email"
+          type="email"
           className="w-full rounded-md border px-3 py-2"
         />
         {errors.email && <p className="text-red-500">{errors.email.message}</p>}

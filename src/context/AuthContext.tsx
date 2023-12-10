@@ -1,25 +1,9 @@
-import {
-  createContext,
-  useReducer,
-  type Dispatch,
-  type ReactNode,
-  useContext,
-} from "react";
+import { createContext, useReducer, type ReactNode, useContext } from "react";
 import { useRouter } from "next/router";
+import { type AuthContextType, type User, type Action } from "./type";
 
-type User = {
-  id: number;
-  name: string;
-  isLoggedIn: boolean;
-};
-
-type Action = { type: "LOGIN"; payload: User } | { type: "LOGOUT" };
-
-type AuthContextType = {
-  user: User | null;
-  dispatch: Dispatch<Action>;
-  login: (user: User) => Promise<void>;
-  logout: () => Promise<void>;
+type AuthContextProviderProps = {
+  children: ReactNode;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,10 +17,6 @@ const authReducer = (state: User | null, action: Action): User | null => {
     default:
       return state;
   }
-};
-
-type AuthContextProviderProps = {
-  children: ReactNode;
 };
 
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {

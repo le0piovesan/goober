@@ -1,8 +1,9 @@
 import { type NextPage } from "next";
 import { useAuth } from "~/context/AuthContext";
+import { type AuthContextType } from "~/context/type";
 
 const Feed: NextPage = () => {
-  const { logout } = useAuth();
+  const { logout }: AuthContextType = useAuth();
 
   const handleLogOut = async () => {
     await logout();

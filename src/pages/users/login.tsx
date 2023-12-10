@@ -1,3 +1,11 @@
+import {
+  Box,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  Input,
+  VStack,
+} from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -5,6 +13,7 @@ import { z } from "zod";
 import { api } from "~/utils/api";
 import { useState } from "react";
 import { useAuth } from "~/context/AuthContext";
+import { type AuthContextType } from "~/context/type";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -15,7 +24,7 @@ type FormInputsProps = z.infer<typeof schema>;
 
 const Login: NextPage = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const { login } = useAuth();
+  const { login }: AuthContextType = useAuth();
   const auth = api.auth.login.useMutation();
 
   const {
@@ -43,36 +52,41 @@ const Login: NextPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
-      <form
+    <Box
+      minH="100vh"
+      display="flex"
+      alignItems="center"
+      justifyContent="center"
+      p={4}
+    >
+      <VStack
+        as="form"
         onSubmit={handleSubmit(onSubmit)}
-        className="mx-auto w-full max-w-md space-y-4"
+        spacing={4}
+        w="full"
+        maxW="md"
       >
-        <input
-          {...register("email")}
-          placeholder="Email"
-          type="email"
-          className="w-full rounded-md border px-3 py-2"
-        />
-        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+        <FormControl isInvalid={!!errors.email}>
+          <Input {...register("email")} placeholder="Email" type="email" />
+          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
+        </FormControl>
 
-        <input
-          {...register("password")}
-          placeholder="Password"
-          type="password"
-          className="w-full rounded-md border px-3 py-2"
-        />
+        <FormControl isInvalid={!!errors.password}>
+          <Input
+            {...register("password")}
+            placeholder="Password"
+            type="password"
+          />
+          <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
+        </FormControl>
 
-        {submitError && <p className="text-red-500">{submitError}</p>}
+        {submitError && <FormErrorMessage>{submitError}</FormErrorMessage>}
 
-        <button
-          type="submit"
-          className="w-full cursor-pointer rounded-md bg-blue-500 px-3 py-2 text-white hover:bg-blue-600"
-        >
+        <Button type="submit" colorScheme="blue" w="full">
           Login
-        </button>
-      </form>
-    </div>
+        </Button>
+      </VStack>
+    </Box>
   );
 };
 

@@ -3,6 +3,9 @@ import {
   FormLabel,
   Input,
   FormErrorMessage,
+  Button,
+  InputRightElement,
+  InputGroup,
 } from "@chakra-ui/react";
 import {
   type UseFormRegister,
@@ -10,6 +13,7 @@ import {
   type FieldValues,
   type Path,
 } from "react-hook-form";
+import { useState } from "react";
 
 type InputComponentProps<TFormValues extends FieldValues> = {
   label: string;
@@ -27,16 +31,42 @@ const InputComponent = <TFormValues extends FieldValues>({
   placeholder,
   type = "text",
   error,
-}: InputComponentProps<TFormValues>) => (
-  <FormControl isInvalid={!!error}>
-    <FormLabel>{label}</FormLabel>
-    <Input
-      {...register(name as string as Path<TFormValues>)}
-      placeholder={placeholder}
-      type={type}
-    />
-    <FormErrorMessage>{error?.message}</FormErrorMessage>
-  </FormControl>
-);
+}: InputComponentProps<TFormValues>) => {
+  const [show, setShow] = useState<boolean>(false);
+  const handleShowPassword = () => setShow(!show);
+
+  return (
+    <FormControl isInvalid={!!error}>
+      <FormLabel color={"primary"}>{label}</FormLabel>
+      <InputGroup size="md">
+        <Input
+          {...register(name as string as Path<TFormValues>)}
+          placeholder={placeholder}
+          type={type === "password" && show ? "text" : type}
+          ringColor={error ? "red.500" : "border"}
+          borderColor={"border"}
+          _hover={{
+            borderColor: "secondary",
+          }}
+          focusBorderColor="secondary"
+        />
+        {type === "password" && (
+          <InputRightElement width="4.5rem">
+            <Button
+              color={"gray"}
+              h="1.75rem"
+              size="sm"
+              onClick={handleShowPassword}
+            >
+              {show ? "Hide" : "Show"}
+            </Button>
+          </InputRightElement>
+        )}
+      </InputGroup>
+
+      <FormErrorMessage>{error?.message}</FormErrorMessage>
+    </FormControl>
+  );
+};
 
 export default InputComponent;

@@ -6,6 +6,7 @@ type ButtonComponentProps = {
   href?: string;
   outline?: boolean;
   textOnly?: boolean;
+  loading?: boolean;
   children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -13,6 +14,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
   href,
   outline,
   textOnly,
+  loading,
   children,
   ...props
 }) => {
@@ -40,7 +42,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
       </Link>
     </NextLink>
   ) : (
-    <Button {...buttonStyles} {...props}>
+    <Button {...buttonStyles} {...props} isLoading={loading}>
       {children}
     </Button>
   );

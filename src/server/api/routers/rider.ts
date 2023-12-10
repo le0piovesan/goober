@@ -19,6 +19,17 @@ export const riderRouter = createTRPCRouter({
       z.object({ name: z.string(), email: z.string(), password: z.string() }),
     )
     .mutation(async ({ ctx, input }) => {
+      const existingRider = await ctx.db.rider.findUnique({
+        where: { email: input.email },
+      });
+      const existingDriver = await ctx.db.driver.findUnique({
+        where: { email: input.email },
+      });
+
+      if (existingRider ?? existingDriver) {
+        throw new Error("A user with this email already exists");
+      }
+
       const rider = await ctx.db.rider.create({
         data: {
           name: input.name,

@@ -1,9 +1,8 @@
 import { type NextPage } from "next";
-import { useContext } from "react";
-import { AuthContext } from "~/context/AuthContext";
+import { useAuth } from "~/context/AuthContext";
 
 const Feed: NextPage = () => {
-  const { logout } = useContext(AuthContext);
+  const { logout } = useAuth();
 
   const handleLogOut = async () => {
     await logout();

@@ -1,11 +1,7 @@
 import { type NextPage } from "next";
 import Link from "next/link";
-import useAuthRedirect from "~/hooks/useAuthRedirect";
 
 const Home: NextPage = () => {
-  const { isLoggedIn, redirectTo } = useAuthRedirect();
-  isLoggedIn ? redirectTo("/rides/feed") : redirectTo("/");
-
   return (
     <div className="flex h-screen flex-col items-center justify-around">
       <div className="flex flex-col items-center self-start p-4 text-5xl font-bold">
@@ -19,6 +15,7 @@ const Home: NextPage = () => {
           </span>
         </div>
       </div>
+
       <div className="mb-4 flex flex-row items-center gap-4">
         <Link href="users/signup">
           <button className="text-bold rounded border-2 p-2">Sign Up</button>

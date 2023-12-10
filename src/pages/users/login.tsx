@@ -3,9 +3,8 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/utils/api";
-import { useContext, useState } from "react";
-import { AuthContext } from "~/context/AuthContext";
-import useAuthRedirect from "~/hooks/useAuthRedirect";
+import { useState } from "react";
+import { useAuth } from "~/context/AuthContext";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -15,11 +14,8 @@ const schema = z.object({
 type FormInputsProps = z.infer<typeof schema>;
 
 const Login: NextPage = () => {
-  const { isLoggedIn, redirectTo } = useAuthRedirect();
-  isLoggedIn ? redirectTo("/rides/feed") : redirectTo("/users/login");
-
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const { login } = useContext(AuthContext);
+  const { login } = useAuth();
   const auth = api.auth.login.useMutation();
 
   const {
@@ -38,7 +34,7 @@ const Login: NextPage = () => {
     try {
       const { email, password } = data;
       const response = await auth.mutateAsync({ email, password });
-      await login(response.id);
+      await login({ id: response.id, name: response.name, isLoggedIn: true });
     } catch (error) {
       console.error(error);
       if (error instanceof Error) setSubmitError(error.message);

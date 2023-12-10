@@ -25,8 +25,10 @@ const Home: NextPage = () => {
       </VStack>
 
       <Flex mb={4} direction="row" align="center" gap={4}>
-        <ButtonLink href="users/signup">Sign Up</ButtonLink>
         <ButtonLink href="users/login">Log In</ButtonLink>
+        <ButtonLink href="users/signup" secondary>
+          Sign Up
+        </ButtonLink>
       </Flex>
     </Flex>
   );

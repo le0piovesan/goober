@@ -1,49 +1,69 @@
+import {
+  createContext,
+  useReducer,
+  type Dispatch,
+  type ReactNode,
+  useContext,
+} from "react";
 import { useRouter } from "next/router";
-import { createContext, useState, type ReactNode } from "react";
+
+type User = {
+  id: number;
+  name: string;
+  isLoggedIn: boolean;
+};
+
+type Action = { type: "LOGIN"; payload: User } | { type: "LOGOUT" };
 
 type AuthContextType = {
-  userId: number | null;
-  isLoggedIn: boolean;
-  login: (userId: number) => Promise<void>;
+  user: User | null;
+  dispatch: Dispatch<Action>;
+  login: (user: User) => Promise<void>;
   logout: () => Promise<void>;
+};
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const authReducer = (state: User | null, action: Action): User | null => {
+  switch (action.type) {
+    case "LOGIN":
+      return action.payload;
+    case "LOGOUT":
+      return null;
+    default:
+      return state;
+  }
 };
 
 type AuthContextProviderProps = {
   children: ReactNode;
 };
 
-export const AuthContext = createContext<AuthContextType>({
-  userId: null,
-  isLoggedIn: false,
-  login: () => {
-    throw new Error("login function must be overridden by provider");
-  },
-  logout: () => {
-    throw new Error("logout function must be overridden by provider");
-  },
-});
-
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
-  const [userId, setUserId] = useState<number | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, dispatch] = useReducer(authReducer, null);
   const router = useRouter();
 
-  const login = async (userId: number) => {
-    console.log("Logging in with user id: ", userId);
-    setUserId(userId);
-    setIsLoggedIn(true);
+  const login = async (user: User) => {
+    dispatch({ type: "LOGIN", payload: user });
     await router.push("/rides/feed");
   };
 
   const logout = async () => {
-    setUserId(null);
-    setIsLoggedIn(false);
+    dispatch({ type: "LOGOUT" });
     await router.push("/");
   };
 
   return (
-    <AuthContext.Provider value={{ userId, isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ user, dispatch, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within AuthContextProvider");
+  }
+  return context;
+}

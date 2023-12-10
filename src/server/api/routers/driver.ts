@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import bcrypt from "bcrypt";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -35,7 +36,7 @@ export const driverRouter = createTRPCRouter({
         data: {
           name: input.name,
           email: input.email,
-          password: input.password,
+          password: bcrypt.hashSync(input.password, 10),
         },
       });
 

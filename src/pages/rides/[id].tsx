@@ -1,5 +1,5 @@
-import React from "react";
+import { type NextPage } from "next";
 
-const Ride: React.FC = () => <div>Ride</div>;
+const Ride: NextPage = () => <div>Ride</div>;
 
 export default Ride;

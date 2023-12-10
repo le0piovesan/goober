@@ -1,5 +1,5 @@
-import React from "react";
+import { type NextPage } from "next";
 
-const Call: React.FC = () => <div>Call</div>;
+const Call: NextPage = () => <div>Call</div>;
 
 export default Call;

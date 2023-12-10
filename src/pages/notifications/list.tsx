@@ -1,5 +1,5 @@
-import React from "react";
+import { type NextPage } from "next";
 
-const NotificationList: React.FC = () => <div>NotificationList</div>;
+const NotificationList: NextPage = () => <div>NotificationList</div>;
 
 export default NotificationList;

@@ -1,5 +1,5 @@
-import React from "react";
+import { type NextPage } from "next";
 
-const Profile: React.FC = () => <div>Profile</div>;
+const Profile: NextPage = () => <div>Profile</div>;
 
 export default Profile;

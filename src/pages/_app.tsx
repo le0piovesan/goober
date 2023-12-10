@@ -4,7 +4,7 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { AuthContextProvider } from "~/context/AuthContext";
 import UserContent from "~/components/UserContent";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, Flex } from "@chakra-ui/react";
 import theme from "theme";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
@@ -19,9 +19,16 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <ChakraProvider theme={theme}>
-        <UserContent>
-          <Component {...pageProps} />
-        </UserContent>
+        <Flex
+          bgImage="url('/goober-gradient-titled-bg.png')"
+          bgRepeat="no-repeat"
+          bgSize="contain"
+          bgPosition="right bottom"
+        >
+          <UserContent>
+            <Component {...pageProps} />
+          </UserContent>
+        </Flex>
       </ChakraProvider>
     </AuthContextProvider>
   );

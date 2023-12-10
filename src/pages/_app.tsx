@@ -4,6 +4,8 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { AuthContextProvider } from "~/context/AuthContext";
 import UserContent from "~/components/UserContent";
+import { ChakraProvider } from "@chakra-ui/react";
+import theme from "theme";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -16,10 +18,11 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <UserContent>
-        <Component {...pageProps} />
-      </UserContent>
+      <ChakraProvider theme={theme}>
+        <UserContent>
+          <Component {...pageProps} />
+        </UserContent>
+      </ChakraProvider>
     </AuthContextProvider>
   );
 };

@@ -13,7 +13,7 @@ import {
   type PathValue,
 } from "react-hook-form";
 
-type CheckboxComponentProps<TFormValues extends FieldValues> = {
+type RadioComponentProps<TFormValues extends FieldValues> = {
   label: string;
   control: Control<TFormValues>;
   name: keyof TFormValues;
@@ -21,24 +21,37 @@ type CheckboxComponentProps<TFormValues extends FieldValues> = {
   options: { value: string; label: string }[];
 };
 
-const CheckboxComponent = <TFormValues extends FieldValues>({
+const RadioComponent = <TFormValues extends FieldValues>({
   label,
   control,
   name,
   defaultValue,
   options,
-}: CheckboxComponentProps<TFormValues>) => (
+}: RadioComponentProps<TFormValues>) => (
   <FormControl as="fieldset">
-    <FormLabel as="legend">{label}</FormLabel>
+    <FormLabel as="legend" color="primary">
+      {label}
+    </FormLabel>
     <Controller
       control={control}
       name={name as string as Path<TFormValues>}
       defaultValue={defaultValue as PathValue<TFormValues, Path<TFormValues>>}
       render={({ field }) => (
         <RadioGroup {...field}>
-          <Stack direction="row">
+          <Stack direction="row" spacing={4}>
             {options.map((option) => (
-              <Radio key={option.value} value={option.value}>
+              <Radio
+                key={option.value}
+                value={option.value}
+                size={"md"}
+                color={"primary"}
+                _checked={{
+                  bg: "primary",
+                }}
+                _hover={{
+                  borderColor: "secondary",
+                }}
+              >
                 {option.label}
               </Radio>
             ))}
@@ -49,4 +62,4 @@ const CheckboxComponent = <TFormValues extends FieldValues>({
   </FormControl>
 );
 
-export default CheckboxComponent;
+export default RadioComponent;

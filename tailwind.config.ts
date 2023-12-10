@@ -9,8 +9,8 @@ export default {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
       colors: {
-        primary: "#4ffbdf",
-        secondary: "#845ec2",
+        primary: "#845ec2",
+        secondary: "#4ffbdf",
         light: "#f9f9f9",
         dark: "#222222",
         optional: "#2ac97a",

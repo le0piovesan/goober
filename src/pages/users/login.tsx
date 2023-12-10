@@ -1,19 +1,14 @@
-import {
-  Box,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  Input,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, VStack, useToast } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/utils/api";
-import { useState } from "react";
 import { useAuth } from "~/context/AuthContext";
 import { type AuthContextType } from "~/context/type";
+import ButtonComponent from "~/components/ButtonComponent";
+import InputComponent from "~/components/InputComponent";
+import { useLoading } from "~/hooks/useLoading";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -23,9 +18,10 @@ const schema = z.object({
 type FormInputsProps = z.infer<typeof schema>;
 
 const Login: NextPage = () => {
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const { login }: AuthContextType = useAuth();
   const auth = api.auth.login.useMutation();
+  const toast = useToast();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const {
     register,
@@ -40,14 +36,23 @@ const Login: NextPage = () => {
   });
 
   const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
+    startLoading();
     try {
       const { email, password } = data;
       const response = await auth.mutateAsync({ email, password });
       await login({ id: response.id, name: response.name, isLoggedIn: true });
     } catch (error) {
       console.error(error);
-      if (error instanceof Error) setSubmitError(error.message);
-      else setSubmitError("An unknown error occurred");
+      if (error instanceof Error)
+        toast({
+          title: "Error",
+          description: `${error.message} 😢`,
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+    } finally {
+      stopLoading();
     }
   };
 
@@ -66,25 +71,30 @@ const Login: NextPage = () => {
         w="full"
         maxW="md"
       >
-        <FormControl isInvalid={!!errors.email}>
-          <Input {...register("email")} placeholder="Email" type="email" />
-          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-        </FormControl>
+        <InputComponent
+          label="Email"
+          register={register}
+          name="email"
+          placeholder="Email"
+          type="email"
+          error={errors.email}
+        />
 
-        <FormControl isInvalid={!!errors.password}>
-          <Input
-            {...register("password")}
-            placeholder="Password"
-            type="password"
-          />
-          <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-        </FormControl>
+        <InputComponent
+          label="Password"
+          register={register}
+          name="password"
+          placeholder="Password"
+          type="password"
+          error={errors.password}
+        />
 
-        {submitError && <FormErrorMessage>{submitError}</FormErrorMessage>}
-
-        <Button type="submit" colorScheme="blue" w="full">
+        <ButtonComponent type="submit" loading={loading}>
           Login
-        </Button>
+        </ButtonComponent>
+        <ButtonComponent href="/" textOnly>
+          Go Back
+        </ButtonComponent>
       </VStack>
     </Box>
   );

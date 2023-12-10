@@ -1,23 +1,14 @@
-import {
-  Box,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  Radio,
-  RadioGroup,
-  Stack,
-  useToast,
-  VStack,
-} from "@chakra-ui/react";
+import { Box, useToast, VStack } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
-import { useForm, Controller, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/utils/api";
-import { useState } from "react";
 import ButtonComponent from "~/components/ButtonComponent";
+import InputComponent from "~/components/InputComponent";
+import RadioComponent from "~/components/RadioComponent";
+import { useLoading } from "~/hooks/useLoading";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -34,11 +25,11 @@ const schema = z.object({
 type FormInputsProps = z.infer<typeof schema>;
 
 const SignUp: NextPage = () => {
-  const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
   const toast = useToast();
   const rider = api.rider.createRider.useMutation();
   const driver = api.driver.createDriver.useMutation();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const {
     register,
@@ -59,28 +50,43 @@ const SignUp: NextPage = () => {
 
   const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
     if (getValues("confirmPassword") !== getValues("password")) {
-      setSubmitError("Passwords don't match");
+      toast({
+        title: "Error",
+        description: "Passwords don't match 🔑",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
       return;
     }
 
     try {
+      startLoading();
       const { name, email, password, role } = data;
       role === "Rider"
         ? await rider.mutateAsync({ name, email, password })
         : await driver.mutateAsync({ name, email, password });
 
       toast({
-        title: "Account created.",
-        description: "We've created your account.",
+        title: "Account Created! 🎉",
+        description: "You can now log in.",
         status: "success",
-        duration: 9000,
+        duration: 8000,
         isClosable: true,
       });
       await router.push("/users/login");
     } catch (error) {
       console.error(error);
-      if (error instanceof Error) setSubmitError(error.message);
-      else setSubmitError("An unknown error occurred");
+      if (error instanceof Error)
+        toast({
+          title: "Error",
+          description: `${error.message} 😢`,
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+    } finally {
+      stopLoading();
     }
   };
 
@@ -100,58 +106,51 @@ const SignUp: NextPage = () => {
         w="full"
         maxW="md"
       >
-        <FormControl isInvalid={!!errors.name}>
-          <FormLabel>Name</FormLabel>
-          <Input {...register("name")} placeholder="Name" />
-          <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-        </FormControl>
+        <InputComponent
+          label="Name"
+          register={register}
+          name="name"
+          placeholder="Name"
+          error={errors.name}
+        />
+        <InputComponent
+          label="Email"
+          register={register}
+          name="email"
+          placeholder="Email"
+          type="email"
+          error={errors.email}
+        />
+        <InputComponent
+          label="Password"
+          register={register}
+          name="password"
+          placeholder="Password"
+          type="password"
+          error={errors.password}
+        />
+        <InputComponent
+          label="Confirm Password"
+          register={register}
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          type="password"
+          error={errors.confirmPassword}
+        />
+        <RadioComponent
+          label="Role"
+          control={control}
+          name="role"
+          defaultValue="Rider"
+          options={[
+            { value: "Rider", label: "Rider" },
+            { value: "Driver", label: "Driver" },
+          ]}
+        />
 
-        <FormControl isInvalid={!!errors.email}>
-          <FormLabel>Email</FormLabel>
-          <Input {...register("email")} placeholder="Email" type="email" />
-          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={!!errors.password}>
-          <FormLabel>Password</FormLabel>
-          <Input
-            {...register("password")}
-            placeholder="Password"
-            type="password"
-          />
-          <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl isInvalid={!!errors.confirmPassword}>
-          <FormLabel>Confirm Password</FormLabel>
-          <Input
-            {...register("confirmPassword")}
-            placeholder="Confirm Password"
-            type="password"
-          />
-          <FormErrorMessage>{errors.confirmPassword?.message}</FormErrorMessage>
-        </FormControl>
-
-        <FormControl as="fieldset">
-          <FormLabel as="legend">Role</FormLabel>
-          <Controller
-            control={control}
-            name="role"
-            defaultValue="Rider"
-            render={({ field }) => (
-              <RadioGroup {...field}>
-                <Stack direction="row">
-                  <Radio value="Rider">Rider</Radio>
-                  <Radio value="Driver">Driver</Radio>
-                </Stack>
-              </RadioGroup>
-            )}
-          />
-        </FormControl>
-
-        {submitError && <FormErrorMessage>{submitError}</FormErrorMessage>}
-
-        <ButtonComponent type="submit">Create Account</ButtonComponent>
+        <ButtonComponent type="submit" loading={loading}>
+          Create Account
+        </ButtonComponent>
         <ButtonComponent href="/" textOnly>
           Go Back
         </ButtonComponent>

@@ -3,8 +3,8 @@ import { useAuth } from "~/context/AuthContext";
 import { useState, useEffect, useMemo } from "react";
 
 type Location = {
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
 };
 
 type Ride = {

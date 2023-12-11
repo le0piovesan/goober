@@ -17,15 +17,15 @@ model Rider {
 }
 
 model Driver {
-  id                Int            @id @default(autoincrement())
-  name              String
-  email             String         @unique
-  password          String
-  onTrip            Boolean        @default(false)
-  currentLocation   Location?       @relation("DriverLocation", fields: [currentLocationId], references: [id])
-  currentLocationId Int?            @unique
-  rides             Ride[]
-  notifications     Notification[]
+  id             Int            @id @default(autoincrement())
+  name           String
+  email          String         @unique
+  password       String
+  onTrip         Boolean        @default(false)
+  lastLocation   Location       @relation("DriverLastLocation", fields: [lastLocationId], references: [id])
+  lastLocationId Int            @unique
+  rides          Ride[]
+  notifications  Notification[]
 }
 
 model Ride {
@@ -50,12 +50,12 @@ model Ride {
 }
 
 model Location {
-  id             Int     @id @default(autoincrement())
-  lat            Float @default(0)
-  lng            Float @default(0)
-  driverLocation Driver? @relation("DriverLocation")
-  pickupRide     Ride?   @relation("PickupLocation")
-  dropoffRide    Ride?   @relation("DropoffLocation")
+  id                 Int     @id @default(autoincrement())
+  latitude           Float   @default(0)
+  longitude          Float   @default(0)
+  driverLastLocation Driver? @relation("DriverLastLocation")
+  pickupRide         Ride?   @relation("PickupLocation")
+  dropoffRide        Ride?   @relation("DropoffLocation")
 }
 
 model Notification {

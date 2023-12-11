@@ -4,7 +4,11 @@ import ButtonComponent from "./ButtonComponent";
 import { useAuth } from "~/context/AuthContext";
 import { useRouter } from "next/router";
 
-const MenuContent = () => {
+interface MenuContentProps {
+  onClose: () => void;
+}
+
+const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
   const { logout } = useAuth();
   const router = useRouter();
   const currentPath = router.pathname;
@@ -23,6 +27,11 @@ const MenuContent = () => {
     },
   ];
 
+  const handleMenuItemClick = async (href: string) => {
+    onClose();
+    await router.push(href);
+  };
+
   return (
     <Flex
       h="100vh"
@@ -34,7 +43,9 @@ const MenuContent = () => {
       {menuItems.map((item) => (
         <ButtonComponent
           key={item.href}
-          href={currentPath === item.href ? "#" : item.href}
+          onClick={() =>
+            handleMenuItemClick(currentPath === item.href ? "#" : item.href)
+          }
           outline
           leftIcon={item.icon}
         >

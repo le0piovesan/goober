@@ -43,7 +43,7 @@ const MenuDrawer: React.FC = () => {
           <DrawerCloseButton>✖️</DrawerCloseButton>
           <DrawerHeader>Menu</DrawerHeader>
           <DrawerBody overflow={"hidden"}>
-            <MenuContent />
+            <MenuContent onClose={onClose} />
           </DrawerBody>
         </DrawerContent>
       </Drawer>

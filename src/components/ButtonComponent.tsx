@@ -40,7 +40,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
 
   return href ? (
     <NextLink href={href} passHref>
-      <Link as={Button} {...buttonStyles}>
+      <Link as={Button} {...buttonStyles} leftIcon={leftIcon}>
         {children}
       </Link>
     </NextLink>

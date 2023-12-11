@@ -37,6 +37,12 @@ export const driverRouter = createTRPCRouter({
           name: input.name,
           email: input.email,
           password: bcrypt.hashSync(input.password, 10),
+          lastLocation: {
+            create: {
+              latitude: 0,
+              longitude: 0,
+            },
+          },
         },
       });
 

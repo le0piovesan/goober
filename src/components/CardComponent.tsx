@@ -1,8 +1,8 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Heading } from "@chakra-ui/react";
 
-const CardComponent = ({ children }: { children: React.ReactNode }) => (
+const CardComponent = (ride) => (
   <Box bg="white" p={4} rounded="md" shadow="md">
-    {children}
+    <Heading>Hello from card</Heading>
   </Box>
 );
 

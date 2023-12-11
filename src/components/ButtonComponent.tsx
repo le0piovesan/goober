@@ -7,6 +7,7 @@ type ButtonComponentProps = {
   outline?: boolean;
   textOnly?: boolean;
   loading?: boolean;
+  leftIcon?: React.ReactElement;
   children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -15,12 +16,14 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
   outline,
   textOnly,
   loading,
+  leftIcon,
   children,
   ...props
 }) => {
   const buttonStyles = {
     lineHeight: "1.2",
     fontWeight: "bold",
+    marginBottom: "0.5rem",
     color: outline ?? textOnly ? "background" : "light",
     border: outline ? "2px solid" : "none",
     backgroundColor: outline
@@ -42,7 +45,12 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
       </Link>
     </NextLink>
   ) : (
-    <Button {...buttonStyles} {...props} isLoading={loading}>
+    <Button
+      {...buttonStyles}
+      {...props}
+      isLoading={loading}
+      leftIcon={leftIcon}
+    >
       {children}
     </Button>
   );

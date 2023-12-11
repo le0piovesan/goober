@@ -9,6 +9,10 @@ export const rideRouter = createTRPCRouter({
         where: {
           riderId: input.id,
         },
+        include: {
+          pickupLocation: true,
+          dropoffLocation: true,
+        },
       });
 
       return riderRides;
@@ -21,6 +25,10 @@ export const rideRouter = createTRPCRouter({
         where: {
           driverId: input.id,
         },
+        include: {
+          pickupLocation: true,
+          dropoffLocation: true,
+        },
       });
 
       return driverRides;
@@ -29,8 +37,14 @@ export const rideRouter = createTRPCRouter({
   createRide: publicProcedure
     .input(
       z.object({
-        pickupLocation: z.string(),
-        dropoffLocation: z.string(),
+        pickupLocation: z.object({
+          lat: z.number(),
+          lng: z.number(),
+        }),
+        dropoffLocation: z.object({
+          lat: z.number(),
+          lng: z.number(),
+        }),
         tripFee: z.number(),
         duration: z.number(),
         riderId: z.number(),

@@ -1,63 +1,51 @@
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
-import { useState, useCallback, useEffect } from "react";
-import { useLoading } from "./useLoading";
+import { useState, useEffect, useMemo } from "react";
+
+type Location = {
+  lat: number;
+  lng: number;
+};
 
 type Ride = {
   id: number;
   status: string;
+  pickupLocation: Location;
   pickupLocationId: number;
+  dropoffLocation: Location;
   dropoffLocationId: number;
   tripFee: number;
   duration: number;
   createdAt: Date;
   updatedAt: Date;
-  riderId: number;
-  driverId: number;
 };
+
+type UserRides = Ride[];
 
 const useUserRides = () => {
   const { user } = useAuth();
-  const { startLoading, stopLoading, loading } = useLoading();
-  const [rides, setRides] = useState<Ride[]>([]);
-  const riderRides = user
-    ? api.ride.getRiderRides.useQuery({ id: user.id })
-    : null;
-  const driverRides = user
-    ? api.ride.getDriverRides.useQuery({ id: user.id })
-    : null;
+  const [rides, setRides] = useState<UserRides | null>(null);
 
-  const fetchRides = useCallback(() => {
-    if (!user) {
-      return;
-    }
+  if (!user) return { rides: null, isLoading: false };
 
-    startLoading();
-
-    try {
-      let fetchedRides: Ride[] = [];
-
-      if (user && (user.type === "Rider" || user.type === "Driver")) {
-        const result = user.type === "Rider" ? riderRides : driverRides;
-
-        if (result) fetchedRides = result.data ?? [];
-      }
-
-      setRides(fetchedRides);
-    } catch (error) {
-      console.error("Failed to fetch rides:", error);
-      throw error;
-    } finally {
-      stopLoading();
-    }
-  }, [user]);
+  const { isLoading, data } =
+    user.type === "Rider"
+      ? api.ride.getRiderRides.useQuery({
+          id: user.id,
+        })
+      : api.ride.getDriverRides.useQuery({
+          id: user.id,
+        });
 
   useEffect(() => {
-    fetchRides();
-    console.log("test useeffect");
-  }, []);
+    if (data) {
+      setRides(data);
+    }
+  }, [data]);
 
-  return { rides, loading };
+  const result = useMemo(() => ({ rides, isLoading }), [rides, isLoading]);
+
+  return result;
 };
 
 export default useUserRides;

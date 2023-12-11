@@ -4,12 +4,12 @@ import ContainerCard from "~/components/ContainerCard";
 import useUserRides from "~/hooks/useUserRides";
 
 const Feed: NextPage = () => {
-  const { rides, loading } = useUserRides();
+  const { rides, isLoading } = useUserRides();
 
   console.log("testing render");
   console.log(rides);
 
-  if (loading) return <Spinner />;
+  if (isLoading) return <Spinner />;
   return <ContainerCard />;
 };
 

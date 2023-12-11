@@ -1,19 +1,22 @@
-import { type NextPage } from "next";
-import { useAuth } from "~/context/AuthContext";
-import { type AuthContextType } from "~/context/type";
+import { Flex, VStack, useBreakpointValue } from "@chakra-ui/react";
 
-const Feed: NextPage = () => {
-  const { logout }: AuthContextType = useAuth();
+import TitleComponent from "~/components/TitleComponent";
+import MenuContent from "~/components/MenuContent";
+import MenuDrawer from "~/components/MenuDrawer";
+import ContainerCard from "~/components/ContainerCard";
 
-  const handleLogOut = async () => {
-    await logout();
-  };
+const Feed = () => {
+  const webScreen = useBreakpointValue({ base: false, lg: true });
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
-      <h1 className="text-2xl font-bold">Feed</h1>
-      <button onClick={() => handleLogOut()}>Log out</button>
-    </div>
+    <Flex direction={webScreen ? "row" : "column"} minH="100vh" p={4}>
+      <VStack fontSize="3xl" fontWeight="bold">
+        <TitleComponent />
+        {webScreen && <MenuContent />}
+      </VStack>
+      {!webScreen && <MenuDrawer />}
+      <ContainerCard />
+    </Flex>
   );
 };
 

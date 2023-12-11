@@ -1,13 +1,14 @@
-import { Flex, Grid, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Flex, Grid, Heading, Text } from "@chakra-ui/react";
 import CardComponent from "./CardComponent";
 import useUserRides from "~/hooks/useUserRides";
 import { useAuth } from "~/context/AuthContext";
+import Loading from "./Loading";
 
 const ContainerCard = () => {
   const { rides, isLoading } = useUserRides();
   const { user } = useAuth();
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) return <Loading />;
 
   if (rides && rides.length > 0)
     return (

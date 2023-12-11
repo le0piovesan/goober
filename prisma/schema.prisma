@@ -17,24 +17,28 @@ model Rider {
 }
 
 model Driver {
-  id            Int            @id @default(autoincrement())
-  name          String
-  email         String         @unique
-  password      String
-  onTrip        Boolean        @default(false)
-  rides         Ride[]
-  notifications Notification[]
+  id                Int            @id @default(autoincrement())
+  name              String
+  email             String         @unique
+  password          String
+  onTrip            Boolean        @default(false)
+  currentLocation   Location?       @relation("DriverLocation", fields: [currentLocationId], references: [id])
+  currentLocationId Int?            @unique
+  rides             Ride[]
+  notifications     Notification[]
 }
 
 model Ride {
-  id              Int      @id @default(autoincrement())
-  status          String
-  pickupLocation  String
-  dropoffLocation String
-  tripFee         Float
-  duration        Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                Int      @id @default(autoincrement())
+  status            String
+  pickupLocation    Location @relation("PickupLocation", fields: [pickupLocationId], references: [id])
+  pickupLocationId  Int      @unique
+  dropoffLocation   Location @relation("DropoffLocation", fields: [dropoffLocationId], references: [id])
+  dropoffLocationId Int      @unique
+  tripFee           Float
+  duration          Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   rider    Rider  @relation(fields: [riderId], references: [id])
   riderId  Int
@@ -45,13 +49,22 @@ model Ride {
   @@index([driverId])
 }
 
+model Location {
+  id             Int     @id @default(autoincrement())
+  lat            Float @default(0)
+  lng            Float @default(0)
+  driverLocation Driver? @relation("DriverLocation")
+  pickupRide     Ride?   @relation("PickupLocation")
+  dropoffRide    Ride?   @relation("DropoffLocation")
+}
+
 model Notification {
   id        Int      @id @default(autoincrement())
   message   String
   createdAt DateTime @default(now())
 
   rider    Rider?  @relation(fields: [riderId], references: [id])
-  riderId  Int
+  riderId  Int?
   driver   Driver? @relation(fields: [driverId], references: [id])
-  driverId Int
+  driverId Int?
 }

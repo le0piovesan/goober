@@ -1,4 +1,4 @@
-import { Box, VStack, useToast } from "@chakra-ui/react";
+import { VStack, useToast } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +9,7 @@ import { type AuthContextType } from "~/context/type";
 import ButtonComponent from "~/components/ButtonComponent";
 import InputComponent from "~/components/InputComponent";
 import { useLoading } from "~/hooks/useLoading";
+import ContainerContent from "~/components/ContainerContent";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -57,13 +58,7 @@ const Login: NextPage = () => {
   };
 
   return (
-    <Box
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      p={4}
-    >
+    <ContainerContent>
       <VStack
         as="form"
         onSubmit={handleSubmit(onSubmit)}
@@ -96,7 +91,7 @@ const Login: NextPage = () => {
           Go Back
         </ButtonComponent>
       </VStack>
-    </Box>
+    </ContainerContent>
   );
 };
 

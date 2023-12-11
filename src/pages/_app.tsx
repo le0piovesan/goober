@@ -23,6 +23,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           bgImage="url('/goober-gradient-titled-bg.png')"
           bgRepeat="no-repeat"
           bgSize="contain"
+          bgColor={"gray.100"}
           bgPosition="right bottom"
         >
           <UserContent>

@@ -1,4 +1,4 @@
-import { Box, useToast, VStack } from "@chakra-ui/react";
+import { useToast, VStack } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { useForm, type SubmitHandler } from "react-hook-form";
@@ -9,6 +9,7 @@ import ButtonComponent from "~/components/ButtonComponent";
 import InputComponent from "~/components/InputComponent";
 import RadioComponent from "~/components/RadioComponent";
 import { useLoading } from "~/hooks/useLoading";
+import ContainerContent from "~/components/ContainerContent";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -91,14 +92,7 @@ const SignUp: NextPage = () => {
   };
 
   return (
-    <Box
-      minH="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      p={4}
-      bg="gray.100"
-    >
+    <ContainerContent>
       <VStack
         as="form"
         onSubmit={handleSubmit(onSubmit)}
@@ -155,7 +149,7 @@ const SignUp: NextPage = () => {
           Go Back
         </ButtonComponent>
       </VStack>
-    </Box>
+    </ContainerContent>
   );
 };
 

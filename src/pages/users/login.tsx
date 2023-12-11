@@ -9,7 +9,7 @@ import { type AuthContextType } from "~/context/type";
 import ButtonComponent from "~/components/ButtonComponent";
 import InputComponent from "~/components/InputComponent";
 import { useLoading } from "~/hooks/useLoading";
-import ContainerContent from "~/components/ContainerContent";
+import ContainerForm from "~/components/ContainerForm";
 
 const schema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -62,7 +62,7 @@ const Login: NextPage = () => {
   };
 
   return (
-    <ContainerContent>
+    <ContainerForm>
       <VStack
         as="form"
         onSubmit={handleSubmit(onSubmit)}
@@ -95,7 +95,7 @@ const Login: NextPage = () => {
           Go Back
         </ButtonComponent>
       </VStack>
-    </ContainerContent>
+    </ContainerForm>
   );
 };
 

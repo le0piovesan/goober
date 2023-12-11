@@ -9,7 +9,7 @@ import ButtonComponent from "~/components/ButtonComponent";
 import InputComponent from "~/components/InputComponent";
 import RadioComponent from "~/components/RadioComponent";
 import { useLoading } from "~/hooks/useLoading";
-import ContainerContent from "~/components/ContainerContent";
+import ContainerForm from "~/components/ContainerForm";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -92,7 +92,7 @@ const SignUp: NextPage = () => {
   };
 
   return (
-    <ContainerContent>
+    <ContainerForm>
       <VStack
         as="form"
         onSubmit={handleSubmit(onSubmit)}
@@ -149,7 +149,7 @@ const SignUp: NextPage = () => {
           Go Back
         </ButtonComponent>
       </VStack>
-    </ContainerContent>
+    </ContainerForm>
   );
 };
 

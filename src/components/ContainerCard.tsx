@@ -1,8 +1,9 @@
-import { Flex, Grid, Heading, Text } from "@chakra-ui/react";
+import { Flex, Grid } from "@chakra-ui/react";
 import CardComponent from "./CardComponent";
 import useUserRides from "~/hooks/useUserRides";
 import { useAuth } from "~/context/AuthContext";
 import Loading from "./Loading";
+import EmptyState from "./EmptyState";
 
 const ContainerCard = () => {
   const { rides, isLoading } = useUserRides();
@@ -22,14 +23,14 @@ const ContainerCard = () => {
     );
   else
     return (
-      <>
-        <Heading>No goober rides yet. </Heading>
-        <Text>
-          {user && user.type === "Rider"
+      <EmptyState
+        title="No goober rides yet."
+        subtext={
+          user && user.type === "Rider"
             ? "Go somewhere fun by accessing the menu on the left and call your first Goober driver"
-            : "No worries, soon someone will request a ride!"}
-        </Text>
-      </>
+            : "No worries, soon someone will request a ride!"
+        }
+      />
     );
 };
 

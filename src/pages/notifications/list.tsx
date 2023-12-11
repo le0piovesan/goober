@@ -1,16 +1,14 @@
 import { type NextPage } from "next";
-import { Heading } from "@chakra-ui/react";
 import useUserNotifications from "~/hooks/useUserNotifications";
-import ContainerContent from "~/components/ContainerContent";
 import Loading from "~/components/Loading";
+import EmptyState from "~/components/EmptyState";
 
 const NotificationList: NextPage = () => {
   const { notifications, isLoading } = useUserNotifications();
 
   if (isLoading) return <Loading />;
   return (
-    <ContainerContent>
-      <Heading>My latest notifications: </Heading>
+    <>
       {notifications && notifications.length > 0 ? (
         <ul>
           {notifications.map((notification) => (
@@ -20,9 +18,12 @@ const NotificationList: NextPage = () => {
           ))}
         </ul>
       ) : (
-        <p>You have no notifications</p>
+        <EmptyState
+          title="You don't have any notifications"
+          subtext="We will keep you updated! 😉"
+        />
       )}
-    </ContainerContent>
+    </>
   );
 };
 

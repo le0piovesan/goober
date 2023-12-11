@@ -6,7 +6,7 @@ const spin = keyframes`
 `;
 
 const Loading = () => (
-  <Box display="flex" alignItems="center" justifyContent="center">
+  <Box position="fixed" top="50%" left="50%" transform="translate(-50%, -50%)">
     <Box
       display="flex"
       alignItems="center"

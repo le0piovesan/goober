@@ -9,7 +9,7 @@ interface MenuContentProps {
 }
 
 const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const router = useRouter();
   const currentPath = router.pathname;
 
@@ -40,18 +40,23 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
       pr={4}
       overflow="hidden"
     >
-      {menuItems.map((item) => (
-        <ButtonComponent
-          key={item.href}
-          onClick={() =>
-            handleMenuItemClick(currentPath === item.href ? "#" : item.href)
-          }
-          outline
-          leftIcon={item.icon}
-        >
-          {item.label}
-        </ButtonComponent>
-      ))}
+      {menuItems
+        .filter(
+          (route) =>
+            route.href !== "/rides/call" || (user && user.type === "Rider"),
+        )
+        .map((item) => (
+          <ButtonComponent
+            key={item.href}
+            onClick={() =>
+              handleMenuItemClick(currentPath === item.href ? "#" : item.href)
+            }
+            outline
+            leftIcon={item.icon}
+          >
+            {item.label}
+          </ButtonComponent>
+        ))}
       <ButtonComponent
         onClick={() => logout()}
         outline

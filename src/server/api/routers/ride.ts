@@ -38,12 +38,12 @@ export const rideRouter = createTRPCRouter({
     .input(
       z.object({
         pickupLocation: z.object({
-          lat: z.number(),
-          lng: z.number(),
+          latitude: z.number(),
+          longitude: z.number(),
         }),
         dropoffLocation: z.object({
-          lat: z.number(),
-          lng: z.number(),
+          latitude: z.number(),
+          longitude: z.number(),
         }),
         tripFee: z.number(),
         duration: z.number(),

@@ -43,23 +43,36 @@ export const driverRouter = createTRPCRouter({
       return driver;
     }),
 
-  updateDriver: publicProcedure
+  updateDriverLastLocation: publicProcedure
     .input(
       z.object({
         id: z.number(),
-        onTrip: z.boolean(),
+        latitude: z.number(),
+        longitude: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const driver = await ctx.db.driver.update({
+      const driver = await ctx.db.driver.findUnique({
         where: {
           id: input.id,
         },
-        data: {
-          onTrip: input.onTrip,
+        include: {
+          lastLocation: true,
         },
       });
 
-      return driver;
+      if (!driver?.lastLocation) {
+        throw new Error("Driver does not have a last location");
+      }
+
+      await ctx.db.location.update({
+        where: {
+          id: driver.lastLocation.id,
+        },
+        data: {
+          latitude: input.latitude,
+          longitude: input.longitude,
+        },
+      });
     }),
 });

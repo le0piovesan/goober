@@ -1,6 +1,6 @@
 import { Box } from "@chakra-ui/react";
 
-const ContainerContent = ({
+const ContainerForm = ({
   children,
   transparent,
 }: {
@@ -19,4 +19,4 @@ const ContainerContent = ({
   </Box>
 );
 
-export default ContainerContent;
+export default ContainerForm;

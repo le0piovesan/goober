@@ -1,13 +1,8 @@
 import { type NextPage } from "next";
-import Layout from "~/components/Layout";
 import { Heading } from "@chakra-ui/react";
 
 const NotificationList: NextPage = () => {
-  return (
-    <Layout>
-      <Heading>List of notifications</Heading>
-    </Layout>
-  );
+  return <Heading>List of notifications</Heading>;
 };
 
 export default NotificationList;

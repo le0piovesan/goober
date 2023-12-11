@@ -1,15 +1,9 @@
-import { useAuth } from "~/context/AuthContext";
-import SideBar from "~/components/SideBar";
 import { Flex, Box } from "@chakra-ui/react";
-import { type AuthContextType } from "~/context/type";
 
 const UserContent = ({ children }: { children: React.ReactNode }) => {
-  const { user }: AuthContextType = useAuth();
-
   return (
     <Flex direction="row" align="start" className="container mx-auto">
-      {user && user.isLoggedIn && <SideBar />}
-      <Box flexGrow={1} minHeight="100vh" borderX="1px">
+      <Box flexGrow={1} minHeight="100vh">
         {children}
       </Box>
     </Flex>

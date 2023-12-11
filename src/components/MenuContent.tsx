@@ -5,7 +5,7 @@ import { useAuth } from "~/context/AuthContext";
 import { useRouter } from "next/router";
 
 interface MenuContentProps {
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
@@ -28,7 +28,7 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
   ];
 
   const handleMenuItemClick = async (href: string) => {
-    onClose();
+    if (onClose) onClose();
     await router.push(href);
   };
 

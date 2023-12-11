@@ -15,6 +15,7 @@ export const authRouter = createTRPCRouter({
       });
 
       const user = existingDriver ?? existingRider;
+      const type = existingDriver ? "Driver" : "Rider";
 
       if (!user) {
         throw new Error("No user with this email exists");
@@ -23,6 +24,10 @@ export const authRouter = createTRPCRouter({
       if (!bcrypt.compareSync(input.password, user.password)) {
         throw new Error("Incorrect password");
       }
-      return user;
+
+      return {
+        id: user.id,
+        type,
+      };
     }),
 });

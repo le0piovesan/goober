@@ -2,7 +2,7 @@ import { type Dispatch } from "react";
 
 type User = {
   id: number;
-  name: string;
+  type: string;
   isLoggedIn: boolean;
 };
 

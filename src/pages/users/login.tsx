@@ -41,7 +41,11 @@ const Login: NextPage = () => {
     try {
       const { email, password } = data;
       const response = await auth.mutateAsync({ email, password });
-      await login({ id: response.id, name: response.name, isLoggedIn: true });
+      await login({
+        id: response.id,
+        type: response.type,
+        isLoggedIn: true,
+      });
     } catch (error) {
       console.error(error);
       if (error instanceof Error)

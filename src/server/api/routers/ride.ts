@@ -52,31 +52,35 @@ export const rideRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const ride = await ctx.db.ride.create({
-        data: {
-          tripFee: input.tripFee,
-          distance: input.distance,
-          pickupLocation: {
-            create: {
-              latitude: input.pickupLocation.latitude,
-              longitude: input.pickupLocation.longitude,
+      return ctx.db.$transaction(async (prisma) => {
+        const ride = await prisma.ride.create({
+          data: {
+            tripFee: input.tripFee,
+            distance: input.distance,
+            pickupLocation: {
+              create: {
+                latitude: input.pickupLocation.latitude,
+                longitude: input.pickupLocation.longitude,
+              },
+            },
+            dropoffLocation: {
+              create: {
+                latitude: input.dropoffLocation.latitude,
+                longitude: input.dropoffLocation.longitude,
+              },
+            },
+            rider: {
+              connect: {
+                id: input.riderId,
+              },
             },
           },
-          dropoffLocation: {
-            create: {
-              latitude: input.dropoffLocation.latitude,
-              longitude: input.dropoffLocation.longitude,
-            },
-          },
-          rider: {
-            connect: {
-              id: input.riderId,
-            },
-          },
-        },
-      });
+        });
 
-      if (ride) {
+        if (!ride) {
+          throw new Error("Not able to request a ride, try again later.");
+        }
+
         const { id } = ride;
         const response = await requestClosestDriver({
           db: ctx.db,
@@ -86,8 +90,6 @@ export const rideRouter = createTRPCRouter({
           },
         });
         return response;
-      }
-
-      throw new Error("Not able to request a ride, try again later.");
+      });
     }),
 });

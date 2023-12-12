@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getDistance } from "geolib";
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaPromise, PrismaClient } from "@prisma/client";
+import type { Notification } from "@prisma/client";
 
 const getRequestClosestDriverInputSchema = z.object({
   rideId: z.number(),
@@ -18,7 +19,7 @@ const requestClosestDriver = async ({
 }: {
   db: PrismaClient;
   input: DriverInput;
-}) => {
+}): Promise<PrismaPromise<Notification>> => {
   const drivers = await db.driver.findMany({
     where: {
       onTrip: false,
@@ -57,13 +58,16 @@ const requestClosestDriver = async ({
     throw new Error("No drivers available at the moment.");
   }
 
-  // const notification = await sendNotification(
-  //   closestDriver,
-  //   "You have a new ride request",
-  // );
+  const notification = await db.notification.create({
+    data: {
+      message: "You have a new ride request",
+      riderId: null,
+      driverId: closestDriver.id,
+      rideId: input.rideId,
+    },
+  });
 
-  console.log({ closestDriver, message: "You have a new ride request" });
-  return "notification sended";
+  return notification;
 };
 
 export { requestClosestDriver };

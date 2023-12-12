@@ -21,6 +21,8 @@ import { useLoading } from "~/hooks/useLoading";
 import { Autocomplete } from "@react-google-maps/api";
 import useCurrentPosition from "~/hooks/useCurrentPosition";
 import { useRef, useState } from "react";
+import useCalculateTripValue from "~/hooks/useCalculateTripValue";
+import useRetrieveRouteInfo from "~/hooks/useRetrieveRouteInfo";
 
 const schema = z.object({
   pickupLocation: z.string(),
@@ -47,9 +49,19 @@ const Map: React.FC = () => {
     value: 0,
     distance: "",
   });
-  const [directions, setDirections] = useState<
-    google.maps.DirectionsResult | undefined
-  >();
+  const [directions, setDirections] =
+    useState<google.maps.DirectionsResult | null>(null);
+  const typedSetDirections: React.Dispatch<
+    React.SetStateAction<google.maps.DirectionsResult | null>
+  > = setDirections;
+
+  const tripValue = useCalculateTripValue(distanceDetails.value);
+  const retrieveRouteInfo = useRetrieveRouteInfo(
+    pickupLocationRef,
+    dropoffLocationRef,
+    typedSetDirections,
+    setDistanceDetails,
+  );
 
   const {
     register,
@@ -62,36 +74,6 @@ const Map: React.FC = () => {
       dropoffLocation: "",
     },
   });
-
-  const getInfoLocation = async () => {
-    startLoading();
-    const directionService = new google.maps.DirectionsService();
-
-    if (!pickupLocationRef.current || !dropoffLocationRef.current) {
-      console.error("Pickup or dropoff location is not set");
-      return;
-    }
-
-    try {
-      const result = await directionService.route({
-        origin: pickupLocationRef.current,
-        destination: dropoffLocationRef.current,
-        travelMode: google.maps.TravelMode.DRIVING,
-      });
-
-      setDirections(result);
-      const legs = result.routes[0]?.legs[0];
-
-      setDistanceDetails({
-        value: legs?.distance?.value ?? 0,
-        distance: legs?.distance?.text ?? "",
-      });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      stopLoading();
-    }
-  };
 
   const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
     startLoading();
@@ -126,7 +108,7 @@ const Map: React.FC = () => {
           <Marker position={pickupLocationRef.current} />
           <Marker position={dropoffLocationRef.current} />
           <DirectionsRenderer
-            directions={directions}
+            directions={directions ?? undefined}
             options={{
               polylineOptions: {
                 strokeColor: "#845ec2",
@@ -198,10 +180,7 @@ const Map: React.FC = () => {
                   />
                 </Autocomplete>
 
-                <ButtonComponent
-                  onClick={() => getInfoLocation()}
-                  loading={loading}
-                >
+                <ButtonComponent onClick={retrieveRouteInfo} loading={loading}>
                   Search 🔍
                 </ButtonComponent>
               </>
@@ -222,8 +201,7 @@ const Map: React.FC = () => {
                       Value
                     </Heading>
                     <Text fontSize="md" fontWeight={"bold"} color={"green"}>
-                      ${" "}
-                      {Number((distanceDetails.value / 1000) * 0.32).toFixed(2)}
+                      {tripValue}
                     </Text>
                   </Box>
                 </Flex>
@@ -239,7 +217,7 @@ const Map: React.FC = () => {
                     });
                   }}
                 >
-                  Go back
+                  Go Back
                 </ButtonComponent>
               </Stack>
             )}

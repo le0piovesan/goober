@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useLoading } from "./useLoading";
+import { useToast } from "@chakra-ui/react";
 
 type DistanceDetails = {
   value: number;
@@ -15,13 +16,21 @@ const useRetrieveRouteInfo = (
   setDistanceDetails: React.Dispatch<React.SetStateAction<DistanceDetails>>,
 ) => {
   const { startLoading, stopLoading } = useLoading();
+  const toast = useToast();
 
   return useCallback(async () => {
     startLoading();
     const directionService = new google.maps.DirectionsService();
 
     if (!pickupLocationRef.current || !dropoffLocationRef.current) {
-      console.error("Pickup or dropoff location is not set");
+      toast({
+        title: "Warning",
+        description: "Pickup or Dropoff location is not set 📍",
+        position: "top",
+        status: "info",
+        duration: 4000,
+        isClosable: true,
+      });
       return;
     }
 

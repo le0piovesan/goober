@@ -1,28 +1,18 @@
-import { GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
-import InputComponent from "./InputComponent";
-import ButtonComponent from "~/components/ButtonComponent";
-import {
-  Card,
-  CardBody,
-  Stack,
-  VStack,
-  Heading,
-  Text,
-  useToast,
-  Flex,
-  Box,
-} from "@chakra-ui/react";
+import { GoogleMap } from "@react-google-maps/api";
+import { Card, CardBody, VStack, useToast } from "@chakra-ui/react";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useLoading } from "~/hooks/useLoading";
-import { Autocomplete } from "@react-google-maps/api";
 import useCurrentPosition from "~/hooks/useCurrentPosition";
 import { useRef, useState } from "react";
 import useCalculateTripValue from "~/hooks/useCalculateTripValue";
 import useRetrieveRouteInfo from "~/hooks/useRetrieveRouteInfo";
+import MapDetails from "./MapDetails";
+import MapSearch from "./MapSearch";
+import MapMarkerDirections from "./MapMarkerDirections";
 
 const schema = z.object({
   pickupLocation: z.string(),
@@ -102,21 +92,20 @@ const Map: React.FC = () => {
         lat: position.latitude,
         lng: position.longitude,
       }}
+      options={{
+        streetViewControl: false,
+        mapTypeControlOptions: {
+          mapTypeIds: [google.maps.MapTypeId.ROADMAP],
+        },
+        fullscreenControl: false,
+      }}
     >
       {pickupLocationRef.current && dropoffLocationRef.current && (
-        <>
-          <Marker position={pickupLocationRef.current} />
-          <Marker position={dropoffLocationRef.current} />
-          <DirectionsRenderer
-            directions={directions ?? undefined}
-            options={{
-              polylineOptions: {
-                strokeColor: "#845ec2",
-                strokeWeight: 5,
-              },
-            }}
-          />
-        </>
+        <MapMarkerDirections
+          pickupLocationRef={pickupLocationRef}
+          dropoffLocationRef={dropoffLocationRef}
+          directions={directions}
+        />
       )}
       <Card
         bgColor={"light"}
@@ -136,90 +125,21 @@ const Map: React.FC = () => {
           >
             {!distanceDetails.distance ||
             (!distanceDetails.value && !directions) ? (
-              <>
-                <Autocomplete
-                  onLoad={(autocomplete) => {
-                    autocomplete.addListener("place_changed", () => {
-                      const place = autocomplete.getPlace();
-                      const lat = place.geometry?.location?.lat();
-                      const lng = place.geometry?.location?.lng();
-
-                      pickupLocationRef.current = {
-                        lat: lat ?? 0,
-                        lng: lng ?? 0,
-                      };
-                    });
-                  }}
-                >
-                  <InputComponent
-                    label="Get a ride"
-                    register={register}
-                    name="pickupLocation"
-                    placeholder="Origin"
-                  />
-                </Autocomplete>
-                <Autocomplete
-                  onLoad={(autocomplete) => {
-                    autocomplete.addListener("place_changed", () => {
-                      const place = autocomplete.getPlace();
-                      const lat = place.geometry?.location?.lat();
-                      const lng = place.geometry?.location?.lng();
-
-                      dropoffLocationRef.current = {
-                        lat: lat ?? 0,
-                        lng: lng ?? 0,
-                      };
-                    });
-                  }}
-                >
-                  <InputComponent
-                    label="Where to?"
-                    register={register}
-                    name="dropoffLocation"
-                    placeholder="Destination"
-                  />
-                </Autocomplete>
-
-                <ButtonComponent onClick={retrieveRouteInfo} loading={loading}>
-                  Search 🔍
-                </ButtonComponent>
-              </>
+              <MapSearch
+                register={register}
+                loading={loading}
+                retrieveRouteInfo={retrieveRouteInfo}
+                pickupLocationRef={pickupLocationRef}
+                dropoffLocationRef={dropoffLocationRef}
+                errors={errors}
+              />
             ) : (
-              <Stack>
-                <Flex align={"center"}>
-                  <Box p={2}>
-                    <Heading size="sm" fontWeight={""}>
-                      Distance
-                    </Heading>
-                    <Text fontSize="md" fontWeight={"bold"} color={"primary"}>
-                      {distanceDetails.distance}
-                    </Text>
-                  </Box>
-
-                  <Box p={2}>
-                    <Heading size="sm" fontWeight={""}>
-                      Value
-                    </Heading>
-                    <Text fontSize="md" fontWeight={"bold"} color={"green"}>
-                      {tripValue}
-                    </Text>
-                  </Box>
-                </Flex>
-                <ButtonComponent type="submit" loading={loading}>
-                  Request Goober Driver
-                </ButtonComponent>
-                <ButtonComponent
-                  textOnly
-                  onClick={() => {
-                    setDistanceDetails({
-                      value: 0,
-                      distance: "",
-                    });
-                  }}
-                >
-                  Go Back
-                </ButtonComponent>
-              </Stack>
+              <MapDetails
+                distanceDetails={distanceDetails.distance}
+                setDistanceDetails={setDistanceDetails}
+                tripValue={tripValue}
+                loading={loading}
+              />
             )}
           </VStack>
         </CardBody>

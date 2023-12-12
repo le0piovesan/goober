@@ -102,8 +102,8 @@ const Map: React.FC = () => {
       });
       console.log(response);
       toast({
-        title: `${response} 🎉`,
-        description: "We will notify you when a driver accepts your request.",
+        title: "Goober Request 🚗",
+        description: response,
         status: "success",
         duration: 8000,
         isClosable: true,

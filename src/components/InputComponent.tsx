@@ -37,7 +37,12 @@ const InputComponent = <TFormValues extends FieldValues>({
 
   return (
     <FormControl isInvalid={!!error}>
-      <FormLabel color={"primary"}>{label}</FormLabel>
+      <FormLabel
+        color={"primary"}
+        className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.2)]"
+      >
+        {label}
+      </FormLabel>
       <InputGroup size="md">
         <Input
           {...register(name as string as Path<TFormValues>)}
@@ -45,6 +50,7 @@ const InputComponent = <TFormValues extends FieldValues>({
           type={type === "password" && show ? "text" : type}
           ringColor={error ? "red.500" : "border"}
           borderColor={"border"}
+          bgColor={"light"}
           _hover={{
             borderColor: "secondary",
           }}

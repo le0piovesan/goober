@@ -9,6 +9,7 @@ import { z } from "zod";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useLoading } from "~/hooks/useLoading";
 import { Autocomplete } from "@react-google-maps/api";
+import useCurrentPosition from "~/hooks/useCurrentPosition";
 
 const schema = z.object({
   pickupLocation: z.string(),
@@ -19,6 +20,7 @@ type FormInputsProps = z.infer<typeof schema>;
 
 const Map: React.FC = () => {
   const { user } = useAuth();
+  const { position } = useCurrentPosition();
   const ride = api.ride.createRide.useMutation();
   const toast = useToast();
   const { loading, startLoading, stopLoading } = useLoading();
@@ -55,8 +57,15 @@ const Map: React.FC = () => {
   };
 
   return (
-    <GoogleMap zoom={15} mapContainerStyle={{ width: "100%", height: "100vh" }}>
-      <Card>
+    <GoogleMap
+      zoom={15}
+      mapContainerStyle={{ width: "100%", height: "100vh" }}
+      center={{
+        lat: position.latitude,
+        lng: position.longitude,
+      }}
+    >
+      <Card bgColor={"transparent"}>
         <CardBody>
           <VStack
             as="form"

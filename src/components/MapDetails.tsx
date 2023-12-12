@@ -9,7 +9,7 @@ type MapDetailsProps = {
       distance: string;
     }>
   >;
-  tripValue: string;
+  tripValue: number;
   loading: boolean;
 };
 
@@ -35,7 +35,7 @@ const MapDetails: React.FC<MapDetailsProps> = ({
           Value
         </Heading>
         <Text fontSize="md" fontWeight={"bold"} color={"green"}>
-          {tripValue}
+          $ {tripValue}
         </Text>
       </Box>
     </Flex>

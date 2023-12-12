@@ -15,7 +15,7 @@ type Ride = {
   dropoffLocation: Location;
   dropoffLocationId: number;
   tripFee: number;
-  duration: number;
+  duration: number | null;
   createdAt: Date;
   updatedAt: Date;
 };

@@ -13,6 +13,7 @@ import useRetrieveRouteInfo from "~/hooks/useRetrieveRouteInfo";
 import MapDetails from "./MapDetails";
 import MapSearch from "./MapSearch";
 import MapMarkerDirections from "./MapMarkerDirections";
+import { useRouter } from "next/router";
 
 const schema = z.object({
   pickupLocation: z.string(),
@@ -52,6 +53,7 @@ const Map: React.FC = () => {
     typedSetDirections,
     setDistanceDetails,
   );
+  const router = useRouter();
 
   const {
     register,
@@ -66,9 +68,47 @@ const Map: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
-    startLoading();
+    console.log(data);
+
+    if (
+      !pickupLocationRef.current ||
+      !dropoffLocationRef.current ||
+      !user?.id
+    ) {
+      toast({
+        title: "Error",
+        description: "No Location or User ID",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
-      console.log(data);
+      startLoading();
+      const response = await ride.mutateAsync({
+        tripFee: tripValue,
+        distance: distanceDetails.distance,
+        pickupLocation: {
+          latitude: pickupLocationRef.current.lat,
+          longitude: pickupLocationRef.current.lng,
+        },
+        dropoffLocation: {
+          latitude: dropoffLocationRef.current.lat,
+          longitude: dropoffLocationRef.current.lng,
+        },
+        riderId: user.id,
+      });
+      console.log(response);
+      toast({
+        title: `${response} 🎉`,
+        description: "We will notify you when a driver accepts your request.",
+        status: "success",
+        duration: 8000,
+        isClosable: true,
+      });
+      await router.push("/rides/feed");
     } catch (error) {
       console.error(error);
       if (error instanceof Error)
@@ -123,8 +163,7 @@ const Map: React.FC = () => {
             w="full"
             maxW="md"
           >
-            {!distanceDetails.distance ||
-            (!distanceDetails.value && !directions) ? (
+            {!distanceDetails.distance || (!tripValue && !directions) ? (
               <MapSearch
                 register={register}
                 loading={loading}

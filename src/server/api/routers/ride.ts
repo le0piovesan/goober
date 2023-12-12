@@ -37,6 +37,8 @@ export const rideRouter = createTRPCRouter({
   createRide: publicProcedure
     .input(
       z.object({
+        tripFee: z.number(),
+        distance: z.string(),
         pickupLocation: z.object({
           latitude: z.number(),
           longitude: z.number(),
@@ -45,45 +47,34 @@ export const rideRouter = createTRPCRouter({
           latitude: z.number(),
           longitude: z.number(),
         }),
-        tripFee: z.number(),
-        duration: z.number(),
         riderId: z.number(),
-        driverId: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const ride = await ctx.db.ride.create({
+      await ctx.db.ride.create({
         data: {
-          status: "requested",
-          pickupLocation: input.pickupLocation,
-          dropoffLocation: input.dropoffLocation,
           tripFee: input.tripFee,
-          duration: input.duration,
-          riderId: input.riderId,
-          driverId: input.driverId,
+          distance: input.distance,
+          pickupLocation: {
+            create: {
+              latitude: input.pickupLocation.latitude,
+              longitude: input.pickupLocation.longitude,
+            },
+          },
+          dropoffLocation: {
+            create: {
+              latitude: input.dropoffLocation.latitude,
+              longitude: input.dropoffLocation.longitude,
+            },
+          },
+          rider: {
+            connect: {
+              id: input.riderId,
+            },
+          },
         },
       });
 
-      return ride;
-    }),
-
-  updateRide: publicProcedure
-    .input(
-      z.object({
-        id: z.number(),
-        status: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const ride = await ctx.db.ride.update({
-        where: {
-          id: input.id,
-        },
-        data: {
-          status: input.status,
-        },
-      });
-
-      return ride;
+      return "Ride Requested!";
     }),
 });

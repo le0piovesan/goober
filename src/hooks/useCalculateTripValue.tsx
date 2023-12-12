@@ -6,7 +6,7 @@ const useCalculateTripValue = (distanceInMeters: number) => {
     const baseFee = 0.32;
     const quote = 1.2;
     const value = distanceInKm * baseFee * quote;
-    return ` $ ${Number(value).toFixed(2)}`;
+    return Number(value.toFixed(2));
   }, [distanceInMeters]);
 };
 

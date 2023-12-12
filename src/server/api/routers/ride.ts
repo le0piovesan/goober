@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { requestClosestDriver } from "./trigger";
 
 export const rideRouter = createTRPCRouter({
   getRiderRides: publicProcedure
@@ -51,7 +52,7 @@ export const rideRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.ride.create({
+      const ride = await ctx.db.ride.create({
         data: {
           tripFee: input.tripFee,
           distance: input.distance,
@@ -75,6 +76,18 @@ export const rideRouter = createTRPCRouter({
         },
       });
 
-      return "Ride Requested!";
+      if (ride) {
+        const { id } = ride;
+        const response = await requestClosestDriver({
+          db: ctx.db,
+          input: {
+            rideId: id,
+            pickupLocation: input.pickupLocation,
+          },
+        });
+        return response;
+      }
+
+      throw new Error("Not able to request a ride, try again later.");
     }),
 });

@@ -1,5 +1,5 @@
 import { Flex, Grid } from "@chakra-ui/react";
-import CardComponent from "./CardComponent";
+import RideCard from "./RideCard";
 import useUserRides from "~/hooks/useUserRides";
 import { useAuth } from "~/context/AuthContext";
 import Loading from "./Loading";
@@ -16,7 +16,7 @@ const ContainerCard = () => {
       <Flex direction="column">
         <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
           {rides.map((ride) => (
-            <CardComponent key={ride.id} ride={ride} />
+            <RideCard key={ride.id} ride={ride} />
           ))}
         </Grid>
       </Flex>

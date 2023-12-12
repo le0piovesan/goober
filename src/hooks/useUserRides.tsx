@@ -1,26 +1,7 @@
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { useState, useEffect, useMemo } from "react";
-
-type Location = {
-  latitude: number;
-  longitude: number;
-};
-
-type Ride = {
-  id: number;
-  status: string;
-  pickupLocation: Location;
-  pickupLocationId: number;
-  dropoffLocation: Location;
-  dropoffLocationId: number;
-  tripFee: number;
-  duration: number | null;
-  createdAt: Date;
-  updatedAt: Date;
-};
-
-type UserRides = Ride[];
+import type { UserRides } from "~/types/ride";
 
 const useUserRides = () => {
   const { user } = useAuth();

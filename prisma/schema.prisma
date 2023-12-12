@@ -25,28 +25,36 @@ model Driver {
   lastLocation   Location       @relation("DriverLastLocation", fields: [lastLocationId], references: [id])
   lastLocationId Int            @unique
   rides          Ride[]
+  declinedRides  DeclinedRide[]
   notifications  Notification[]
 }
 
 model Ride {
-  id                Int      @id @default(autoincrement())
-  status            String
+  id       Int    @id @default(autoincrement())
+  status   String @default("REQUESTED")
+  tripFee  Float
+  distance String
+
   pickupLocation    Location @relation("PickupLocation", fields: [pickupLocationId], references: [id])
   pickupLocationId  Int      @unique
   dropoffLocation   Location @relation("DropoffLocation", fields: [dropoffLocationId], references: [id])
   dropoffLocationId Int      @unique
-  tripFee           Float
-  duration          Int
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
 
-  rider    Rider  @relation(fields: [riderId], references: [id])
-  riderId  Int
-  driver   Driver @relation(fields: [driverId], references: [id])
-  driverId Int
+  acceptedAt DateTime?
+  finishedAt DateTime?
+  duration   Int?
 
-  @@index([riderId])
-  @@index([driverId])
+  driver   Driver? @relation(fields: [driverId], references: [id])
+  driverId Int?
+
+  rider   Rider @relation(fields: [riderId], references: [id])
+  riderId Int
+
+  declinedRides DeclinedRide[]
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Location {
@@ -67,4 +75,16 @@ model Notification {
   riderId  Int?
   driver   Driver? @relation(fields: [driverId], references: [id])
   driverId Int?
+  ride     Ride?   @relation(fields: [rideId], references: [id])
+  rideId   Int?
+}
+
+model DeclinedRide {
+  id       Int    @id @default(autoincrement())
+  ride     Ride   @relation(fields: [rideId], references: [id])
+  rideId   Int
+  driver   Driver @relation(fields: [driverId], references: [id])
+  driverId Int
+
+  @@unique([rideId, driverId])
 }

@@ -49,8 +49,8 @@ const InputComponent = <TFormValues extends FieldValues>({
           placeholder={placeholder}
           type={type === "password" && show ? "text" : type}
           ringColor={error ? "red.500" : "border"}
-          borderColor={"border"}
-          bgColor={"light"}
+          borderColor={"#dfe3ef"}
+          bgColor={"#dfe3ef"}
           _hover={{
             borderColor: "secondary",
           }}

@@ -5,7 +5,7 @@ import type { UserRides } from "~/types/ride";
 
 const useUserRides = () => {
   const { user } = useAuth();
-  const [rides, setRides] = useState<UserRides | null>(null);
+  const [rides, setRides] = useState<UserRides>([]);
 
   if (!user) return { rides: null, isLoading: false };
 

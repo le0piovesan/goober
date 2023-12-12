@@ -12,9 +12,9 @@ type Ride = {
   pickupLocationId: number;
   dropoffLocation: Location;
   dropoffLocationId: number;
-  acceptedAt: Date;
-  finishedAt: Date;
-  duration: number;
+  acceptedAt: Date | null;
+  finishedAt: Date | null;
+  duration: number | null;
   createdAt: Date;
   updatedAt: Date;
 };

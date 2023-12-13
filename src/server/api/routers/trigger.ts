@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getDistance } from "geolib";
-import type { PrismaPromise, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaPromise, PrismaClient } from "@prisma/client";
 import type { Notification } from "@prisma/client";
 
 const getRequestClosestDriverInputSchema = z.object({
@@ -13,13 +13,28 @@ const getRequestClosestDriverInputSchema = z.object({
 
 type DriverInput = z.infer<typeof getRequestClosestDriverInputSchema>;
 
+const sendDriverRideRequestNotificationSchema = z.object({
+  message: z.string(),
+  driverId: z.number(),
+  rideId: z.number(),
+});
+
+type NotificationInput = z.infer<
+  typeof sendDriverRideRequestNotificationSchema
+>;
+
+type TransactionalPrismaClient = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>;
+
 const requestClosestDriver = async ({
   db,
   input,
 }: {
-  db: PrismaClient;
+  db: TransactionalPrismaClient;
   input: DriverInput;
-}): Promise<PrismaPromise<Notification>> => {
+}): Promise<Prisma.Prisma__NotificationClient<Notification>> => {
   const drivers = await db.driver.findMany({
     where: {
       onTrip: false,
@@ -33,7 +48,7 @@ const requestClosestDriver = async ({
   });
 
   if (drivers.length === 0) {
-    throw new Error("All our drivers are on duty, try again later.");
+    throw new Error("No drivers found, try again later.");
   }
 
   const driversWithDistance = drivers.map((driver) => ({
@@ -58,16 +73,42 @@ const requestClosestDriver = async ({
     throw new Error("No drivers available at the moment.");
   }
 
-  const notification = await db.notification.create({
-    data: {
-      message: "You have a new ride request",
-      riderId: null,
+  const response = await sendDriverRideRequestNotification({
+    db,
+    input: {
+      message: `You have a new ride request.`,
       driverId: closestDriver.id,
       rideId: input.rideId,
     },
   });
 
-  return notification;
+  return response;
 };
 
-export { requestClosestDriver };
+const sendDriverRideRequestNotification = async ({
+  db,
+  input,
+}: {
+  db: TransactionalPrismaClient;
+  input: NotificationInput;
+}): Promise<PrismaPromise<Notification>> => {
+  const response = await db.notification.create({
+    data: {
+      message: input.message,
+      driver: {
+        connect: {
+          id: input.driverId,
+        },
+      },
+      ride: {
+        connect: {
+          id: input.rideId,
+        },
+      },
+    },
+  });
+
+  return response;
+};
+
+export { requestClosestDriver, sendDriverRideRequestNotification };

@@ -83,7 +83,7 @@ export const rideRouter = createTRPCRouter({
 
         const { id } = ride;
         const response = await requestClosestDriver({
-          db: ctx.db,
+          db: prisma,
           input: {
             rideId: id,
             pickupLocation: input.pickupLocation,

@@ -87,7 +87,7 @@ const Map: React.FC = () => {
 
     try {
       startLoading();
-      const response = await ride.mutateAsync({
+      await ride.mutateAsync({
         tripFee: tripValue,
         distance: distanceDetails.distance,
         pickupLocation: {
@@ -100,10 +100,10 @@ const Map: React.FC = () => {
         },
         riderId: user.id,
       });
-      console.log(response);
+
       toast({
-        title: "Goober Request 🚗",
-        description: response,
+        title: "Done! 🚗",
+        description: "We are looking for the nearest Goober Driver!",
         status: "success",
         duration: 8000,
         isClosable: true,

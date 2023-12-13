@@ -2,7 +2,6 @@ import { z } from "zod";
 import { getDistance } from "geolib";
 import type { Prisma, PrismaPromise, PrismaClient } from "@prisma/client";
 import type { Notification } from "@prisma/client";
-import { publicProcedure } from "../trpc";
 import { Status } from "@prisma/client";
 
 const getRequestClosestDriverInputSchema = z.object({
@@ -75,8 +74,17 @@ const requestClosestDriver = async ({
   const closestDriver = driversWithDistance[0];
 
   if (!closestDriver) {
-    await cancelExistingRideRequest(input.rideId);
     throw new Error("No drivers available at the moment.");
+  }
+
+  const declinedRides = await db.declinedRide.findMany({
+    where: {
+      rideId: input.rideId,
+    },
+  });
+
+  if (!closestDriver && declinedRides.length > 0) {
+    await cancelExistingRideRequest(db, input.rideId);
   }
 
   const response = await sendDriverRideRequestNotification({
@@ -117,44 +125,45 @@ const sendDriverRideRequestNotification = async ({
   return response;
 };
 
-const cancelExistingRideRequest = async (rideId: number) => {
-  publicProcedure.query(async ({ ctx }) => {
-    const ride = await ctx.db.ride.findUnique({
-      where: {
-        id: rideId,
-      },
-      include: {
-        status: {},
-      },
-    });
+const cancelExistingRideRequest = async (
+  db: TransactionalPrismaClient,
+  rideId: number,
+) => {
+  const ride = await db.ride.findUnique({
+    where: {
+      id: rideId,
+    },
+    include: {
+      status: {},
+    },
+  });
 
-    if (!ride) return;
+  if (!ride) return;
 
-    await ctx.db.rideStatus.update({
-      where: {
-        id: ride.id,
-      },
-      data: {
-        current: Status.CANCELED,
-        finishedAt: new Date(),
-      },
-    });
+  await db.rideStatus.update({
+    where: {
+      id: ride.statusId,
+    },
+    data: {
+      current: Status.CANCELED,
+      finishedAt: new Date(),
+    },
+  });
 
-    await ctx.db.notification.create({
-      data: {
-        message: "No drivers available at the moment, try again later.",
-        rider: {
-          connect: {
-            id: ride.riderId,
-          },
-        },
-        ride: {
-          connect: {
-            id: ride.id,
-          },
+  await db.notification.create({
+    data: {
+      message: "No drivers available at the moment, try again later.",
+      rider: {
+        connect: {
+          id: ride.riderId,
         },
       },
-    });
+      ride: {
+        connect: {
+          id: ride.id,
+        },
+      },
+    },
   });
 };
 

@@ -18,6 +18,7 @@ import { useLoading } from "~/hooks/useLoading";
 import Loading from "./Loading";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
+import { colorStatus } from "~/utils/colorFormatter";
 
 const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
   notification,
@@ -89,29 +90,18 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
     }
   };
 
-  const colorStatus = (message: string) => {
-    switch (message) {
-      case "You have a new ride request":
-        return "yellow";
-      case "You have accepted the ride":
-        return "green";
-      case "You have declined this ride":
-        return "blue";
-      case "The rider has canceled the ride":
-        return "red";
-      case "You have canceled the ride":
-        return "orange";
-      case "Ride completed! 🚀":
-        return "primary";
-      default:
-        return "gray";
-    }
-  };
   if (loading) return <Loading />;
 
   return (
     <ListItem marginBottom="2">
-      <Box maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
+      <Box
+        maxW="sm"
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        bgColor="light"
+        paddingX="4"
+      >
         {user?.type === "Driver" && (
           <VStack padding="2" align="start">
             <HStack>

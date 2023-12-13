@@ -12,6 +12,7 @@ import {
 
 import type { RideWithStatus } from "~/types/ride";
 import { formatDateTime } from "~/utils/dateFormatter";
+import { colorStatus } from "~/utils/colorFormatter";
 
 interface RideCardProps {
   ride: RideWithStatus;
@@ -26,14 +27,24 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => (
         borderRadius="lg"
       />
       <Stack mt="2" spacing="1">
-        <Heading size="md" color={"yellow.600"}>
-          {ride.status.current === "REQUESTED"
-            ? "Looking for a Driver"
-            : "TODO: Add status"}
+        <Heading size="md" color={colorStatus(ride.status.current)}>
+          {ride.status.current}
         </Heading>
         <Text>
+          From:{" "}
+          <Text as="span" fontSize="md" fontWeight={"bold"}>
+            {ride.originName}
+          </Text>
+        </Text>
+        <Text>
+          To:{" "}
+          <Text as="span" fontSize="md" fontWeight={"bold"}>
+            {ride.destinationName}
+          </Text>
+        </Text>
+        <Text>
           Distance:{" "}
-          <Text as="span" color="primary" fontSize="md">
+          <Text as="span" fontSize="md" fontWeight={"bold"}>
             {ride.distance}
           </Text>
         </Text>

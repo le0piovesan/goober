@@ -92,6 +92,16 @@ export const driverRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      const driver = await ctx.db.driver.findUnique({
+        where: {
+          id: input.driverId,
+        },
+      });
+
+      if (driver?.onTrip) {
+        throw new Error("You are already on a trip");
+      }
+
       const ride = await ctx.db.ride.findUnique({
         where: {
           id: input.rideId,
@@ -155,12 +165,12 @@ export const driverRouter = createTRPCRouter({
             message: "Your ride has been accepted!",
             rider: {
               connect: {
-                id: input.driverId,
+                id: ride.riderId,
               },
             },
             ride: {
               connect: {
-                id: ride.riderId,
+                id: ride.id,
               },
             },
           },

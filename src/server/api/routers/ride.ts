@@ -65,16 +65,25 @@ export const rideRouter = createTRPCRouter({
           include: {
             rides: {
               where: {
-                status: {
-                  current: Status.REQUESTED,
-                },
+                OR: [
+                  {
+                    status: {
+                      current: Status.REQUESTED,
+                    },
+                  },
+                  {
+                    status: {
+                      current: Status.ONGOING,
+                    },
+                  },
+                ],
               },
             },
           },
         });
 
         if (checksOpenRequests?.rides && checksOpenRequests.rides.length > 0) {
-          throw new Error("You already have an open ride request.");
+          throw new Error("You already have an open or ongoing ride request.");
         }
 
         const ride = await prisma.ride.create({

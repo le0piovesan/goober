@@ -9,6 +9,7 @@ const TitleComponent = () => (
       color="transparent"
       className="bg-gradient-to-r
              from-primary to-secondary bg-clip-text text-transparent"
+      fontWeight={"bold"}
     >
       Goober
     </Box>

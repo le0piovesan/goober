@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
 import { Status } from "@prisma/client";
+import { requestClosestDriver } from "./trigger";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -149,6 +150,88 @@ export const driverRouter = createTRPCRouter({
             },
           },
         }),
+        ctx.db.notification.create({
+          data: {
+            message: "Your ride has been accepted!",
+            rider: {
+              connect: {
+                id: input.driverId,
+              },
+            },
+            ride: {
+              connect: {
+                id: ride.riderId,
+              },
+            },
+          },
+        }),
       ]);
+    }),
+
+  declineRide: publicProcedure
+    .input(
+      z.object({
+        rideId: z.number(),
+        driverId: z.number(),
+        pickupLocation: z.object({
+          latitude: z.number(),
+          longitude: z.number(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.$transaction(async (prisma) => {
+        const ride = await ctx.db.ride.findUnique({
+          where: {
+            id: input.rideId,
+          },
+          include: {
+            status: {},
+          },
+        });
+
+        if (!ride || ride.status.current !== Status.REQUESTED) {
+          throw new Error("This ride is not available anymore");
+        }
+
+        if (ride?.driverId) {
+          throw new Error("This ride has already been accepted");
+        }
+
+        await ctx.db.ride.update({
+          where: {
+            id: input.rideId,
+          },
+          data: {
+            declinedRides: {
+              connect: {
+                id: input.driverId,
+              },
+            },
+          },
+        }),
+          await ctx.db.notification.create({
+            data: {
+              message: "You have declined this ride",
+              driver: {
+                connect: {
+                  id: input.driverId,
+                },
+              },
+              ride: {
+                connect: {
+                  id: ride.id,
+                },
+              },
+            },
+          }),
+          await requestClosestDriver({
+            db: prisma,
+            input: {
+              rideId: ride.id,
+              pickupLocation: input.pickupLocation,
+            },
+          });
+      });
     }),
 });

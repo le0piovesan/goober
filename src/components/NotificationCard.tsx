@@ -17,12 +17,14 @@ import { useRouter } from "next/router";
 import { useLoading } from "~/hooks/useLoading";
 import Loading from "./Loading";
 import { formatDateTime } from "~/utils/dateFormatter";
+import { type Location } from "@prisma/client";
 
 const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
   notification,
 }) => {
   const { user } = useAuth();
-  const driver = api.driver.acceptRide.useMutation();
+  const driverAccept = api.driver.acceptRide.useMutation();
+  const driverDecline = api.driver.declineRide.useMutation();
   const toast = useToast();
   const router = useRouter();
   const { loading, startLoading, stopLoading } = useLoading();
@@ -30,7 +32,7 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
   const acceptRide = async (rideId: number, driverId: number) => {
     try {
       startLoading();
-      await driver.mutateAsync({ rideId, driverId });
+      await driverAccept.mutateAsync({ rideId, driverId });
 
       toast({
         title: "Success",
@@ -56,12 +58,45 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
     }
   };
 
+  const declineRide = async (
+    rideId: number,
+    driverId: number,
+    pickupLocation: Location,
+  ) => {
+    try {
+      startLoading();
+      await driverDecline.mutateAsync({ rideId, driverId, pickupLocation });
+
+      toast({
+        title: "Success",
+        description: "You declined the ride",
+        status: "info",
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        toast({
+          title: "Error",
+          description: `${error.message} 😢`,
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      }
+    } finally {
+      stopLoading();
+    }
+  };
+
   const colorStatus = (message: string) => {
     switch (message) {
       case "You have a new ride request":
         return "yellow";
       case "You have accepted the ride":
         return "green";
+      case "You have declined this ride":
+        return "blue";
       case "The rider has canceled the ride":
         return "red";
       case "You have canceled the ride":
@@ -89,9 +124,9 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
               </Badge>
             </HStack>
             <Text>In {notification.ride?.originName}</Text>
-            <Text>
+            <Text fontSize="sm">
               The trip fee is:{" "}
-              <Text as="span" fontSize="md" fontWeight={"bold"} color={"green"}>
+              <Text as="span" fontWeight={"bold"} color={"green"}>
                 $ {notification.ride?.tripFee}
               </Text>
             </Text>
@@ -106,9 +141,14 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
                 </ButtonComponent>
                 <ButtonComponent
                   decline
-                  onClick={() => {
-                    console.log("Decline");
-                  }}
+                  onClick={() =>
+                    notification.ride &&
+                    declineRide(
+                      notification.rideId!,
+                      notification.driverId!,
+                      notification.ride.pickupLocation,
+                    )
+                  }
                 >
                   Decline
                 </ButtonComponent>

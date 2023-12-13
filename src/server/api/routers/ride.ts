@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { requestClosestDriver } from "./trigger";
+import { Status } from "@prisma/client";
 
 export const rideRouter = createTRPCRouter({
   getRiderRides: publicProcedure
@@ -57,6 +58,25 @@ export const rideRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.$transaction(async (prisma) => {
+        const checksOpenRequests = await prisma.rider.findUnique({
+          where: {
+            id: input.riderId,
+          },
+          include: {
+            rides: {
+              where: {
+                status: {
+                  current: Status.REQUESTED,
+                },
+              },
+            },
+          },
+        });
+
+        if (checksOpenRequests?.rides && checksOpenRequests.rides.length > 0) {
+          throw new Error("You already have an open ride request.");
+        }
+
         const ride = await prisma.ride.create({
           data: {
             tripFee: input.tripFee,

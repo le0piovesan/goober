@@ -1,4 +1,4 @@
-import type { Notification, Status } from "@prisma/client";
+import type { Notification, Status, Location } from "@prisma/client";
 
 type NotificationWithRide = Notification & {
   ride: {
@@ -10,6 +10,7 @@ type NotificationWithRide = Notification & {
     };
     tripFee: number;
     originName: string;
+    pickupLocation: Location;
     updatedAt: Date;
   } | null;
 };

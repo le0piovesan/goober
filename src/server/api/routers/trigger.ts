@@ -2,6 +2,8 @@ import { z } from "zod";
 import { getDistance } from "geolib";
 import type { Prisma, PrismaPromise, PrismaClient } from "@prisma/client";
 import type { Notification } from "@prisma/client";
+import { publicProcedure } from "../trpc";
+import { Status } from "@prisma/client";
 
 const getRequestClosestDriverInputSchema = z.object({
   rideId: z.number(),
@@ -73,6 +75,7 @@ const requestClosestDriver = async ({
   const closestDriver = driversWithDistance[0];
 
   if (!closestDriver) {
+    await cancelExistingRideRequest(input.rideId);
     throw new Error("No drivers available at the moment.");
   }
 
@@ -112,6 +115,47 @@ const sendDriverRideRequestNotification = async ({
   });
 
   return response;
+};
+
+const cancelExistingRideRequest = async (rideId: number) => {
+  publicProcedure.query(async ({ ctx }) => {
+    const ride = await ctx.db.ride.findUnique({
+      where: {
+        id: rideId,
+      },
+      include: {
+        status: {},
+      },
+    });
+
+    if (!ride) return;
+
+    await ctx.db.rideStatus.update({
+      where: {
+        id: ride.id,
+      },
+      data: {
+        current: Status.CANCELED,
+        finishedAt: new Date(),
+      },
+    });
+
+    await ctx.db.notification.create({
+      data: {
+        message: "No drivers available at the moment, try again later.",
+        rider: {
+          connect: {
+            id: ride.riderId,
+          },
+        },
+        ride: {
+          connect: {
+            id: ride.id,
+          },
+        },
+      },
+    });
+  });
 };
 
 export { requestClosestDriver, sendDriverRideRequestNotification };

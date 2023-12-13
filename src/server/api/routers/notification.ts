@@ -2,12 +2,42 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const notificationRouter = createTRPCRouter({
-  getNotifications: publicProcedure
+  getDriverNotifications: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const notification = await ctx.db.notification.findMany({
         where: {
-          id: input.id,
+          driverId: input.id,
+        },
+        include: {
+          ride: {
+            select: {
+              tripFee: true,
+              status: true,
+              updatedAt: true,
+            },
+          },
+        },
+      });
+
+      return notification;
+    }),
+
+  getRiderNotifications: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const notification = await ctx.db.notification.findMany({
+        where: {
+          riderId: input.id,
+        },
+        include: {
+          ride: {
+            select: {
+              tripFee: true,
+              status: true,
+              pickupLocation: true,
+            },
+          },
         },
       });
 

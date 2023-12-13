@@ -36,6 +36,7 @@ export const notificationRouter = createTRPCRouter({
               tripFee: true,
               status: true,
               pickupLocation: true,
+              updatedAt: true,
             },
           },
         },

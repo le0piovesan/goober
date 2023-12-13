@@ -68,8 +68,6 @@ const Map: React.FC = () => {
   });
 
   const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
-    console.log(data);
-
     if (
       !pickupLocationRef.current ||
       !dropoffLocationRef.current ||
@@ -90,6 +88,8 @@ const Map: React.FC = () => {
       await ride.mutateAsync({
         tripFee: tripValue,
         distance: distanceDetails.distance,
+        originName: data.pickupLocation,
+        destinationName: data.dropoffLocation,
         pickupLocation: {
           latitude: pickupLocationRef.current.lat,
           longitude: pickupLocationRef.current.lng,

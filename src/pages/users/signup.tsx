@@ -132,7 +132,7 @@ const SignUp: NextPage = () => {
           error={errors.confirmPassword}
         />
         <RadioComponent
-          label="Role"
+          label="Are you a?"
           control={control}
           name="role"
           defaultValue="Rider"

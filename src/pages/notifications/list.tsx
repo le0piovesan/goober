@@ -14,7 +14,10 @@ const NotificationList: NextPage = () => {
       {notifications && notifications.length > 0 ? (
         <List>
           {notifications.map((notification) => (
-            <NotificationCard notification={notification} />
+            <NotificationCard
+              key={notification.id}
+              notification={notification}
+            />
           ))}
         </List>
       ) : (

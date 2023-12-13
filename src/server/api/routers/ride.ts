@@ -13,6 +13,7 @@ export const rideRouter = createTRPCRouter({
         include: {
           pickupLocation: true,
           dropoffLocation: true,
+          status: {},
         },
       });
 
@@ -29,6 +30,7 @@ export const rideRouter = createTRPCRouter({
         include: {
           pickupLocation: true,
           dropoffLocation: true,
+          status: {},
         },
       });
 
@@ -40,6 +42,8 @@ export const rideRouter = createTRPCRouter({
       z.object({
         tripFee: z.number(),
         distance: z.string(),
+        originName: z.string(),
+        destinationName: z.string(),
         pickupLocation: z.object({
           latitude: z.number(),
           longitude: z.number(),
@@ -57,6 +61,8 @@ export const rideRouter = createTRPCRouter({
           data: {
             tripFee: input.tripFee,
             distance: input.distance,
+            originName: input.originName,
+            destinationName: input.destinationName,
             pickupLocation: {
               create: {
                 latitude: input.pickupLocation.latitude,
@@ -73,6 +79,9 @@ export const rideRouter = createTRPCRouter({
               connect: {
                 id: input.riderId,
               },
+            },
+            status: {
+              create: {},
             },
           },
         });

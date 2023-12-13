@@ -9,9 +9,14 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import type { Ride } from "~/types/ride";
 
-const RideCard: React.FC<{ ride: Ride }> = ({ ride }) => (
+import type { RideWithStatus } from "~/types/ride";
+
+interface RideCardProps {
+  ride: RideWithStatus;
+}
+
+const RideCard: React.FC<RideCardProps> = ({ ride }) => (
   <Card>
     <CardBody>
       <Image
@@ -21,7 +26,7 @@ const RideCard: React.FC<{ ride: Ride }> = ({ ride }) => (
       />
       <Stack mt="2" spacing="1">
         <Heading size="md" color={"yellow.600"}>
-          {ride.status === "REQUESTED"
+          {ride.status.current === "REQUESTED"
             ? "Looking for a Driver"
             : "TODO: Add status"}
         </Heading>

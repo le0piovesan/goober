@@ -8,7 +8,7 @@ type ButtonComponentProps = {
   textOnly?: boolean;
   loading?: boolean;
   leftIcon?: React.ReactElement;
-  decline?: boolean;
+  declineCancel?: boolean;
   children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -18,7 +18,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
   textOnly,
   loading,
   leftIcon,
-  decline,
+  declineCancel,
   children,
   ...props
 }) => {
@@ -26,19 +26,18 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
     lineHeight: "1.2",
     fontWeight: "bold",
     marginBottom: "0.2rem",
-    color: outline ?? textOnly ? "background" : "light",
-    border: outline ? "2px solid" : "none",
-    backgroundColor: outline
-      ? "light"
-      : textOnly
-        ? "transparent"
-        : decline
-          ? "red"
+    color: outline ?? textOnly ? "background" : declineCancel ? "red" : "light",
+    border: outline ?? declineCancel ? "2px solid" : "none",
+    backgroundColor:
+      outline ?? declineCancel
+        ? "light"
+        : textOnly
+          ? "transparent"
           : "background",
     _hover: {
-      bg: textOnly ? "transparent" : decline ? "red.700" : "primary",
+      bg: textOnly ? "transparent" : declineCancel ? "red" : "primary",
       color: textOnly ? "primary" : "light",
-      borderColor: outline && "primary",
+      borderColor: outline ? "primary" : declineCancel ? "red" : "none",
     },
   };
 

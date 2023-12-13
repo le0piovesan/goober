@@ -122,4 +122,67 @@ export const rideRouter = createTRPCRouter({
         return response;
       });
     }),
+
+  cancelRide: publicProcedure
+    .input(z.object({ id: z.number(), userType: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.db.ride.findFirst({
+        where: {
+          id: input.id,
+          status: {
+            current: Status.ONGOING,
+          },
+        },
+      });
+
+      if (!ride) {
+        throw new Error("Ride not found.");
+      }
+
+      const updatedRide = await ctx.db.rideStatus.update({
+        where: {
+          id: ride.id,
+        },
+        data: {
+          current: Status.CANCELED,
+          acceptedAt: new Date(),
+        },
+      });
+
+      if (!ride.driverId) {
+        throw new Error("Driver not found.");
+      }
+
+      await ctx.db.driver.update({
+        where: {
+          id: ride.driverId,
+        },
+        data: {
+          onTrip: false,
+        },
+      });
+
+      await ctx.db.notification.create({
+        data: {
+          message: `The ride has been canceled by the ${input.userType}`,
+          driver: {
+            connect: {
+              id: ride.driverId,
+            },
+          },
+          rider: {
+            connect: {
+              id: ride.riderId,
+            },
+          },
+          ride: {
+            connect: {
+              id: ride.id,
+            },
+          },
+        },
+      });
+
+      return updatedRide;
+    }),
 });

@@ -133,7 +133,7 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
                   Accept
                 </ButtonComponent>
                 <ButtonComponent
-                  decline
+                  declineCancel
                   onClick={() =>
                     notification.ride &&
                     declineRide(

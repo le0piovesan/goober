@@ -65,7 +65,10 @@ const requestClosestDriver = async ({
     ),
   }));
 
-  driversWithDistance.sort((a, b) => a.distance - b.distance);
+  driversWithDistance.sort((a, b) => {
+    if (a.distance === b.distance) return 0.5 - Math.random();
+    return a.distance - b.distance;
+  });
 
   const closestDriver = driversWithDistance[0];
 

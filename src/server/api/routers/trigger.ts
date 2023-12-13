@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { getDistance } from "geolib";
-import type { Prisma, PrismaPromise, PrismaClient } from "@prisma/client";
+import type { Prisma, PrismaPromise } from "@prisma/client";
 import type { Notification } from "@prisma/client";
 import { Status } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const getRequestClosestDriverInputSchema = z.object({
   rideId: z.number(),
@@ -36,67 +37,64 @@ const requestClosestDriver = async ({
   db: TransactionalPrismaClient;
   input: DriverInput;
 }): Promise<Prisma.Prisma__NotificationClient<Notification>> => {
-  const drivers = await db.driver.findMany({
-    where: {
-      onTrip: false,
-      declinedRides: {
-        none: {
-          rideId: input.rideId,
+  try {
+    const drivers = await db.driver.findMany({
+      where: {
+        onTrip: false,
+        declinedRides: {
+          none: {
+            rideId: input.rideId,
+          },
         },
       },
-    },
-    include: { lastLocation: true },
-  });
+      include: { lastLocation: true },
+    });
 
-  if (drivers.length === 0) {
-    throw new Error("No drivers found, try again later.");
-  }
+    if (drivers.length === 0) {
+      throw new Error("No drivers found, try again later.");
+    }
 
-  const driversWithDistance = drivers.map((driver) => ({
-    ...driver,
-    distance: getDistance(
-      {
-        latitude: input.pickupLocation.latitude,
-        longitude: input.pickupLocation.longitude,
+    const driversWithDistance = drivers.map((driver) => ({
+      ...driver,
+      distance: getDistance(
+        {
+          latitude: input.pickupLocation.latitude,
+          longitude: input.pickupLocation.longitude,
+        },
+        {
+          latitude: driver.lastLocation.latitude,
+          longitude: driver.lastLocation.longitude,
+        },
+      ),
+    }));
+
+    driversWithDistance.sort((a, b) => {
+      if (a.distance === b.distance) return 0.5 - Math.random();
+      return a.distance - b.distance;
+    });
+
+    const closestDriver = driversWithDistance[0];
+
+    if (!closestDriver) {
+      throw new Error("No drivers available at the moment.");
+    }
+
+    const response = await sendDriverRideRequestNotification({
+      db,
+      input: {
+        message: `You have a new ride request`,
+        driverId: closestDriver.id,
+        rideId: input.rideId,
       },
-      {
-        latitude: driver.lastLocation.latitude,
-        longitude: driver.lastLocation.longitude,
-      },
-    ),
-  }));
+    });
 
-  driversWithDistance.sort((a, b) => {
-    if (a.distance === b.distance) return 0.5 - Math.random();
-    return a.distance - b.distance;
-  });
-
-  const closestDriver = driversWithDistance[0];
-
-  if (!closestDriver) {
-    throw new Error("No drivers available at the moment.");
+    return response;
+  } catch (error) {
+    const newDb = new PrismaClient();
+    await cancelExistingRideRequest(newDb, input.rideId);
+    await newDb.$disconnect();
+    throw error;
   }
-
-  const declinedRides = await db.declinedRide.findMany({
-    where: {
-      rideId: input.rideId,
-    },
-  });
-
-  if (!closestDriver && declinedRides.length > 0) {
-    await cancelExistingRideRequest(db, input.rideId);
-  }
-
-  const response = await sendDriverRideRequestNotification({
-    db,
-    input: {
-      message: `You have a new ride request`,
-      driverId: closestDriver.id,
-      rideId: input.rideId,
-    },
-  });
-
-  return response;
 };
 
 const sendDriverRideRequestNotification = async ({
@@ -138,11 +136,9 @@ const cancelExistingRideRequest = async (
     },
   });
 
-  if (!ride) return;
-
   await db.rideStatus.update({
     where: {
-      id: ride.statusId,
+      id: ride?.statusId,
     },
     data: {
       current: Status.CANCELED,
@@ -155,12 +151,12 @@ const cancelExistingRideRequest = async (
       message: "No drivers available at the moment, try again later.",
       rider: {
         connect: {
-          id: ride.riderId,
+          id: ride?.riderId,
         },
       },
       ride: {
         connect: {
-          id: ride.id,
+          id: ride?.id,
         },
       },
     },

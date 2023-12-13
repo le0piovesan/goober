@@ -76,7 +76,10 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
         isClosable: true,
       });
     } catch (error) {
-      if (error instanceof Error) {
+      if (
+        error instanceof Error &&
+        error.message !== "No drivers found, try again later."
+      ) {
         toast({
           title: "Error",
           description: `${error.message} 😢`,
@@ -102,25 +105,25 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
         bgColor="light"
         paddingX="4"
       >
-        {user?.type === "Driver" && (
-          <VStack padding="2" align="start">
-            <HStack>
-              <ListIcon
-                as={FiCheckCircle as React.ElementType}
-                color={colorStatus(notification.message)}
-              />
-              <Badge colorScheme={colorStatus(notification.message)}>
-                {notification.message}
-              </Badge>
-            </HStack>
-            <Text>In {notification.ride?.originName}</Text>
-            <Text fontSize="sm">
-              The trip fee is:{" "}
-              <Text as="span" fontWeight={"bold"} color={"green"}>
-                $ {notification.ride?.tripFee}
-              </Text>
+        <VStack padding="2" align="start">
+          <HStack>
+            <ListIcon
+              as={FiCheckCircle as React.ElementType}
+              color={colorStatus(notification.message)}
+            />
+            <Badge colorScheme={colorStatus(notification.message)}>
+              {notification.message}
+            </Badge>
+          </HStack>
+          <Text>In {notification.ride?.originName}</Text>
+          <Text fontSize="sm">
+            The trip fee is:{" "}
+            <Text as="span" fontWeight={"bold"} color={"green"}>
+              $ {notification.ride?.tripFee}
             </Text>
-            {notification.ride?.status.current === "REQUESTED" && (
+          </Text>
+          {user?.type === "Driver" &&
+            notification.ride?.status.current === "REQUESTED" && (
               <HStack>
                 <ButtonComponent
                   onClick={() =>
@@ -144,9 +147,8 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
                 </ButtonComponent>
               </HStack>
             )}
-            <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
-          </VStack>
-        )}
+          <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
+        </VStack>
       </Box>
     </ListItem>
   );

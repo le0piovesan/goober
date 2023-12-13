@@ -119,6 +119,10 @@ const Map: React.FC = () => {
           duration: 4000,
           isClosable: true,
         });
+      setDistanceDetails({
+        value: 0,
+        distance: "",
+      });
     } finally {
       stopLoading();
     }

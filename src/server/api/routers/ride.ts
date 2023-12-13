@@ -57,35 +57,27 @@ export const rideRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (prisma) => {
-        const checksOpenRequests = await prisma.rider.findUnique({
-          where: {
-            id: input.riderId,
-          },
-          include: {
-            rides: {
-              where: {
-                OR: [
-                  {
-                    status: {
-                      current: Status.REQUESTED,
-                    },
-                  },
-                  {
-                    status: {
-                      current: Status.ONGOING,
-                    },
-                  },
-                ],
+      const existingRide = await ctx.db.ride.findFirst({
+        where: {
+          riderId: input.riderId,
+          status: {
+            OR: [
+              {
+                current: Status.REQUESTED,
               },
-            },
+              {
+                current: Status.ONGOING,
+              },
+            ],
           },
-        });
+        },
+      });
 
-        if (checksOpenRequests?.rides && checksOpenRequests.rides.length > 0) {
-          throw new Error("You already have an open or ongoing ride request.");
-        }
+      if (existingRide) {
+        throw new Error("You already have an open or ongoing ride request.");
+      }
 
+      return ctx.db.$transaction(async (prisma) => {
         const ride = await prisma.ride.create({
           data: {
             tripFee: input.tripFee,

@@ -208,14 +208,16 @@ export const driverRouter = createTRPCRouter({
           throw new Error("This ride has already been accepted");
         }
 
-        await ctx.db.ride.update({
-          where: {
-            id: input.rideId,
-          },
+        await ctx.db.declinedRide.create({
           data: {
-            declinedRides: {
+            driver: {
               connect: {
                 id: input.driverId,
+              },
+            },
+            ride: {
+              connect: {
+                id: ride.id,
               },
             },
           },
@@ -242,6 +244,7 @@ export const driverRouter = createTRPCRouter({
               pickupLocation: input.pickupLocation,
             },
           });
+        return "You have declined this ride";
       });
     }),
 });

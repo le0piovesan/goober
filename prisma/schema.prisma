@@ -30,19 +30,19 @@ model Driver {
 }
 
 model Ride {
-  id       Int    @id @default(autoincrement())
-  status   String @default("REQUESTED")
-  tripFee  Float
-  distance String
+  id              Int    @id @default(autoincrement())
+  tripFee         Float
+  distance        String
+  originName      String
+  destinationName String
 
   pickupLocation    Location @relation("PickupLocation", fields: [pickupLocationId], references: [id])
   pickupLocationId  Int      @unique
   dropoffLocation   Location @relation("DropoffLocation", fields: [dropoffLocationId], references: [id])
   dropoffLocationId Int      @unique
 
-  acceptedAt DateTime?
-  finishedAt DateTime?
-  duration   Int?
+  status   RideStatus @relation(fields: [statusId], references: [id])
+  statusId Int
 
   driver   Driver? @relation(fields: [driverId], references: [id])
   driverId Int?
@@ -55,6 +55,22 @@ model Ride {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Status {
+  REQUESTED
+  ONGOING
+  CANCELED
+  FINISHED
+  EXPIRED
+}
+
+model RideStatus {
+  id         Int       @id @default(autoincrement())
+  current    Status    @default(REQUESTED)
+  acceptedAt DateTime?
+  finishedAt DateTime?
+  rides      Ride[]
 }
 
 model Location {

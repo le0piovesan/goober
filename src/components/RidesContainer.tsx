@@ -5,7 +5,7 @@ import { useAuth } from "~/context/AuthContext";
 import Loading from "./Loading";
 import EmptyState from "./EmptyState";
 
-const ContainerCard = () => {
+const RidesContainer = () => {
   const { rides, isLoading } = useUserRides();
   const { user } = useAuth();
 
@@ -34,4 +34,4 @@ const ContainerCard = () => {
     );
 };
 
-export default ContainerCard;
+export default RidesContainer;

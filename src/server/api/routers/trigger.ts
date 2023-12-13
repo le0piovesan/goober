@@ -79,7 +79,7 @@ const requestClosestDriver = async ({
   const response = await sendDriverRideRequestNotification({
     db,
     input: {
-      message: `You have a new ride request.`,
+      message: `You have a new ride request`,
       driverId: closestDriver.id,
       rideId: input.rideId,
     },

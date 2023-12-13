@@ -9,6 +9,7 @@ type NotificationWithRide = Notification & {
       finishedAt: Date | null;
     };
     tripFee: number;
+    originName: string;
     updatedAt: Date;
   } | null;
 };

@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 
 import type { RideWithStatus } from "~/types/ride";
+import { formatDateTime } from "~/utils/dateFormatter";
 
 interface RideCardProps {
   ride: RideWithStatus;
@@ -48,21 +49,9 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => (
     <CardFooter>
       <Box>
         <Text fontSize="sm">
-          Requested at:{" "}
-          {ride.createdAt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}{" "}
-          {ride.createdAt.toLocaleDateString()}
+          Requested at: {formatDateTime(ride.createdAt)}
         </Text>
-        <Text fontSize="xs">
-          Updated at:{" "}
-          {ride.updatedAt.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}{" "}
-          {ride.updatedAt.toLocaleDateString()}
-        </Text>
+        <Text fontSize="xs">Updated at: {formatDateTime(ride.updatedAt)}</Text>
       </Box>
     </CardFooter>
   </Card>

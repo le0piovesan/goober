@@ -14,6 +14,7 @@ export const notificationRouter = createTRPCRouter({
             select: {
               tripFee: true,
               status: true,
+              originName: true,
               updatedAt: true,
             },
           },

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
+import { Status } from "@prisma/client";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -80,5 +81,74 @@ export const driverRouter = createTRPCRouter({
           longitude: input.longitude,
         },
       });
+    }),
+
+  acceptRide: publicProcedure
+    .input(
+      z.object({
+        rideId: z.number(),
+        driverId: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const ride = await ctx.db.ride.findUnique({
+        where: {
+          id: input.rideId,
+        },
+        include: {
+          status: {},
+        },
+      });
+
+      if (!ride || ride.status.current !== Status.REQUESTED) {
+        throw new Error("This ride is not available anymore");
+      }
+
+      if (ride?.driverId) {
+        throw new Error("This ride has already been accepted");
+      }
+
+      await ctx.db.$transaction([
+        ctx.db.ride.update({
+          where: {
+            id: ride.id,
+          },
+          data: {
+            driverId: input.driverId,
+          },
+        }),
+        ctx.db.driver.update({
+          where: {
+            id: input.driverId,
+          },
+          data: {
+            onTrip: true,
+          },
+        }),
+        ctx.db.rideStatus.update({
+          where: {
+            id: ride.id,
+          },
+          data: {
+            current: Status.ONGOING,
+            acceptedAt: new Date(),
+          },
+        }),
+        ctx.db.notification.create({
+          data: {
+            message: "You have accepted the ride",
+            driver: {
+              connect: {
+                id: input.driverId,
+              },
+            },
+            ride: {
+              connect: {
+                id: ride.id,
+              },
+            },
+          },
+        }),
+      ]);
     }),
 });

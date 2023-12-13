@@ -13,12 +13,14 @@ const NotificationList: NextPage = () => {
     <>
       {notifications && notifications.length > 0 ? (
         <List>
-          {notifications.map((notification) => (
-            <NotificationCard
-              key={notification.id}
-              notification={notification}
-            />
-          ))}
+          {notifications
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .map((notification) => (
+              <NotificationCard
+                key={notification.id}
+                notification={notification}
+              />
+            ))}
         </List>
       ) : (
         <EmptyState

@@ -1,10 +1,4 @@
-import {
-  Flex,
-  useBreakpointValue,
-  VStack,
-  Text,
-  HStack,
-} from "@chakra-ui/react";
+import { Flex, useBreakpointValue, VStack, HStack } from "@chakra-ui/react";
 import MenuContent from "~/components/MenuContent";
 import MenuDrawer from "~/components/MenuDrawer";
 import TitleComponent from "./TitleComponent";
@@ -14,12 +8,14 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
   if (webScreen)
     return (
-      <Flex direction={"row"} p={4} justifyContent="space-evenly">
+      <Flex direction="row" height="100vh" p={4}>
         <VStack fontSize="3xl">
           <TitleComponent />
           {webScreen && <MenuContent />}
-        </VStack>
-        {children}
+        </VStack>{" "}
+        <Flex overflowY="auto" flex="1" justifyContent="center">
+          {children}
+        </Flex>
       </Flex>
     );
   else

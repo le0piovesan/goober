@@ -39,21 +39,21 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const user = localStorage.getItem("user");
     if (user) {
       dispatch({ type: "LOGIN", payload: JSON.parse(user) as User });
-      void router.push("/rides/feed");
+      void router.replace("/rides/feed");
     } else {
-      void router.push("/");
+      void router.replace("/");
     }
     stopLoading();
   }, []);
 
   const login = async (user: User) => {
     dispatch({ type: "LOGIN", payload: user });
-    await router.push("/rides/feed");
+    await router.replace("/rides/feed");
   };
 
   const logout = async () => {
     dispatch({ type: "LOGOUT" });
-    await router.push("/");
+    await router.replace("/");
   };
 
   if (loading) return <Loading />;

@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "Your Font";
+  src:
+    url("/fonts/ZillaSlab-Regular.ttf") format("truetype"),
+    url("/fonts/ZillaSlab-LightItalicd.ttf") format("truetype"),
+    url("/fonts/ZillaSlab-Bold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+body {
+  font-family: "Zilla Slab", sans-serif;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

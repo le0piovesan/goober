@@ -1,4 +1,4 @@
-import { Flex, Grid } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import RideCard from "./RideCard";
 import useUserRides from "~/hooks/useUserRides";
 import { useAuth } from "~/context/AuthContext";

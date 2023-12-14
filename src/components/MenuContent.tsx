@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Card, Flex } from "@chakra-ui/react";
 import { FiMap, FiMapPin, FiBell, FiLogOut } from "react-icons/fi";
 import ButtonComponent from "./ButtonComponent";
 import { useAuth } from "~/context/AuthContext";
@@ -29,48 +29,48 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
 
   const handleMenuItemClick = async (href: string) => {
     if (onClose) onClose();
-    await router.push(href);
+    await router.replace(href);
   };
 
   return (
-    <Flex
-      align={"flex-start"}
-      direction={"column"}
-      p={4}
-      m={2}
-      overflow="hidden"
-      border={"1px solid"}
-      borderRadius={"lg"}
-      borderColor={"light"}
-      bgColor={"#fff"}
-    >
-      {menuItems
-        .filter(
-          (route) =>
-            route.href !== "/rides/call" || (user && user.type === "Rider"),
-        )
-        .map((item) => (
-          <ButtonComponent
-            key={item.href}
-            onClick={() =>
-              handleMenuItemClick(currentPath === item.href ? "#" : item.href)
-            }
-            outline
-            leftIcon={item.icon}
-            className="my-2"
-          >
-            {item.label}
-          </ButtonComponent>
-        ))}
-      <ButtonComponent
-        onClick={() => logout()}
-        outline
-        leftIcon={<FiLogOut size={24} />}
-        className="mt-2"
+    <Card bgColor={"light"}>
+      <Flex
+        align={"flex-start"}
+        direction={"column"}
+        p={4}
+        m={2}
+        overflow="hidden"
+        position="sticky"
+        top={0}
       >
-        Log Out
-      </ButtonComponent>
-    </Flex>
+        {menuItems
+          .filter(
+            (route) =>
+              route.href !== "/rides/call" || (user && user.type === "Rider"),
+          )
+          .map((item) => (
+            <ButtonComponent
+              key={item.href}
+              onClick={() =>
+                handleMenuItemClick(currentPath === item.href ? "#" : item.href)
+              }
+              outline
+              leftIcon={item.icon}
+              className="my-2"
+            >
+              {item.label}
+            </ButtonComponent>
+          ))}
+        <ButtonComponent
+          onClick={() => logout()}
+          outline
+          leftIcon={<FiLogOut size={24} />}
+          className="mt-2"
+        >
+          Log Out
+        </ButtonComponent>
+      </Flex>
+    </Card>
   );
 };
 

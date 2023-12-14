@@ -75,7 +75,7 @@ const SignUp: NextPage = () => {
         duration: 8000,
         isClosable: true,
       });
-      await router.push("/users/login");
+      await router.replace("/users/login");
     } catch (error) {
       console.error(error);
       if (error instanceof Error)

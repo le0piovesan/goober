@@ -61,7 +61,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
   if (loading) return <Loading />;
   else
     return (
-      <Card>
+      <Card bgColor={"light"}>
         <CardBody>
           <Image
             src={getStaticMapImage(ride.pickupLocation, ride.dropoffLocation)}

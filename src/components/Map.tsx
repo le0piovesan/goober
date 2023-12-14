@@ -108,7 +108,7 @@ const Map: React.FC = () => {
         duration: 8000,
         isClosable: true,
       });
-      await router.push("/rides/feed");
+      await router.replace("/rides/feed");
     } catch (error) {
       console.error(error);
       if (error instanceof Error)

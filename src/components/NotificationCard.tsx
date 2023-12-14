@@ -44,7 +44,7 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
         isClosable: true,
       });
 
-      await router.push("/rides/feed");
+      await router.replace("/rides/feed");
     } catch (error) {
       if (error instanceof Error) {
         toast({

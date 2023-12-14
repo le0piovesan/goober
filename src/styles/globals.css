@@ -34,3 +34,15 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #8888dd;
 }
+
+@keyframes pulse {
+  0% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #48bb78;
+  }
+  100% {
+    border-color: transparent;
+  }
+}

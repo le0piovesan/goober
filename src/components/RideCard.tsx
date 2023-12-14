@@ -62,7 +62,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
   return (
     <Card
       bgColor={"light"}
-      mb={4}
+      my={2}
       boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
       className="transform transition-transform duration-300 ease-in-out hover:scale-105"
     >
@@ -118,14 +118,14 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
           </Stack>
           <HStack justifyContent={"space-between"}>
             <Box>
-              <Text fontSize="xs">
+              <Text fontSize="sm" fontWeight={"semibold"} color={"primary"}>
                 {loading ? (
                   <Skeleton height="20px" width="100px" />
                 ) : (
                   `From: ${ride.originName}`
                 )}
               </Text>
-              <Text fontSize="xs">
+              <Text fontSize="sm" fontWeight={"semibold"} color={"secondary"}>
                 {loading ? (
                   <Skeleton height="20px" width="100px" />
                 ) : (
@@ -134,14 +134,14 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
               </Text>
             </Box>
             <Box textAlign="right">
-              <Text fontSize="xs">
+              <Text fontSize="sm" fontWeight={"semibold"}>
                 {loading ? (
                   <Skeleton height="20px" width="80px" />
                 ) : (
                   `Distance: ${ride.distance}`
                 )}
               </Text>
-              <Text fontSize="xs">
+              <Text fontSize="sm" fontWeight={"semibold"} color={"green"}>
                 {loading ? (
                   <Skeleton height="20px" width="80px" />
                 ) : (

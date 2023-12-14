@@ -6,6 +6,7 @@ import EmptyState from "./EmptyState";
 import RideCardSkeleton from "./skeletons/RideCardSkeleton";
 import { useState } from "react";
 import InputComponent from "./InputComponent";
+import ActiveCard from "./BouncingActiveCard";
 
 const RidesContainer = () => {
   const { rides, isLoading } = useUserRides();
@@ -23,19 +24,25 @@ const RidesContainer = () => {
   return (
     <Flex direction="column" m={4}>
       <InputComponent
-        placeholder="Search rides..."
+        placeholder="Search here for rides"
         value={search}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setSearch(e.target.value)
-        }
-        mb={4}
+        onChange={(e) => setSearch(e.target.value)}
       />
+
       {isLoading ? (
         <RideCardSkeleton />
       ) : filteredRides && filteredRides.length > 0 ? (
         filteredRides
           .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
-          .map((ride) => <RideCard key={ride.id} ride={ride} />)
+          .map((ride) =>
+            ride.status.current === "ONGOING" ? (
+              <ActiveCard>
+                <RideCard key={ride.id} ride={ride} />
+              </ActiveCard>
+            ) : (
+              <RideCard key={ride.id} ride={ride} />
+            ),
+          )
       ) : (
         <EmptyState
           title="No goober rides yet."

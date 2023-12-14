@@ -1,9 +1,6 @@
-import { Box, HStack, Text, VStack } from "@chakra-ui/react";
-import { useAuth } from "~/context/AuthContext";
+import { Box, VStack } from "@chakra-ui/react";
 
 const TitleComponent = () => {
-  const { user } = useAuth();
-
   return (
     <VStack align="center">
       <Box>
@@ -22,13 +19,6 @@ const TitleComponent = () => {
           🚕
         </Box>
       </Box>
-      {user && user.isLoggedIn && (
-        <HStack>
-          <Text fontSize="md" color={"gray"}>
-            Hello, {user?.type === "Driver" ? "Driver" : "Rider"} {user?.name}
-          </Text>
-        </HStack>
-      )}
     </VStack>
   );
 };

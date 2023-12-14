@@ -13,9 +13,9 @@ const RidesContainer = () => {
 
   if (rides && rides.length > 0)
     return (
-      <Flex direction="column">
+      <Flex direction="column" m={4}>
         {rides
-          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
           .map((ride) => (
             <RideCard key={ride.id} ride={ride} />
           ))}

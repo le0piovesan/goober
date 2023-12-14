@@ -1,4 +1,4 @@
-import { Card, Flex } from "@chakra-ui/react";
+import { Box, Card, Flex, Text } from "@chakra-ui/react";
 import { FiMap, FiMapPin, FiBell, FiLogOut } from "react-icons/fi";
 import ButtonComponent from "./ButtonComponent";
 import { useAuth } from "~/context/AuthContext";
@@ -33,7 +33,7 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
   };
 
   return (
-    <Card bgColor={"light"}>
+    <Card bgColor={"light"} boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}>
       <Flex
         align={"flex-start"}
         direction={"column"}
@@ -43,6 +43,16 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
         position="sticky"
         top={0}
       >
+        {user && user.isLoggedIn && (
+          <Box>
+            <Text fontSize="md" color={"gray"}>
+              Hello, {user?.name}
+            </Text>
+            <Text fontSize="md" color={"primary"}>
+              {user?.type === "Driver" ? "Driver" : "Rider"} Menu
+            </Text>
+          </Box>
+        )}
         {menuItems
           .filter(
             (route) =>
@@ -64,6 +74,7 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
         <ButtonComponent
           onClick={() => logout()}
           outline
+          declineCancel
           leftIcon={<FiLogOut size={24} />}
           className="mt-2"
         >

@@ -2,24 +2,23 @@ import {
   Box,
   Card,
   CardBody,
-  CardFooter,
-  Divider,
-  Heading,
   Stack,
   Image,
   Text,
   useToast,
+  HStack,
+  Badge,
 } from "@chakra-ui/react";
 
 import type { RideStatusLocation } from "~/types/ride";
 import { formatDateTime } from "~/utils/dateFormatter";
-import { colorStatus } from "~/utils/colorFormatter";
 import { useLoading } from "~/hooks/useLoading";
 import Loading from "./Loading";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import ConfirmationPopover from "./ConfirmationPopover";
 import { getStaticMapImage } from "~/utils/getStaticMapImage";
+import { tagStatus } from "~/utils/tagStatusFormatter";
 
 interface RideCardProps {
   ride: RideStatusLocation;
@@ -61,14 +60,29 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
   if (loading) return <Loading />;
   else
     return (
-      <Card bgColor={"light"}>
+      <Card
+        bgColor={"light"}
+        mb={2}
+        boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
+      >
         <CardBody>
+          <Badge colorScheme={tagStatus(ride.status.current).color}>
+            {ride.status.current}
+          </Badge>
+          <HStack justifyContent={"space-between"}>
+            <Text fontSize={"xs"}>
+              Requested at: {formatDateTime(ride.createdAt)}
+            </Text>
+            <Text fontSize={"xs"}>
+              Updated at: {formatDateTime(ride.updatedAt)}
+            </Text>
+          </HStack>
           <Image
             src={getStaticMapImage(ride.pickupLocation, ride.dropoffLocation)}
             alt="Map Route"
             borderRadius="md"
             maxW="100%"
-            h="auto"
+            h="200px"
           />
           <Stack mt="2" spacing="1">
             <Stack
@@ -76,13 +90,6 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
               spacing={{ base: 2, md: 4 }}
               justifyContent="space-between"
             >
-              <Heading
-                size="md"
-                color={colorStatus(ride.status.current)}
-                fontSize={{ base: "lg", md: "md" }}
-              >
-                {ride.status.current}
-              </Heading>
               {ride.status.current === "ONGOING" && (
                 <ConfirmationPopover
                   onConfirm={() =>
@@ -91,48 +98,53 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
                 />
               )}
             </Stack>
-            <Text>
-              From:{" "}
-              <Text as="span" fontSize="md" fontWeight={"bold"}>
-                {ride.originName}
-              </Text>
-            </Text>
-            <Text>
-              To:{" "}
-              <Text as="span" fontSize="md" fontWeight={"bold"}>
-                {ride.destinationName}
-              </Text>
-            </Text>
-            <Text>
-              Distance:{" "}
-              <Text as="span" fontSize="md" fontWeight={"bold"}>
-                {ride.distance}
-              </Text>
-            </Text>
-            <Text>
-              Value:{" "}
-              <Text
-                as="span"
-                color="green.600"
-                fontSize="md"
-                fontWeight={"bold"}
-              >
-                $ {ride.tripFee}
-              </Text>
-            </Text>
+            <HStack justifyContent={"space-between"}>
+              <Box>
+                <Text fontSize="xs">
+                  From:{" "}
+                  <Text
+                    as="span"
+                    fontSize="sm"
+                    color={"primary"}
+                    fontWeight={"bold"}
+                  >
+                    {ride.originName}
+                  </Text>
+                </Text>
+                <Text fontSize="xs">
+                  To:{" "}
+                  <Text
+                    as="span"
+                    fontSize="sm"
+                    color={"secondary"}
+                    fontWeight={"bold"}
+                  >
+                    {ride.destinationName}
+                  </Text>
+                </Text>
+              </Box>
+              <Box textAlign="right">
+                <Text fontSize="xs">
+                  Distance:{" "}
+                  <Text as="span" fontSize="sm" fontWeight={"bold"}>
+                    {ride.distance}
+                  </Text>
+                </Text>
+                <Text fontSize="xs">
+                  Value:{" "}
+                  <Text
+                    as="span"
+                    fontSize="sm"
+                    color="green.600"
+                    fontWeight={"bold"}
+                  >
+                    $ {ride.tripFee}
+                  </Text>
+                </Text>
+              </Box>
+            </HStack>
           </Stack>
         </CardBody>
-        <Divider />
-        <CardFooter>
-          <Box>
-            <Text fontSize={{ base: "sm", md: "md" }}>
-              Requested at: {formatDateTime(ride.createdAt)}
-            </Text>
-            <Text fontSize={{ base: "xs", md: "sm" }}>
-              Updated at: {formatDateTime(ride.updatedAt)}
-            </Text>
-          </Box>
-        </CardFooter>
       </Card>
     );
 };

@@ -1,12 +1,11 @@
 import {
-  ListIcon,
-  ListItem,
-  Box,
-  VStack,
   Text,
   Badge,
   HStack,
   useToast,
+  Card,
+  Icon,
+  CardBody,
 } from "@chakra-ui/react";
 import type { NotificationWithRide } from "~/types/notification";
 import { FiCheckCircle } from "react-icons/fi";
@@ -18,7 +17,7 @@ import { useLoading } from "~/hooks/useLoading";
 import Loading from "./Loading";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
-import { colorStatus } from "~/utils/colorFormatter";
+import { tagStatus } from "~/utils/tagStatusFormatter";
 import ConfirmationPopover from "./ConfirmationPopover";
 
 const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
@@ -97,58 +96,53 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
   if (loading) return <Loading />;
 
   return (
-    <ListItem marginBottom="2">
-      <Box
-        maxW="sm"
-        borderWidth="1px"
-        borderRadius="lg"
-        overflow="hidden"
-        bgColor="light"
-        paddingX="4"
-      >
-        <VStack padding="2" align="start">
-          <HStack>
-            <ListIcon
-              as={FiCheckCircle as React.ElementType}
-              color={colorStatus(notification.message)}
-            />
-            <Badge colorScheme={colorStatus(notification.message)}>
-              {notification.message}
-            </Badge>
-          </HStack>
-          <Text>In {notification.ride?.originName}</Text>
-          <Text fontSize="sm">
-            The trip fee is:{" "}
-            <Text as="span" fontWeight={"bold"} color={"green"}>
-              $ {notification.ride?.tripFee}
-            </Text>
+    <Card
+      bgColor={"light"}
+      boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
+      mb={2}
+    >
+      <CardBody>
+        <HStack>
+          <Icon
+            as={FiCheckCircle as React.ElementType}
+            color={tagStatus(notification.message).color}
+          />
+          <Badge colorScheme={tagStatus(notification.message).color}>
+            {tagStatus(notification.message).tag}
+          </Badge>
+        </HStack>
+        <Text>In {notification.ride?.originName}</Text>
+        <Text fontSize="sm">
+          The trip fee is:{" "}
+          <Text as="span" fontWeight={"bold"} color={"green"}>
+            $ {notification.ride?.tripFee}
           </Text>
-          {user?.type === "Driver" &&
-            notification.ride?.status.current === "REQUESTED" && (
-              <HStack>
-                <ButtonComponent
-                  onClick={() =>
-                    acceptRide(notification.rideId!, notification.driverId!)
-                  }
-                >
-                  Accept
-                </ButtonComponent>
-                <ConfirmationPopover
-                  onConfirm={() =>
-                    notification.ride &&
-                    declineRide(
-                      notification.rideId!,
-                      notification.driverId!,
-                      notification.ride.pickupLocation,
-                    )
-                  }
-                />
-              </HStack>
-            )}
-          <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
-        </VStack>
-      </Box>
-    </ListItem>
+        </Text>
+        {user?.type === "Driver" &&
+          notification.ride?.status.current === "REQUESTED" && (
+            <HStack>
+              <ButtonComponent
+                onClick={() =>
+                  acceptRide(notification.rideId!, notification.driverId!)
+                }
+              >
+                Accept
+              </ButtonComponent>
+              <ConfirmationPopover
+                onConfirm={() =>
+                  notification.ride &&
+                  declineRide(
+                    notification.rideId!,
+                    notification.driverId!,
+                    notification.ride.pickupLocation,
+                  )
+                }
+              />
+            </HStack>
+          )}
+        <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
+      </CardBody>
+    </Card>
   );
 };
 

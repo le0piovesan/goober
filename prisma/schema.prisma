@@ -12,6 +12,7 @@ model Rider {
   name          String
   email         String         @unique
   password      String
+  image         String
   rides         Ride[]
   notifications Notification[]
 }
@@ -21,6 +22,7 @@ model Driver {
   name           String
   email          String         @unique
   password       String
+  image          String
   onTrip         Boolean        @default(false)
   lastLocation   Location       @relation("DriverLastLocation", fields: [lastLocationId], references: [id])
   lastLocationId Int            @unique

@@ -39,7 +39,13 @@ const ConfirmationModal: React.FC<{ onConfirm: () => void }> = ({
             <Box fontSize="sm">We will look for another driver</Box>
             <ButtonGroup size="sm">
               <ButtonComponent onClick={onClose}>Back</ButtonComponent>
-              <ButtonComponent declineCancel onClick={onConfirm}>
+              <ButtonComponent
+                declineCancel
+                onClick={() => {
+                  onConfirm();
+                  onClose();
+                }}
+              >
                 Confirm
               </ButtonComponent>
             </ButtonGroup>

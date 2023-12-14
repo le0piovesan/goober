@@ -1,7 +1,14 @@
 import withPWA from "next-pwa";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(
+  "https://",
+  "",
+);
 
 const config = {
   reactStrictMode: true,
+  images: {
+    domains: supabaseUrl ? [supabaseUrl] : [],
+  },
 };
 
 const nextConfig = withPWA({

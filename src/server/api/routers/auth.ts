@@ -28,6 +28,8 @@ export const authRouter = createTRPCRouter({
       return {
         id: user.id,
         name: user.name,
+        image: user.image,
+        email: user.email,
         type,
       };
     }),

@@ -19,7 +19,7 @@ export const driverRouter = createTRPCRouter({
 
   createDriver: publicProcedure
     .input(
-      z.object({ name: z.string(), email: z.string(), password: z.string() }),
+      z.object({ name: z.string(), email: z.string(), password: z.string(), image: z.string() }),
     )
     .mutation(async ({ ctx, input }) => {
       const existingDriver = await ctx.db.driver.findUnique({
@@ -45,6 +45,7 @@ export const driverRouter = createTRPCRouter({
               longitude: 0,
             },
           },
+          image: input.image,
         },
       });
 

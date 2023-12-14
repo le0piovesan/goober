@@ -17,7 +17,12 @@ export const riderRouter = createTRPCRouter({
 
   createRider: publicProcedure
     .input(
-      z.object({ name: z.string(), email: z.string(), password: z.string() }),
+      z.object({
+        name: z.string(),
+        email: z.string(),
+        password: z.string(),
+        image: z.string(),
+      }),
     )
     .mutation(async ({ ctx, input }) => {
       const existingRider = await ctx.db.rider.findUnique({
@@ -36,6 +41,7 @@ export const riderRouter = createTRPCRouter({
           name: input.name,
           email: input.email,
           password: bcrypt.hashSync(input.password, 10),
+          image: input.image,
         },
       });
 

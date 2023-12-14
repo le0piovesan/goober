@@ -23,11 +23,13 @@ const RidesContainer = () => {
 
   return (
     <Flex direction="column" m={4}>
-      <InputComponent
-        placeholder="Search here for rides"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      {filteredRides && filteredRides.length > 0 && (
+        <InputComponent
+          placeholder="Search here for rides"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      )}
 
       {isLoading ? (
         <RideCardSkeleton />

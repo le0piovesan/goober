@@ -1,15 +1,25 @@
-import { useToast, VStack } from "@chakra-ui/react";
+import { useToast, VStack, Text, Heading } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "~/utils/api";
-import ButtonComponent from "~/components/ButtonComponent";
 import InputComponent from "~/components/InputComponent";
 import RadioComponent from "~/components/RadioComponent";
 import { useLoading } from "~/hooks/useLoading";
 import ContainerForm from "~/components/ContainerForm";
+import ButtonComponent from "~/components/ButtonComponent";
+import supabase from "~/utils/supabaseClient";
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  role: "Rider" | "Driver";
+  image: File;
+};
 
 const schema = z.object({
   name: z.string().min(1),
@@ -21,6 +31,9 @@ const schema = z.object({
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
   role: z.enum(["Rider", "Driver"]),
+  image: z.instanceof(File).refine((file) => file !== null, {
+    message: "A file must be uploaded",
+  }),
 });
 
 type FormInputsProps = z.infer<typeof schema>;
@@ -35,8 +48,8 @@ const SignUp: NextPage = () => {
   const {
     register,
     handleSubmit,
-    getValues,
     control,
+    getValues,
     formState: { errors },
   } = useForm<FormInputsProps>({
     resolver: zodResolver(schema),
@@ -46,8 +59,28 @@ const SignUp: NextPage = () => {
       password: "",
       confirmPassword: "",
       role: "Rider",
+      image: undefined,
     },
   });
+
+  const uploadImage = async (email: string, image: File) => {
+    const { data, error } = await supabase.storage
+      .from("avatar")
+      .upload(`/${email}`, image);
+
+    if (error) {
+      if (error instanceof Error)
+        toast({
+          title: "Error",
+          description: `${error.message} 😢`,
+          status: "error",
+          duration: 4000,
+          isClosable: true,
+        });
+      throw error;
+    }
+    return data.path;
+  };
 
   const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
     if (getValues("confirmPassword") !== getValues("password")) {
@@ -63,10 +96,13 @@ const SignUp: NextPage = () => {
 
     try {
       startLoading();
-      const { name, email, password, role } = data;
+      const { name, email, password, role, image }: FormData = data;
+
+      const path = await uploadImage(email, image);
+
       role === "Rider"
-        ? await rider.mutateAsync({ name, email, password })
-        : await driver.mutateAsync({ name, email, password });
+        ? await rider.mutateAsync({ name, email, password, image: path })
+        : await driver.mutateAsync({ name, email, password, image: path });
 
       toast({
         title: "Account Created! 🎉",
@@ -100,6 +136,7 @@ const SignUp: NextPage = () => {
         w="full"
         maxW="md"
       >
+        <Heading color={"primary"}>Sign up</Heading>
         <InputComponent
           label="Name"
           register={register}
@@ -131,6 +168,30 @@ const SignUp: NextPage = () => {
           type="password"
           error={errors.confirmPassword}
         />
+
+        <Controller
+          control={control}
+          name="image"
+          render={({ field }) => (
+            <InputComponent
+              label="Upload Image"
+              name="image"
+              placeholder="Upload Image"
+              type="file"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  field.onChange(e.target.files[0]);
+                }
+              }}
+            />
+          )}
+        />
+        {errors.image && (
+          <Text fontSize="xs" color="red">
+            A file must be uploaded
+          </Text>
+        )}
+
         <RadioComponent
           label="Are you a?"
           control={control}

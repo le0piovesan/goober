@@ -38,12 +38,14 @@ const MenuDrawer: React.FC = () => {
         finalFocusRef={btnRef}
       >
         <DrawerOverlay />
-        <DrawerContent bgColor={"transparent"}>
+        <DrawerContent bgColor={"transparent"} boxShadow="none">
           <DrawerCloseButton zIndex={1} mr={6} mt={2}>
             <Icon
               as={FiArrowLeft as React.ElementType}
               color={"primary"}
               boxSize={6}
+              bgColor={"light"}
+              rounded={"full"}
             />
           </DrawerCloseButton>
 

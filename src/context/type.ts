@@ -4,6 +4,8 @@ type User = {
   id: number;
   name: string;
   type: string;
+  image: string;
+  email: string;
   isLoggedIn: boolean;
 };
 

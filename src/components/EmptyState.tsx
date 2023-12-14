@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from "@chakra-ui/react";
+import { Card, Text } from "@chakra-ui/react";
 
 interface EmptyStateProps {
   title: string;
@@ -7,19 +7,18 @@ interface EmptyStateProps {
 
 const EmptyState: React.FC<EmptyStateProps> = ({ title, subtext }) => {
   return (
-    <Box
+    <Card
+      bgColor="light"
       display="flex"
-      flexDirection="column"
       alignItems="center"
       justifyContent="center"
       padding={4}
       margin={4}
-      width="100%"
-      height="100%"
+      boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
     >
-      <Heading marginBottom={2}>{title}</Heading>
-      <Text>{subtext}</Text>
-    </Box>
+      <Text fontSize={"xl"}>{title}</Text>
+      <Text fontSize={"md"}>{subtext}</Text>
+    </Card>
   );
 };
 

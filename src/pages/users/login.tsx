@@ -1,4 +1,4 @@
-import { VStack, useToast } from "@chakra-ui/react";
+import { VStack, useToast, Heading } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,6 +45,8 @@ const Login: NextPage = () => {
         id: response.id,
         name: response.name,
         type: response.type,
+        image: response.image,
+        email,
         isLoggedIn: true,
       });
     } catch (error) {
@@ -71,6 +73,7 @@ const Login: NextPage = () => {
         w="full"
         maxW="md"
       >
+        <Heading color={"primary"}>Login</Heading>
         <InputComponent
           label="Email"
           register={register}

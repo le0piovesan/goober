@@ -1,5 +1,5 @@
 import { GoogleMap } from "@react-google-maps/api";
-import { Card, CardBody, VStack, useToast } from "@chakra-ui/react";
+import { Card, CardBody, VStack, useToast, Skeleton } from "@chakra-ui/react";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -131,65 +131,69 @@ const Map: React.FC = () => {
   return (
     <Card bgColor={"light"} boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}>
       <CardBody>
-        <GoogleMap
-          zoom={15}
-          mapContainerStyle={{ width: "100%", height: "80vh" }}
-          center={{
-            lat: position.latitude,
-            lng: position.longitude,
-          }}
-          options={{
-            streetViewControl: false,
-            mapTypeControlOptions: {
-              mapTypeIds: [google.maps.MapTypeId.ROADMAP],
-            },
-            fullscreenControl: false,
-          }}
-        >
-          {pickupLocationRef.current && dropoffLocationRef.current && (
-            <MapMarkerDirections
-              pickupLocationRef={pickupLocationRef}
-              dropoffLocationRef={dropoffLocationRef}
-              directions={directions}
-            />
-          )}
-          <Card
-            bgColor={"light"}
-            position="absolute"
-            bottom="5%"
-            left="5%"
-            boxShadow="0px 4px 20px rgba(0, 0, 0, 0.5)"
-            borderRadius="10px"
+        {loading ? (
+          <Skeleton height="80vh" />
+        ) : (
+          <GoogleMap
+            zoom={15}
+            mapContainerStyle={{ width: "100%", height: "70vh" }}
+            center={{
+              lat: position.latitude,
+              lng: position.longitude,
+            }}
+            options={{
+              streetViewControl: false,
+              mapTypeControlOptions: {
+                mapTypeIds: [google.maps.MapTypeId.ROADMAP],
+              },
+              fullscreenControl: false,
+            }}
           >
-            <CardBody>
-              <VStack
-                as="form"
-                onSubmit={handleSubmit(onSubmit)}
-                spacing={4}
-                w="full"
-                maxW="md"
-              >
-                {!distanceDetails.distance || (!tripValue && !directions) ? (
-                  <MapSearch
-                    register={register}
-                    loading={loading}
-                    retrieveRouteInfo={retrieveRouteInfo}
-                    pickupLocationRef={pickupLocationRef}
-                    dropoffLocationRef={dropoffLocationRef}
-                    errors={errors}
-                  />
-                ) : (
-                  <MapDetails
-                    distanceDetails={distanceDetails.distance}
-                    setDistanceDetails={setDistanceDetails}
-                    tripValue={tripValue}
-                    loading={loading}
-                  />
-                )}
-              </VStack>
-            </CardBody>
-          </Card>
-        </GoogleMap>
+            {pickupLocationRef.current && dropoffLocationRef.current && (
+              <MapMarkerDirections
+                pickupLocationRef={pickupLocationRef}
+                dropoffLocationRef={dropoffLocationRef}
+                directions={directions}
+              />
+            )}
+            <Card
+              bgColor={"light"}
+              position="absolute"
+              bottom="5%"
+              left="5%"
+              boxShadow="0px 4px 20px rgba(0, 0, 0, 0.5)"
+              borderRadius="10px"
+            >
+              <CardBody>
+                <VStack
+                  as="form"
+                  onSubmit={handleSubmit(onSubmit)}
+                  spacing={4}
+                  w="full"
+                  maxW="md"
+                >
+                  {!distanceDetails.distance || (!tripValue && !directions) ? (
+                    <MapSearch
+                      register={register}
+                      loading={loading}
+                      retrieveRouteInfo={retrieveRouteInfo}
+                      pickupLocationRef={pickupLocationRef}
+                      dropoffLocationRef={dropoffLocationRef}
+                      errors={errors}
+                    />
+                  ) : (
+                    <MapDetails
+                      distanceDetails={distanceDetails.distance}
+                      setDistanceDetails={setDistanceDetails}
+                      tripValue={tripValue}
+                      loading={loading}
+                    />
+                  )}
+                </VStack>
+              </CardBody>
+            </Card>
+          </GoogleMap>
+        )}
       </CardBody>
     </Card>
   );

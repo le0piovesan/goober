@@ -8,7 +8,6 @@ import {
 import { useRouter } from "next/router";
 import { type AuthContextType, type User, type Action } from "./type";
 import { useLoading } from "~/hooks/useLoading";
-import Loading from "~/components/Loading";
 
 type AuthContextProviderProps = {
   children: ReactNode;
@@ -32,7 +31,7 @@ const authReducer = (state: User | null, action: Action): User | null => {
 export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
   const [user, dispatch] = useReducer(authReducer, null);
   const router = useRouter();
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   useEffect(() => {
     startLoading();
@@ -55,8 +54,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     dispatch({ type: "LOGOUT" });
     await router.replace("/");
   };
-
-  if (loading) return <Loading />;
 
   return (
     <AuthContext.Provider value={{ user, dispatch, login, logout }}>

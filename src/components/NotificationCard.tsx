@@ -6,6 +6,7 @@ import {
   Card,
   Icon,
   CardBody,
+  Skeleton,
 } from "@chakra-ui/react";
 import type { NotificationWithRide } from "~/types/notification";
 import { FiCheckCircle } from "react-icons/fi";
@@ -14,21 +15,26 @@ import ButtonComponent from "./ButtonComponent";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import { useLoading } from "~/hooks/useLoading";
-import Loading from "./Loading";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
 import { tagStatus } from "~/utils/tagStatusFormatter";
 import ConfirmationPopover from "./ConfirmationPopover";
 
-const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
+type NotificationCardProps = {
+  notification: NotificationWithRide;
+  loading: boolean;
+};
+
+const NotificationCard: React.FC<NotificationCardProps> = ({
   notification,
+  loading,
 }) => {
   const { user } = useAuth();
   const driverAccept = api.driver.acceptRide.useMutation();
   const driverDecline = api.driver.declineRide.useMutation();
   const toast = useToast();
   const router = useRouter();
-  const { loading, startLoading, stopLoading } = useLoading();
+  const { startLoading, stopLoading } = useLoading();
 
   const acceptRide = async (rideId: number, driverId: number) => {
     try {
@@ -93,8 +99,6 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
     }
   };
 
-  if (loading) return <Loading />;
-
   return (
     <Card
       bgColor={"light"}
@@ -108,15 +112,31 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
             color={tagStatus(notification.message).color}
           />
           <Badge colorScheme={tagStatus(notification.message).color}>
-            {tagStatus(notification.message).tag}
+            {loading ? (
+              <Skeleton height="20px" width="80px" />
+            ) : (
+              tagStatus(notification.message).tag
+            )}
           </Badge>
         </HStack>
-        <Text>In {notification.ride?.originName}</Text>
+        <Text>
+          {loading ? (
+            <Skeleton height="20px" width="200px" />
+          ) : (
+            `In ${notification.ride?.originName}`
+          )}
+        </Text>
         <Text fontSize="sm">
-          The trip fee is:{" "}
-          <Text as="span" fontWeight={"bold"} color={"green"}>
-            $ {notification.ride?.tripFee}
-          </Text>
+          {loading ? (
+            <Skeleton height="20px" width="250px" />
+          ) : (
+            <>
+              The trip fee is:{" "}
+              <Text as="span" fontWeight={"bold"} color={"green"}>
+                $ {notification.ride?.tripFee}
+              </Text>
+            </>
+          )}
         </Text>
         {user?.type === "Driver" &&
           notification.ride?.status.current === "REQUESTED" && (
@@ -126,7 +146,7 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
                   acceptRide(notification.rideId!, notification.driverId!)
                 }
               >
-                Accept
+                {loading ? <Skeleton height="20px" width="80px" /> : "Accept"}
               </ButtonComponent>
               <ConfirmationPopover
                 onConfirm={() =>
@@ -140,7 +160,13 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
               />
             </HStack>
           )}
-        <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
+        <Text fontSize="xs">
+          {loading ? (
+            <Skeleton height="20px" width="150px" />
+          ) : (
+            formatDateTime(notification.createdAt)
+          )}
+        </Text>
       </CardBody>
     </Card>
   );

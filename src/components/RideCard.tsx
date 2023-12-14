@@ -15,11 +15,11 @@ import {
 import type { RideWithStatus } from "~/types/ride";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { colorStatus } from "~/utils/colorFormatter";
-import ButtonComponent from "./ButtonComponent";
 import { useLoading } from "~/hooks/useLoading";
 import Loading from "./Loading";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
+import ConfirmationPopover from "./ConfirmationPopover";
 
 interface RideCardProps {
   ride: RideWithStatus;
@@ -74,12 +74,11 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
                 {ride.status.current}
               </Heading>
               {ride.status.current === "ONGOING" && (
-                <ButtonComponent
-                  declineCancel
-                  onClick={() => user && ride && cancelRide(ride.id, user.type)}
-                >
-                  Cancel
-                </ButtonComponent>
+                <ConfirmationPopover
+                  onConfirm={() =>
+                    user && ride && cancelRide(ride.id, user.type)
+                  }
+                />
               )}
             </HStack>
             <Text>

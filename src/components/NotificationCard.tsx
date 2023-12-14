@@ -19,6 +19,7 @@ import Loading from "./Loading";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
 import { colorStatus } from "~/utils/colorFormatter";
+import ConfirmationPopover from "./ConfirmationPopover";
 
 const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
   notification,
@@ -132,9 +133,8 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
                 >
                   Accept
                 </ButtonComponent>
-                <ButtonComponent
-                  declineCancel
-                  onClick={() =>
+                <ConfirmationPopover
+                  onConfirm={() =>
                     notification.ride &&
                     declineRide(
                       notification.rideId!,
@@ -142,9 +142,7 @@ const NotificationCard: React.FC<{ notification: NotificationWithRide }> = ({
                       notification.ride.pickupLocation,
                     )
                   }
-                >
-                  Decline
-                </ButtonComponent>
+                />
               </HStack>
             )}
           <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>

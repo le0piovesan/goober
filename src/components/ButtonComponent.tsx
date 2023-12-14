@@ -26,16 +26,17 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
     lineHeight: "1.2",
     fontWeight: "bold",
     marginBottom: "0.2rem",
-    color: outline ?? textOnly ? "background" : declineCancel ? "red" : "light",
-    border: outline ?? declineCancel ? "2px solid" : "none",
-    backgroundColor:
-      outline ?? declineCancel
-        ? "light"
-        : textOnly
-          ? "transparent"
+    color: outline ?? textOnly ? "background" : "light",
+    border: outline ? "2px solid" : "none",
+    backgroundColor: outline
+      ? "light"
+      : textOnly
+        ? "transparent"
+        : declineCancel
+          ? "red"
           : "background",
     _hover: {
-      bg: textOnly ? "transparent" : declineCancel ? "red" : "primary",
+      bg: textOnly ? "transparent" : declineCancel ? "red.600" : "primary",
       color: textOnly ? "primary" : "light",
       borderColor: outline ? "primary" : declineCancel ? "red" : "none",
     },

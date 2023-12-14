@@ -15,9 +15,11 @@ const RidesContainer = () => {
     return (
       <Flex direction="column">
         <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
-          {rides.map((ride) => (
-            <RideCard key={ride.id} ride={ride} />
-          ))}
+          {rides
+            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+            .map((ride) => (
+              <RideCard key={ride.id} ride={ride} />
+            ))}
         </Grid>
       </Flex>
     );

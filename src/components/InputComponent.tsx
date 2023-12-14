@@ -16,12 +16,15 @@ import {
 import { useState } from "react";
 
 type InputComponentProps<TFormValues extends FieldValues> = {
-  label: string;
-  register: UseFormRegister<TFormValues>;
-  name: keyof TFormValues;
+  label?: string;
+  register?: UseFormRegister<TFormValues>;
+  name?: keyof TFormValues;
   placeholder: string;
   type?: string;
   error?: FieldError;
+  value?: string | number;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  mb?: number;
 };
 
 const InputComponent = <TFormValues extends FieldValues>({
@@ -31,27 +34,36 @@ const InputComponent = <TFormValues extends FieldValues>({
   placeholder,
   type = "text",
   error,
+  value,
+  onChange,
+  mb,
 }: InputComponentProps<TFormValues>) => {
   const [show, setShow] = useState<boolean>(false);
   const handleShowPassword = () => setShow(!show);
 
   return (
-    <FormControl isInvalid={!!error}>
-      <FormLabel color={"primary"} className="drop-shadow">
-        {label}
-      </FormLabel>
+    <FormControl isInvalid={!!error} mb={mb}>
+      {label && (
+        <FormLabel color={"primary"} className="drop-shadow">
+          {label}
+        </FormLabel>
+      )}
       <InputGroup size="md">
         <Input
-          {...register(name as string as Path<TFormValues>)}
+          {...(register && name
+            ? register(name as string as Path<TFormValues>)
+            : {})}
           placeholder={placeholder}
           type={type === "password" && show ? "text" : type}
           ringColor={error ? "red.500" : "border"}
-          borderColor={"#dfe3ef"}
+          borderColor={"primary"}
           bgColor={"#dfe3ef"}
           _hover={{
             borderColor: "secondary",
           }}
           focusBorderColor="secondary"
+          value={value}
+          onChange={onChange}
         />
         {type === "password" && (
           <InputRightElement width="4.5rem">

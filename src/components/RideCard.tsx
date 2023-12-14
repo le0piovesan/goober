@@ -9,6 +9,7 @@ import {
   HStack,
   Badge,
   Skeleton,
+  Icon,
 } from "@chakra-ui/react";
 
 import type { RideStatusLocation } from "~/types/ride";
@@ -19,6 +20,7 @@ import { useAuth } from "~/context/AuthContext";
 import ConfirmationPopover from "./ConfirmationPopover";
 import { getStaticMapImage } from "~/utils/getStaticMapImage";
 import { tagStatus } from "~/utils/tagStatusFormatter";
+import { FiMap } from "react-icons/fi";
 
 interface RideCardProps {
   ride: RideStatusLocation;
@@ -60,17 +62,21 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
   return (
     <Card
       bgColor={"light"}
-      mb={2}
+      mb={4}
       boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
+      className="transform transition-transform duration-300 ease-in-out hover:scale-105"
     >
       <CardBody>
-        <Badge colorScheme={tagStatus(ride.status.current).color}>
-          {loading ? (
-            <Skeleton height="20px" width="100px" />
-          ) : (
-            ride.status.current
-          )}
-        </Badge>
+        <HStack justifyContent={"space-between"}>
+          <Badge colorScheme={tagStatus(ride.status.current).color}>
+            {loading ? (
+              <Skeleton height="20px" width="100px" />
+            ) : (
+              ride.status.current
+            )}
+          </Badge>
+          <Icon as={FiMap as React.ElementType} color={"primary"} />
+        </HStack>
         <HStack justifyContent={"space-between"}>
           <Text fontSize={"xs"}>
             {loading ? (

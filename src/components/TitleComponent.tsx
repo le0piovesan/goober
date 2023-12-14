@@ -1,8 +1,20 @@
 import { Box, VStack } from "@chakra-ui/react";
 
-const TitleComponent = () => {
+type TitleComponentProps = {
+  onClick?: () => void;
+  pointer?: boolean;
+};
+
+const TitleComponent: React.FC<TitleComponentProps> = ({
+  onClick,
+  pointer,
+}) => {
   return (
-    <VStack align="center">
+    <VStack
+      align="center"
+      onClick={onClick}
+      _hover={{ cursor: pointer && "pointer" }}
+    >
       <Box>
         <Box
           as="span"

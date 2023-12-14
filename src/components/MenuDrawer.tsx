@@ -4,16 +4,15 @@ import {
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
-  DrawerHeader,
   DrawerBody,
   IconButton,
   useDisclosure,
+  Icon,
 } from "@chakra-ui/react";
 
 import MenuContent from "./MenuContent";
 
-import { FiMenu } from "react-icons/fi";
-
+import { FiArrowLeft, FiMenu } from "react-icons/fi";
 import { useRef } from "react";
 
 const MenuDrawer: React.FC = () => {
@@ -39,9 +38,15 @@ const MenuDrawer: React.FC = () => {
         finalFocusRef={btnRef}
       >
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton>✖️</DrawerCloseButton>
-          <DrawerHeader>Menu</DrawerHeader>
+        <DrawerContent bgColor={"transparent"}>
+          <DrawerCloseButton zIndex={1} mr={6} mt={2}>
+            <Icon
+              as={FiArrowLeft as React.ElementType}
+              color={"primary"}
+              boxSize={6}
+            />
+          </DrawerCloseButton>
+
           <DrawerBody overflow={"hidden"}>
             <MenuContent onClose={onClose} />
           </DrawerBody>

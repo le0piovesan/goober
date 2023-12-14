@@ -14,13 +14,11 @@ const RidesContainer = () => {
   if (rides && rides.length > 0)
     return (
       <Flex direction="column">
-        <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
-          {rides
-            .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-            .map((ride) => (
-              <RideCard key={ride.id} ride={ride} />
-            ))}
-        </Grid>
+        {rides
+          .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+          .map((ride) => (
+            <RideCard key={ride.id} ride={ride} />
+          ))}
       </Flex>
     );
   else

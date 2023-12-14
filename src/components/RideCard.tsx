@@ -8,11 +8,10 @@ import {
   Stack,
   Image,
   Text,
-  HStack,
   useToast,
 } from "@chakra-ui/react";
 
-import type { RideWithStatus } from "~/types/ride";
+import type { RideStatusLocation } from "~/types/ride";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { colorStatus } from "~/utils/colorFormatter";
 import { useLoading } from "~/hooks/useLoading";
@@ -20,9 +19,10 @@ import Loading from "./Loading";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import ConfirmationPopover from "./ConfirmationPopover";
+import { getStaticMapImage } from "~/utils/getStaticMapImage";
 
 interface RideCardProps {
-  ride: RideWithStatus;
+  ride: RideStatusLocation;
 }
 
 const RideCard: React.FC<RideCardProps> = ({ ride }) => {
@@ -64,13 +64,23 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
       <Card>
         <CardBody>
           <Image
-            src="https://placekitten.com/1000/300"
-            alt="Green double couch with wooden legs"
-            borderRadius="lg"
+            src={getStaticMapImage(ride.pickupLocation, ride.dropoffLocation)}
+            alt="Map Route"
+            borderRadius="md"
+            maxW="100%"
+            h="auto"
           />
           <Stack mt="2" spacing="1">
-            <HStack justifyContent="space-between">
-              <Heading size="md" color={colorStatus(ride.status.current)}>
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={{ base: 2, md: 4 }}
+              justifyContent="space-between"
+            >
+              <Heading
+                size="md"
+                color={colorStatus(ride.status.current)}
+                fontSize={{ base: "lg", md: "md" }}
+              >
                 {ride.status.current}
               </Heading>
               {ride.status.current === "ONGOING" && (
@@ -80,7 +90,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
                   }
                 />
               )}
-            </HStack>
+            </Stack>
             <Text>
               From:{" "}
               <Text as="span" fontSize="md" fontWeight={"bold"}>
@@ -115,10 +125,10 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
         <Divider />
         <CardFooter>
           <Box>
-            <Text fontSize="sm">
+            <Text fontSize={{ base: "sm", md: "md" }}>
               Requested at: {formatDateTime(ride.createdAt)}
             </Text>
-            <Text fontSize="xs">
+            <Text fontSize={{ base: "xs", md: "sm" }}>
               Updated at: {formatDateTime(ride.updatedAt)}
             </Text>
           </Box>

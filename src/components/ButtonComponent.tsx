@@ -28,6 +28,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
     marginBottom: "0.2rem",
     color: outline ?? textOnly ? "background" : "light",
     border: outline ? "2px solid" : "none",
+    boxShadow: textOnly ? "none" : "0px 4px 4px rgba(0, 0, 0, 0.25)",
     backgroundColor: outline
       ? "light"
       : textOnly

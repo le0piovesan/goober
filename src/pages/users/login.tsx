@@ -43,6 +43,7 @@ const Login: NextPage = () => {
       const response = await auth.mutateAsync({ email, password });
       await login({
         id: response.id,
+        name: response.name,
         type: response.type,
         isLoggedIn: true,
       });

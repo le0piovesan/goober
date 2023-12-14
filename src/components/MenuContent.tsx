@@ -34,11 +34,15 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
 
   return (
     <Flex
-      h="100vh"
       align={"flex-start"}
       direction={"column"}
-      pr={4}
+      p={4}
+      m={2}
       overflow="hidden"
+      border={"1px solid"}
+      borderRadius={"lg"}
+      borderColor={"light"}
+      bgColor={"#fff"}
     >
       {menuItems
         .filter(
@@ -53,6 +57,7 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
             }
             outline
             leftIcon={item.icon}
+            className="my-2"
           >
             {item.label}
           </ButtonComponent>
@@ -61,6 +66,7 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
         onClick={() => logout()}
         outline
         leftIcon={<FiLogOut size={24} />}
+        className="mt-2"
       >
         Log Out
       </ButtonComponent>

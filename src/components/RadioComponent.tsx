@@ -4,6 +4,7 @@ import {
   RadioGroup,
   Stack,
   Radio,
+  Text,
 } from "@chakra-ui/react";
 import {
   Controller,
@@ -29,7 +30,7 @@ const RadioComponent = <TFormValues extends FieldValues>({
   options,
 }: RadioComponentProps<TFormValues>) => (
   <FormControl as="fieldset">
-    <FormLabel as="legend" color="primary">
+    <FormLabel as="legend" color="primary" className="drop-shadow">
       {label}
     </FormLabel>
     <Controller
@@ -52,7 +53,7 @@ const RadioComponent = <TFormValues extends FieldValues>({
                   borderColor: "secondary",
                 }}
               >
-                {option.label}
+                <Text color="gray.600">{option.label}</Text>
               </Radio>
             ))}
           </Stack>

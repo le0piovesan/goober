@@ -17,6 +17,9 @@ export default {
         background: "#8888dd",
         border: "#3f48cc",
       },
+      boxShadow: {
+        "drop-shadow": "0 1.2px 1.2px rgba(0, 0, 0, 0.2)",
+      },
     },
   },
   plugins: [],

@@ -1,9 +1,19 @@
 import type { Ride, RideStatus } from "@prisma/client";
 
-type RideWithStatus = Ride & {
+type RideStatusLocation = Ride & {
   status: RideStatus;
+  pickupLocation: {
+    id: number;
+    latitude: number;
+    longitude: number;
+  };
+  dropoffLocation: {
+    id: number;
+    latitude: number;
+    longitude: number;
+  };
 };
 
-type UserRides = RideWithStatus[] | null;
+type UserRides = RideStatusLocation[] | null;
 
-export type { RideWithStatus, UserRides };
+export type { RideStatusLocation, UserRides };

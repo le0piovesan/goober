@@ -5,12 +5,7 @@ import TitleComponent from "~/components/TitleComponent";
 
 const Home: NextPage = () => {
   return (
-    <Flex
-      direction="column"
-      align="flex-start"
-      justify="space-around"
-      h="100vh"
-    >
+    <Flex direction="column" align="center" justify="center" h="100vh">
       <VStack align="start" p={4} fontSize="5xl" fontWeight="bold">
         <Heading>Welcome to</Heading>
         <TitleComponent />

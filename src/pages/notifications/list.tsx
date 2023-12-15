@@ -28,7 +28,6 @@ const NotificationList: NextPage = () => {
               <NotificationCard
                 key={notification.id}
                 notification={notification}
-                loading={isLoading}
               />
             ))}
         </Flex>

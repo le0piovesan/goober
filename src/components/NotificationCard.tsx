@@ -23,19 +23,17 @@ import ConfirmationPopover from "./ConfirmationPopover";
 
 type NotificationCardProps = {
   notification: NotificationWithRide;
-  loading: boolean;
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
   notification,
-  loading,
 }) => {
   const { user } = useAuth();
   const driverAccept = api.driver.acceptRide.useMutation();
   const driverDecline = api.driver.declineRide.useMutation();
   const toast = useToast();
   const router = useRouter();
-  const { startLoading, stopLoading } = useLoading();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const acceptRide = async (rideId: number, driverId: number) => {
     startLoading();

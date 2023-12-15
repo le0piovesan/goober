@@ -48,6 +48,7 @@ const ConfirmationModal: React.FC<{
               <ButtonComponent onClick={onClose}>Back</ButtonComponent>
               <ButtonComponent
                 declineCancel
+                loading={loading}
                 onClick={() => {
                   startLoading();
                   onConfirm();

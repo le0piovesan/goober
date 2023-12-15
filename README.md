@@ -1,12 +1,8 @@
-# Goober Web Application
-
-## Banner
-
-[TODO]
+![Banner](./public/repo/banner.png)
 
 ## Overview
 
-Goober is a ride-share taxi service web application designed to connect riders with available drivers, providing a seamless experience for all users.
+Goober is a PWA (Progressive Web Application) ride-share taxi service designed to connect riders with available drivers, providing a seamless experience for all users.
 
 ## Table of Contents
 
@@ -14,8 +10,10 @@ Goober is a ride-share taxi service web application designed to connect riders w
 - [Product Decisions](#product-decisions)
 - [UX Decisions](#ux-decisions)
 - [Risk and Unknowns](#risk-and-unknowns)
-- [Figma Layout](#figma-layout)
+- [ERD Schema, PWA and Lint](#erd-pwa-lint)
 - [Developer Roadmap](#developer-roadmap)
+- [Sneak Peek](#sneak-peek)
+- [Final Considerations](#final-considerations)
 
 ## Technical Overview
 
@@ -78,9 +76,11 @@ Goober is a ride-share taxi service web application designed to connect riders w
 - **Unknown:** Scalability challenges as the user base grows.
   - **Resolution Plan:** Regularly assess application performance and scalability. Implement optimizations based on usage patterns.
 
-## Figma Layout
+## ERD Schema, PWA and Lint
 
-[TODO]
+![Banner](./public/repo/schema.png)
+![Banner](./public/repo/PWA.png)
+![Banner](./public/repo/lint.png)
 
 ## Developer Roadmap
 
@@ -93,7 +93,7 @@ Goober is a ride-share taxi service web application designed to connect riders w
   - [x] Set up Tailwind CSS
   - [x] Set up Chakra UI
 
-  - [ ] **Frontend Styling and UX**
+- [x] **Frontend Styling and UX**
 
   - [x] PWA implementation: write a serviceWorker, test with Lighthouse, etc
   - [x] Cleanup default layout
@@ -102,19 +102,35 @@ Goober is a ride-share taxi service web application designed to connect riders w
   - [x] Implement user interactions and navigation
   - [x] Style frontend components
   - [x] Optimize for responsive design
-  - [ ] Refactoring
+  - [x] Refactoring
 
-- [ ] **Backend Integration**
+- [x] **Backend Integration**
 
   - [x] Define Prisma data model
   - [x] Implement backend logic using tRPC
   - [x] Add Image to Storage
-  - [ ] Add Cron to expired/completed rides
-  - [ ] Subs to Ride / Notification DB
-  - [ ] Set up OneSignal for notification
 
-- [ ] **Documentation and Deployment**
+- [x] **Documentation and Deployment**
 
   - [x] Deploy the application to Vercel
   - [x] Configure production log system with Axiom
-  - [ ] Create a detailed README.md
+  - [x] Create a detailed README.md
+
+- **Future Features**
+  - Add Cron to expired/completed rides
+  - Subs to Ride / Notification DB
+  - Set up OneSignal for notification
+
+## Sneak Peek:
+
+[Here is a quick video showing the features](https://youtu.be/tfvZpwec8tE) 👀
+
+[Here is the link of the deployable app](https://goober-three.vercel.app/) 🚀
+
+## Final Considerations
+
+Oh, what a ride. I am always grateful for having the chance to learn new technologies, such as Supabase and T3, while simultaneously striving for this great opportunity.
+While I had previous experience with Firebase, it offered a solid foundation but also presented its own set of challenges on the way. Having to attend work, taking care of some development and deploys at the same time, made it a little bit harder this challenge.
+There are still room for improvement, but overall I am really glad of what I could made within a week!
+
+The feature I found to be the most impressive was the responsiveness of the UX/UI layout in the WepApp. I consistently strive to prioritize accessibility in my development process.

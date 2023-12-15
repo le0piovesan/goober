@@ -83,6 +83,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         duration: 4000,
         isClosable: true,
       });
+      await router.replace("/rides/feed");
     } catch (error) {
       if (
         error instanceof Error &&

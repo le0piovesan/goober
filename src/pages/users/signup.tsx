@@ -11,6 +11,7 @@ import { useLoading } from "~/hooks/useLoading";
 import ContainerForm from "~/components/ContainerForm";
 import ButtonComponent from "~/components/ButtonComponent";
 import supabase from "~/utils/supabaseClient";
+import { File } from "@web-std/file";
 
 type FormData = {
   name: string;

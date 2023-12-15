@@ -3,6 +3,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
 import { getDistance } from "geolib";
 import { Status } from "@prisma/client";
+import input from "postcss/lib/input";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -248,15 +249,12 @@ export const driverRouter = createTRPCRouter({
                   },
                 },
               },
-              lastLocationId: {
-                not: {}
-              }
             },
-            include: { lastLocation: true, declinedRides: true },
+            include: { lastLocation: true },
           });
 
           // If there are no other drivers available, update the status of ride to cancelled
-          if (drivers.length === 0) {
+          if (drivers.length === 0 || drivers.some(driver => driver.lastLocation.latitude === 0 || driver.lastLocation.longitude === 0)) {
             await prisma.rideStatus.update({
               where: { id: input.rideId },
               data: { current: Status.CANCELED, finishedAt: new Date() },

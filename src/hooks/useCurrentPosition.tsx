@@ -24,7 +24,7 @@ const useCurrentPosition = () => {
     });
 
     if (user && user.type === "Driver")
-      driver.mutateAsync({
+      driver.mutate({
         id: user.id,
         latitude: coords.latitude,
         longitude: coords.longitude,

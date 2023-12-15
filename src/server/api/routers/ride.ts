@@ -123,16 +123,19 @@ export const rideRouter = createTRPCRouter({
                   },
                 },
               },
-              lastLocationId: {
-                not: {}
-              }
             },
-            include: { lastLocation: true, declinedRides: true },
+            include: { lastLocation: true },
           });
 
           if (drivers.length === 0) {
             throw new Error(
               "No drivers near you at this moment, try again later.",
+            );
+          }
+          
+          if (drivers.some(driver => driver.lastLocation.latitude === 0 || driver.lastLocation.longitude === 0)) {
+            throw new Error(
+              "Found drivers but they haven't set their location yet.",
             );
           }
 

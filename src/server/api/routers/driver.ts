@@ -3,7 +3,6 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
 import { getDistance } from "geolib";
 import { Status } from "@prisma/client";
-import input from "postcss/lib/input";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -232,12 +231,6 @@ export const driverRouter = createTRPCRouter({
             },
           });
 
-          // Find the rider who requested this ride
-          const rider = await prisma.ride.findFirst({
-            where: { id: input.rideId },
-            include: { rider: true },
-          });
-
           // Find all drivers who have not declined this ride yet and are not on ride
           const drivers = await prisma.driver.findMany({
             where: {
@@ -254,17 +247,30 @@ export const driverRouter = createTRPCRouter({
           });
 
           // If there are no other drivers available, update the status of ride to cancelled
-          if (drivers.length === 0 || drivers.some(driver => driver.lastLocation.latitude === 0 || driver.lastLocation.longitude === 0)) {
+          if (
+            drivers.length === 0 ||
+            drivers.some(
+              (driver) =>
+                driver.lastLocation.latitude === 0 ||
+                driver.lastLocation.longitude === 0,
+            )
+          ) {
             await prisma.rideStatus.update({
               where: { id: input.rideId },
               data: { current: Status.CANCELED, finishedAt: new Date() },
+            });
+
+            // Find the rider who requested this ride
+            const ride = await prisma.ride.findUnique({
+              where: { id: input.rideId },
+              include: { rider: true },
             });
 
             // Notify the rider that his ride was cancelled
             await prisma.notification.create({
               data: {
                 message: "No drivers available at the moment, try again later.",
-                riderId: rider?.id,
+                riderId: ride?.rider.id,
               },
             });
           } else {

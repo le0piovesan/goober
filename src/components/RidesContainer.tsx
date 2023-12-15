@@ -1,4 +1,4 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Stack } from "@chakra-ui/react";
 import RideCard from "./RideCard";
 import useUserRides from "~/hooks/useUserRides";
 import { useAuth } from "~/context/AuthContext";
@@ -32,18 +32,18 @@ const RidesContainer = () => {
       )}
 
       {isLoading ? (
-        <>
+        <Stack spacing={4}>
           <RideCardSkeleton />
           <RideCardSkeleton />
           <RideCardSkeleton />
-        </>
+        </Stack>
       ) : filteredRides && filteredRides.length > 0 ? (
         filteredRides
           .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
           .map((ride) =>
             ride.status.current === "ONGOING" ? (
-              <ActiveCard>
-                <RideCard key={ride.id} ride={ride} />
+              <ActiveCard key={ride.id}>
+                <RideCard ride={ride} />
               </ActiveCard>
             ) : (
               <RideCard key={ride.id} ride={ride} />

@@ -163,7 +163,6 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
                 Accept
               </ButtonComponent>
               <ConfirmationPopover
-                loading={loading}
                 onConfirm={() =>
                   notification.ride &&
                   declineRide(

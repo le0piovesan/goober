@@ -8,10 +8,10 @@ const RideCardSkeleton: React.FC = () => {
       boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
     >
       <CardBody>
-        <Skeleton height="20px" width="300px" />
+        <Skeleton height="20px" width="250px" />
         <HStack justifyContent={"space-between"}>
-          <Skeleton height="20px" width="300px" />
-          <Skeleton height="20px" width="300px" />
+          <Skeleton height="20px" width="250px" />
+          <Skeleton height="20px" width="250px" />
         </HStack>
         <Skeleton height="100px" width="100%" />
         <Stack mt="2" spacing="1">
@@ -20,16 +20,16 @@ const RideCardSkeleton: React.FC = () => {
             spacing={{ base: 2, md: 4 }}
             justifyContent="space-between"
           >
-            <Skeleton height="20px" width="300px" />
+            <Skeleton height="20px" width="250px" />
           </Stack>
           <HStack justifyContent={"space-between"}>
             <Box>
-              <Skeleton height="20px" width="300px" />
-              <Skeleton height="20px" width="300px" />
+              <Skeleton height="20px" width="250px" />
+              <Skeleton height="20px" width="250px" />
             </Box>
             <Box textAlign="right">
-              <Skeleton height="20px" width="300px" />
-              <Skeleton height="20px" width="300px" />
+              <Skeleton height="20px" width="250px" />
+              <Skeleton height="20px" width="250px" />
             </Box>
           </HStack>
         </Stack>

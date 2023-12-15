@@ -5,9 +5,25 @@ export const notificationRouter = createTRPCRouter({
   getDriverNotifications: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
-      const notification = await ctx.db.notification.findMany({
+      const declinedRides = await ctx.db.declinedRide.findMany({
         where: {
           driverId: input.id,
+        },
+        select: {
+          rideId: true,
+        },
+      });
+
+      const declinedRideIds = declinedRides.map((ride) => ride.rideId);
+
+      const notifications = await ctx.db.notification.findMany({
+        where: {
+          driverId: input.id,
+          NOT: {
+            rideId: {
+              in: declinedRideIds,
+            },
+          },
         },
         include: {
           ride: {
@@ -22,7 +38,7 @@ export const notificationRouter = createTRPCRouter({
         },
       });
 
-      return notification;
+      return notifications;
     }),
 
   getRiderNotifications: publicProcedure

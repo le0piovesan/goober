@@ -114,7 +114,6 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
           >
             {ride.status.current === "ONGOING" && (
               <ConfirmationPopover
-                loading={loading}
                 onConfirm={() => user && ride && cancelRide(ride.id, user.type)}
               />
             )}

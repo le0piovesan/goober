@@ -14,12 +14,13 @@ import {
 } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
 import { FiInfo } from "react-icons/fi";
+import { useLoading } from "~/hooks/useLoading";
 
 const ConfirmationModal: React.FC<{
   onConfirm: () => void;
-  loading: boolean;
-}> = ({ onConfirm, loading }) => {
+}> = ({ onConfirm }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   return (
     <>
@@ -42,14 +43,16 @@ const ConfirmationModal: React.FC<{
             justifyContent="space-between"
             pb={4}
           >
-            <Box fontSize="sm">We will look for another driver</Box>
+            <Box fontSize="sm">We will notify everyone</Box>
             <ButtonGroup size="sm">
               <ButtonComponent onClick={onClose}>Back</ButtonComponent>
               <ButtonComponent
                 declineCancel
                 onClick={() => {
+                  startLoading();
                   onConfirm();
                   onClose();
+                  stopLoading();
                 }}
               >
                 Confirm

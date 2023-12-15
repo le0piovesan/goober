@@ -21,6 +21,7 @@ import ConfirmationPopover from "./ConfirmationPopover";
 import { getStaticMapImage } from "~/utils/getStaticMapImage";
 import { tagStatus } from "~/utils/tagStatusFormatter";
 import { FiMap } from "react-icons/fi";
+import { useRouter } from "next/router";
 
 interface RideCardProps {
   ride: RideStatusLocation;
@@ -31,6 +32,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
   const toast = useToast();
   const { user } = useAuth();
   const cancel = api.ride.cancelRide.useMutation();
+  const router = useRouter();
 
   const cancelRide = async (rideId: number, userType: string) => {
     try {
@@ -45,6 +47,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
         duration: 4000,
         isClosable: true,
       });
+      router.reload();
     } catch (error) {
       if (error instanceof Error) {
         toast({

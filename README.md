@@ -102,15 +102,14 @@ Goober is a ride-share taxi service web application designed to connect riders w
   - [x] Implement user interactions and navigation
   - [x] Style frontend components
   - [x] Optimize for responsive design
-  - [ ] Design Figma art
   - [ ] Refactoring
 
 - [ ] **Backend Integration**
 
   - [x] Define Prisma data model
   - [x] Implement backend logic using tRPC
-  - [ ] Add Cron to expired/completed rides
   - [x] Add Image to Storage
+  - [ ] Add Cron to expired/completed rides
   - [ ] Subs to Ride / Notification DB
   - [ ] Set up OneSignal for notification
 

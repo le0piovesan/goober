@@ -9,20 +9,26 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  HStack,
+  Icon,
 } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
+import { FiInfo } from "react-icons/fi";
 
-const ConfirmationModal: React.FC<{ onConfirm: () => void }> = ({
-  onConfirm,
-}) => {
+const ConfirmationModal: React.FC<{
+  onConfirm: () => void;
+  loading: boolean;
+}> = ({ onConfirm, loading }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <ButtonComponent declineCancel onClick={onOpen}>
-        Cancel
-      </ButtonComponent>
-
+      <HStack justifyContent={"space-between"}>
+        <ButtonComponent loading={loading} declineCancel onClick={onOpen}>
+          Decline
+        </ButtonComponent>
+        <Icon as={FiInfo as React.ElementType} color={"primary"} />
+      </HStack>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent color="white" bg="background" borderColor="background">

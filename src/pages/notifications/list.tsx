@@ -15,7 +15,11 @@ const NotificationList: NextPage = () => {
         Notification List
       </Text>
       {isLoading ? (
-        <NotificationCardSkeleton />
+        <>
+          <NotificationCardSkeleton />
+          <NotificationCardSkeleton />
+          <NotificationCardSkeleton />
+        </>
       ) : notifications && notifications.length > 0 ? (
         <Flex direction="column">
           {notifications

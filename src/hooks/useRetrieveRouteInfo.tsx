@@ -50,6 +50,14 @@ const useRetrieveRouteInfo = (
       });
     } catch (error) {
       console.log(error);
+      toast({
+        title: "Error",
+        description: `No route found 😢`,
+        status: "error",
+        position: "top",
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       stopLoading();
     }

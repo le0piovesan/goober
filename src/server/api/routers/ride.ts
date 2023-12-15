@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { requestClosestDriver } from "./trigger";
 import { Status } from "@prisma/client";
+import { getDistance } from "geolib";
 
 export const rideRouter = createTRPCRouter({
   getRiderRides: publicProcedure
@@ -57,69 +57,142 @@ export const rideRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const existingRide = await ctx.db.ride.findFirst({
-        where: {
-          riderId: input.riderId,
-          status: {
-            OR: [
-              {
-                current: Status.REQUESTED,
-              },
-              {
-                current: Status.ONGOING,
-              },
-            ],
-          },
-        },
-      });
-
-      if (existingRide) {
-        throw new Error("You already have an open or ongoing ride request.");
-      }
-
       return ctx.db.$transaction(async (prisma) => {
-        const ride = await prisma.ride.create({
-          data: {
-            tripFee: input.tripFee,
-            distance: input.distance,
-            originName: input.originName,
-            destinationName: input.destinationName,
-            pickupLocation: {
-              create: {
-                latitude: input.pickupLocation.latitude,
-                longitude: input.pickupLocation.longitude,
+        try {
+          // Check if the rider has an existing ride
+          const existingRide = await prisma.ride.findFirst({
+            where: {
+              riderId: input.riderId,
+              status: {
+                OR: [
+                  {
+                    current: Status.REQUESTED,
+                  },
+                  {
+                    current: Status.ONGOING,
+                  },
+                ],
               },
             },
-            dropoffLocation: {
-              create: {
-                latitude: input.dropoffLocation.latitude,
-                longitude: input.dropoffLocation.longitude,
-              },
-            },
-            rider: {
-              connect: {
-                id: input.riderId,
-              },
-            },
-            status: {
-              create: {},
-            },
-          },
-        });
+          });
 
-        if (!ride) {
-          throw new Error("Not able to request a ride, try again later.");
+          if (existingRide) {
+            throw new Error(
+              "You already have an open or ongoing ride request.",
+            );
+          }
+
+          // Create a new ride
+          const ride = await prisma.ride.create({
+            data: {
+              tripFee: input.tripFee,
+              distance: input.distance,
+              originName: input.originName,
+              destinationName: input.destinationName,
+              pickupLocation: {
+                create: {
+                  latitude: input.pickupLocation.latitude,
+                  longitude: input.pickupLocation.longitude,
+                },
+              },
+              dropoffLocation: {
+                create: {
+                  latitude: input.dropoffLocation.latitude,
+                  longitude: input.dropoffLocation.longitude,
+                },
+              },
+              rider: {
+                connect: {
+                  id: input.riderId,
+                },
+              },
+              status: {
+                create: {},
+              },
+            },
+          });
+
+          // Find available drivers
+          const drivers = await prisma.driver.findMany({
+            where: {
+              onTrip: false,
+              NOT: {
+                declinedRides: {
+                  some: {
+                    rideId: ride.id,
+                  },
+                },
+              },
+              lastLocationId: {
+                not: {}
+              }
+            },
+            include: { lastLocation: true, declinedRides: true },
+          });
+
+          if (drivers.length === 0) {
+            throw new Error(
+              "No drivers near you at this moment, try again later.",
+            );
+          }
+
+          // Find the closest driver
+          const findClosestDriver = async () => {
+            const driversWithDistance = [];
+
+            for (const driver of drivers) {
+              const distance = getDistance(
+                {
+                  latitude: input.pickupLocation.latitude,
+                  longitude: input.pickupLocation.longitude,
+                },
+                {
+                  latitude: driver.lastLocation.latitude,
+                  longitude: driver.lastLocation.longitude,
+                },
+              );
+
+              driversWithDistance.push({
+                ...driver,
+                distance,
+              });
+            }
+
+            driversWithDistance.sort((a, b) => {
+              if (a.distance === b.distance) return 0.5 - Math.random();
+              return a.distance - b.distance;
+            });
+
+            return driversWithDistance[0] ?? null;
+          };
+
+          const closestDriver = await findClosestDriver();
+
+          if (!closestDriver) {
+            throw new Error("No drivers available at the moment.");
+          }
+
+          // Create a notification for the closest driver
+          const response = await prisma.notification.create({
+            data: {
+              message: `You have a new ride request`,
+              driver: {
+                connect: {
+                  id: closestDriver.id,
+                },
+              },
+              ride: {
+                connect: {
+                  id: ride.id,
+                },
+              },
+            },
+          });
+
+          return response;
+        } catch (error) {
+          throw error;
         }
-
-        const { id } = ride;
-        const response = await requestClosestDriver({
-          db: prisma,
-          input: {
-            rideId: id,
-            pickupLocation: input.pickupLocation,
-          },
-        });
-        return response;
       });
     }),
 

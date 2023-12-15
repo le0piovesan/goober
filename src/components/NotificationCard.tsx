@@ -7,6 +7,7 @@ import {
   Icon,
   CardBody,
   Skeleton,
+  Divider,
 } from "@chakra-ui/react";
 import type { NotificationWithRide } from "~/types/notification";
 import { FiCheckCircle } from "react-icons/fi";
@@ -37,14 +38,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   const { startLoading, stopLoading } = useLoading();
 
   const acceptRide = async (rideId: number, driverId: number) => {
+    startLoading();
     try {
-      startLoading();
       await driverAccept.mutateAsync({ rideId, driverId });
 
       toast({
         title: "Success",
         description: "Your ride has been accepted!",
         status: "success",
+        position: "top",
         duration: 4000,
         isClosable: true,
       });
@@ -56,6 +58,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           title: "Error",
           description: `${error.message} 😢`,
           status: "error",
+          position: "top",
           duration: 4000,
           isClosable: true,
         });
@@ -70,14 +73,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     driverId: number,
     pickupLocation: Location,
   ) => {
+    startLoading();
     try {
-      startLoading();
       await driverDecline.mutateAsync({ rideId, driverId, pickupLocation });
 
       toast({
         title: "Success",
         description: "You declined the ride",
         status: "info",
+        position: "top",
         duration: 4000,
         isClosable: true,
       });
@@ -90,6 +94,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           title: "Error",
           description: `${error.message} 😢`,
           status: "error",
+          position: "top",
           duration: 4000,
           isClosable: true,
         });
@@ -119,7 +124,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             )}
           </Badge>
         </HStack>
-        <Text>
+        <Text fontSize={"md"} color={"primary"}>
+          {loading ? (
+            <Skeleton height="20px" width="200px" />
+          ) : (
+            `${notification.message}`
+          )}
+        </Text>
+        <Divider />
+        <Text fontSize={"sm"}>
           {loading ? (
             <Skeleton height="20px" width="200px" />
           ) : (
@@ -142,13 +155,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
           notification.ride?.status.current === "REQUESTED" && (
             <HStack>
               <ButtonComponent
+                loading={loading}
                 onClick={() =>
                   acceptRide(notification.rideId!, notification.driverId!)
                 }
               >
-                {loading ? <Skeleton height="20px" width="80px" /> : "Accept"}
+                Accept
               </ButtonComponent>
               <ConfirmationPopover
+                loading={loading}
                 onConfirm={() =>
                   notification.ride &&
                   declineRide(
@@ -160,6 +175,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
               />
             </HStack>
           )}
+        <Divider />
         <Text fontSize="xs">
           {loading ? (
             <Skeleton height="20px" width="150px" />

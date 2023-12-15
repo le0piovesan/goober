@@ -41,6 +41,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
         title: "Success",
         description: "The ride was canceled successfully",
         status: "success",
+        position: "top",
         duration: 4000,
         isClosable: true,
       });
@@ -50,6 +51,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
           title: "Error",
           description: `${error.message} 😢`,
           status: "error",
+          position: "top",
           duration: 4000,
           isClosable: true,
         });
@@ -112,6 +114,7 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
           >
             {ride.status.current === "ONGOING" && (
               <ConfirmationPopover
+                loading={loading}
                 onConfirm={() => user && ride && cancelRide(ride.id, user.type)}
               />
             )}

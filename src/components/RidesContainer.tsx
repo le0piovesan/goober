@@ -32,7 +32,11 @@ const RidesContainer = () => {
       )}
 
       {isLoading ? (
-        <RideCardSkeleton />
+        <>
+          <RideCardSkeleton />
+          <RideCardSkeleton />
+          <RideCardSkeleton />
+        </>
       ) : filteredRides && filteredRides.length > 0 ? (
         filteredRides
           .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())

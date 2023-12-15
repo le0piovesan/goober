@@ -69,14 +69,14 @@ const SignUp: NextPage = () => {
       .upload(`/${email}`, image);
 
     if (error) {
-      if (error instanceof Error)
-        toast({
-          title: "Error",
-          description: `${error.message} 😢`,
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
+      console.log(error);
+      toast({
+        title: "Error",
+        description: `There is already an user with this email 😢`,
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
       throw error;
     }
     return data.path;
@@ -88,6 +88,7 @@ const SignUp: NextPage = () => {
         title: "Error",
         description: "Passwords don't match 🔑",
         status: "error",
+        position: "top",
         duration: 4000,
         isClosable: true,
       });

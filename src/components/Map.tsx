@@ -77,6 +77,7 @@ const Map: React.FC = () => {
         title: "Error",
         description: "No Location or User ID",
         status: "error",
+        position: "top",
         duration: 4000,
         isClosable: true,
       });
@@ -105,17 +106,18 @@ const Map: React.FC = () => {
         title: "Done! 🚗",
         description: "We are looking for the nearest Goober Driver!",
         status: "success",
+        position: "top",
         duration: 8000,
         isClosable: true,
       });
       await router.replace("/rides/feed");
     } catch (error) {
-      console.error(error);
       if (error instanceof Error)
         toast({
           title: "Error",
           description: `${error.message} 😢`,
           status: "error",
+          position: "top",
           duration: 4000,
           isClosable: true,
         });

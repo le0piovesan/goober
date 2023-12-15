@@ -17,6 +17,8 @@ export const tagStatus = (status: string) => {
     case "FINISHED":
     case "Ride completed! 🚀":
       return { tag: "finished", color: "primary" };
+    case "You have accepted the ride":
+      return { tag: "accepted", color: "blue" };
     default:
       return { tag: "expired", color: "gray" };
   }

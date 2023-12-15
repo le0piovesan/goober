@@ -67,6 +67,7 @@ const MenuContent: React.FC<MenuContentProps> = ({ onClose }) => {
               src={getAvatar(user?.email)}
               onLoad={() => startLoading()}
               fill
+              sizes="200px"
               alt="User avatar"
               className="rounded-full"
               style={{

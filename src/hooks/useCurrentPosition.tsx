@@ -24,7 +24,7 @@ const useCurrentPosition = () => {
     });
 
     if (user && user.type === "Driver")
-      driver.mutate({
+      driver.mutateAsync({
         id: user.id,
         latitude: coords.latitude,
         longitude: coords.longitude,
@@ -37,6 +37,7 @@ const useCurrentPosition = () => {
         title: "Error",
         description: "Geolocation is not supported by your browser 😢",
         status: "error",
+        position: "top",
         duration: 4000,
         isClosable: true,
       });

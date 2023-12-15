@@ -56,6 +56,7 @@ const Login: NextPage = () => {
           title: "Error",
           description: `${error.message} 😢`,
           status: "error",
+          position: "top",
           duration: 4000,
           isClosable: true,
         });

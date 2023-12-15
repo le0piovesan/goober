@@ -70,7 +70,6 @@ const SignUp: NextPage = () => {
       .upload(`/${email}`, image);
 
     if (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: `There is already an user with this email 😢`,
@@ -115,7 +114,6 @@ const SignUp: NextPage = () => {
       });
       await router.replace("/users/login");
     } catch (error) {
-      console.error(error);
       if (error instanceof Error)
         toast({
           title: "Error",

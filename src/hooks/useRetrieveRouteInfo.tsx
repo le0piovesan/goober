@@ -49,7 +49,6 @@ const useRetrieveRouteInfo = (
         distance: legs?.distance?.text ?? "",
       });
     } catch (error) {
-      console.log(error);
       toast({
         title: "Error",
         description: `No route found 😢`,

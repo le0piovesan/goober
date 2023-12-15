@@ -50,7 +50,6 @@ const Login: NextPage = () => {
         isLoggedIn: true,
       });
     } catch (error) {
-      console.error(error);
       if (error instanceof Error)
         toast({
           title: "Error",

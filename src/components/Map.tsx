@@ -28,7 +28,6 @@ type Coordinates = {
 type FormInputsProps = z.infer<typeof schema>;
 
 const Map: React.FC = () => {
-  console.log("Map Component Mounted");
   const { user } = useAuth();
   const { position } = useCurrentPosition();
   const ride = api.ride.createRide.useMutation();

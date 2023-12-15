@@ -7,7 +7,6 @@ import NotificationCardSkeleton from "~/components/skeletons/NotificationCardSke
 
 const NotificationList: NextPage = () => {
   const { notifications, isLoading } = useUserNotifications();
-  console.log(notifications);
 
   return (
     <VStack width="100%" mx={2}>

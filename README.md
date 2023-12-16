@@ -137,11 +137,15 @@ There is still room for improvement, but overall I am really glad of what was ma
 Then run the following commands:
 
 ```bash
-$ npm install
-$ npm run dev
-```
+# Install dependencies
+npm install
 
-_The app will run in dev mode._
+# Build the app
+npm run build
+
+# Start the app
+npm start
+```
 
 <hr/>
 

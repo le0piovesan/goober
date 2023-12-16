@@ -7,13 +7,12 @@ Goober is a PWA (Progressive Web Application) ride-share taxi service designed t
 ## Table of Contents
 
 - [Technical Overview](#technical-overview)
-- [Product Decisions](#product-decisions)
+- [Product Decisions and Tradeoffs](#product-decisions-and-tradeoffs)
 - [UX Decisions](#ux-decisions)
 - [Risk and Unknowns](#risk-and-unknowns)
 - [ERD Schema, PWA and Lint](#erd-pwa-lint)
 - [Developer Roadmap](#developer-roadmap)
-- [Sneak Peek](#sneak-peek)
-- [Final Considerations](#final-considerations)
+- [Installation and Guide](#installation-and-guide)
 
 ## Technical Overview
 
@@ -36,9 +35,22 @@ Goober is a PWA (Progressive Web Application) ride-share taxi service designed t
 ### Infrastructure
 
 - **Deploy:** [Vercel](https://vercel.com/)
-- **Logging:** [Axiom](https://axiom.co/)
+- **Production Logging:** [Axiom](https://axiom.co/)
 
-## Product Decisions
+## Product Decisions and Tradeoffs
+
+Oh, what a ride. I am always grateful for the chance to learn new technologies, such as Supabase and T3, while simultaneously striving for this great opportunity.
+While I had previous experience with Firebase, it offered a solid foundation but also presented its own set of challenges on the way.
+
+Since we didn't need to waste time implementing any acomplex authentication/user profiles, instead I've created a simple register/login page with a switch for choosing one of the 2 available personas (riders and drivers). This way, being able to create a corresponding model table for each and making the necessary relationships with the rest of the schema. Also, instead of using a real and complex auth system to validate, I decided instead to create my own simple validation custom hook with React Context, after login it validates the user email/encrypted password on the database, saves it to the context and local browser storage.  
+Ultimately, this decision was made by thinking about flexibillity and scallability of the project.
+
+The find driver algorithm was really fun to build, it took me back to the times where I worked at a startup and we used to brainstorm lots of ideas. The algorithm works in a way to ensure fair competition between drivers. It searches for the last location of the available drivers that are not in a ride, then filters and looks for the closest ones to the pickup location coords. If the are more than one in certain radius, it randomly chooses one.
+
+I also decided to focus more on the front-end and design. The feature I found to be the most impressive was the responsiveness of the UX/UI layout in the WepApp. I consistently strive to prioritize accessibility in my development process.
+
+I spent about a week on the whole project. Having to attend work, taking care of some development and deploys at the same time, made it a little bit harder this challenge.
+There is still room for improvement, but overall I am really glad of what was made within this time.
 
 - **Ride Request Process:**
 
@@ -48,13 +60,12 @@ Goober is a PWA (Progressive Web Application) ride-share taxi service designed t
   - Riders can cancel ongoing rides.
 
 - **Driver Interaction:**
+
   - Drivers can receive ride requests and choose to accept or decline.
   - Each ride comes with an indication of the payment amount.
   - Once a ride is accepted, drivers won't receive new requests until the ride is complete.
   - Drivers receive relevant information for pickup and completion of the ride.
   - Drivers can cancel ongoing rides.
-
-## UX Decisions
 
 - **User Flow:**
 
@@ -62,10 +73,6 @@ Goober is a PWA (Progressive Web Application) ride-share taxi service designed t
   - Intuitive interfaces for requesting rides and managing ongoing rides.
   - Clear communication of ride details, including pickup and dropoff locations.
   - Minimal user interactions to ensure a smooth experience.
-
-- **Real-time Updates:**
-  - Leverage Supabase for real-time updates on ride requests and status changes.
-  - Provide notifications to both riders and drivers for important events (e.g., ride acceptance, cancellation).
 
 ## Risk and Unknowns
 
@@ -116,21 +123,28 @@ Goober is a PWA (Progressive Web Application) ride-share taxi service designed t
   - [x] Configure production log system with Axiom
   - [x] Create a detailed README.md
 
-- **Future Features**
+- **Future Implementations**
   - Add Cron to expired/completed rides
   - Subs to Ride / Notification DB
   - Set up OneSignal for notification
 
-## Sneak Peek:
+## Installation and Guid
 
-[Here is a quick video showing the features](https://youtu.be/tfvZpwec8tE) 👀
+> In order to run locally download the .env file from the gist, or copy all its content and place in a .env file in the root of the project.
+
+[Here is the .env file to run the app locally](https://gist.github.com/le0piovesan/52ae22edbd8b0b75f2d1fdb894bf460e) 🔐
+
+Then run the following commands:
+
+```bash
+$ npm install
+$ npm run dev
+```
+
+_The app will run in dev mode._
+
+<hr/>
 
 [Here is the link of the deployable app](https://goober-three.vercel.app/) 🚀
 
-## Final Considerations
-
-Oh, what a ride. I am always grateful for having the chance to learn new technologies, such as Supabase and T3, while simultaneously striving for this great opportunity.
-While I had previous experience with Firebase, it offered a solid foundation but also presented its own set of challenges on the way. Having to attend work, taking care of some development and deploys at the same time, made it a little bit harder this challenge.
-There are still room for improvement, but overall I am really glad of what I could made within a week!
-
-The feature I found to be the most impressive was the responsiveness of the UX/UI layout in the WepApp. I consistently strive to prioritize accessibility in my development process.
+[Here is a quick video showing the features](https://youtu.be/tfvZpwec8tE) 👀

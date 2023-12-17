@@ -1,8 +1,12 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
-import { getDistance } from "geolib";
 import { Status } from "@prisma/client";
+import {
+  findAvailableDrivers,
+  cancelExistingRideRequest,
+  requestClosestDriver,
+} from "./trigger";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -231,19 +235,10 @@ export const driverRouter = createTRPCRouter({
             },
           });
 
-          // Find all drivers who have not declined this ride yet and are not on ride
-          const drivers = await prisma.driver.findMany({
-            where: {
-              onTrip: false,
-              NOT: {
-                declinedRides: {
-                  some: {
-                    rideId: input.rideId,
-                  },
-                },
-              },
-            },
-            include: { lastLocation: true },
+          const { rideId, pickupLocation } = input;
+          const drivers = await findAvailableDrivers({
+            prisma,
+            input: { rideId, pickupLocation },
           });
 
           // If there are no other drivers available, update the status of ride to cancelled
@@ -255,72 +250,12 @@ export const driverRouter = createTRPCRouter({
                 driver.lastLocation.longitude === 0,
             )
           ) {
-            await prisma.rideStatus.update({
-              where: { id: input.rideId },
-              data: { current: Status.CANCELED, finishedAt: new Date() },
-            });
-
-            // Find the rider who requested this ride
-            const ride = await prisma.ride.findUnique({
-              where: { id: input.rideId },
-              include: { rider: true },
-            });
-
-            // Notify the rider that his ride was cancelled
-            await prisma.notification.create({
-              data: {
-                message: "No drivers available at the moment, try again later.",
-                riderId: ride?.rider.id,
-              },
-            });
+            await cancelExistingRideRequest(prisma, input.rideId);
           } else {
-            // If there are drivers, find the closest one
-            const findClosestDriver = async () => {
-              const driversWithDistance = [];
-
-              for (const driver of drivers) {
-                const distance = getDistance(
-                  {
-                    latitude: input.pickupLocation.latitude,
-                    longitude: input.pickupLocation.longitude,
-                  },
-                  {
-                    latitude: driver.lastLocation.latitude,
-                    longitude: driver.lastLocation.longitude,
-                  },
-                );
-
-                driversWithDistance.push({
-                  ...driver,
-                  distance,
-                });
-              }
-
-              driversWithDistance.sort((a, b) => {
-                if (a.distance === b.distance) return 0.5 - Math.random();
-                return a.distance - b.distance;
-              });
-
-              return driversWithDistance[0] ?? null;
-            };
-
-            const closestDriver = await findClosestDriver();
-
-            // Notify the closest driver, sending the ride request
-            await prisma.notification.create({
-              data: {
-                message: `You have a new ride request`,
-                driver: {
-                  connect: {
-                    id: closestDriver?.id,
-                  },
-                },
-                ride: {
-                  connect: {
-                    id: input.rideId,
-                  },
-                },
-              },
+            await requestClosestDriver({
+              prisma,
+              drivers,
+              input: { rideId, pickupLocation },
             });
           }
         } catch (error) {

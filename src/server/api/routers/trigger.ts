@@ -1,9 +1,8 @@
 import { z } from "zod";
 import { getDistance } from "geolib";
-import type { Prisma, PrismaPromise } from "@prisma/client";
-import type { Notification } from "@prisma/client";
 import { Status } from "@prisma/client";
-import { PrismaClient } from "@prisma/client";
+import { type PrismaClient } from "@prisma/client";
+import type { Driver as PrismaDriver, Location } from "@prisma/client";
 
 const getRequestClosestDriverInputSchema = z.object({
   rideId: z.number(),
@@ -15,152 +14,180 @@ const getRequestClosestDriverInputSchema = z.object({
 
 type DriverInput = z.infer<typeof getRequestClosestDriverInputSchema>;
 
-const sendDriverRideRequestNotificationSchema = z.object({
-  message: z.string(),
-  driverId: z.number(),
-  rideId: z.number(),
-});
+type PickupLocationInput = z.infer<
+  typeof getRequestClosestDriverInputSchema
+>["pickupLocation"];
 
-type NotificationInput = z.infer<
-  typeof sendDriverRideRequestNotificationSchema
->;
+type Driver = PrismaDriver & {
+  lastLocation: Location;
+};
 
 type TransactionalPrismaClient = Omit<
   PrismaClient,
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
-const requestClosestDriver = async ({
-  db,
+const findAvailableDrivers = async ({
+  prisma,
   input,
 }: {
-  db: TransactionalPrismaClient;
+  prisma: TransactionalPrismaClient;
   input: DriverInput;
-}): Promise<Prisma.Prisma__NotificationClient<Notification>> => {
+}) => {
   try {
-    const drivers = await db.driver.findMany({
+    // Find all drivers who have not declined this ride yet and are not on ride
+    const drivers = await prisma.driver.findMany({
       where: {
         onTrip: false,
-        declinedRides: {
-          none: {
-            rideId: input.rideId,
+        NOT: {
+          declinedRides: {
+            some: {
+              rideId: input.rideId,
+            },
           },
         },
       },
       include: { lastLocation: true },
     });
 
-    if (drivers.length === 0) {
-      throw new Error("No drivers found, try again later.");
-    }
+    return drivers;
+  } catch (error) {
+    throw error;
+  }
+};
 
-    const driversWithDistance = drivers.map((driver) => ({
-      ...driver,
-      distance: getDistance(
+const requestClosestDriver = async ({
+  prisma,
+  drivers,
+  input,
+}: {
+  prisma: TransactionalPrismaClient;
+  drivers: Driver[];
+  input: DriverInput;
+}) => {
+  try {
+    const closestDriver = await findClosestDriver(
+      drivers,
+      input.pickupLocation,
+    );
+
+    await sendDriverRideRequestNotification(
+      prisma,
+      closestDriver,
+      input.rideId,
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
+const cancelExistingRideRequest = async (
+  prisma: TransactionalPrismaClient,
+  rideId: number,
+) => {
+  try {
+    // Update the status of ride to cancelled
+    await prisma.rideStatus.update({
+      where: { id: rideId },
+      data: { current: Status.CANCELED, finishedAt: new Date() },
+    });
+
+    // Look for the ride requested to get the rider id
+    const ride = await prisma.ride.findUnique({
+      where: { id: rideId },
+      include: { rider: true },
+    });
+
+    // Notify the rider that his ride was cancelled
+    await prisma.notification.create({
+      data: {
+        message: "No drivers available at the moment, try again later.",
+        rider: {
+          connect: {
+            id: ride?.riderId,
+          },
+        },
+        ride: {
+          connect: {
+            id: ride?.id,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const findClosestDriver = async (
+  drivers: Driver[],
+  pickupLocation: PickupLocationInput,
+) => {
+  try {
+    const driversWithDistance = [];
+    // Get distance between pickup location and available drivers last location
+    for (const driver of drivers) {
+      const distance = getDistance(
         {
-          latitude: input.pickupLocation.latitude,
-          longitude: input.pickupLocation.longitude,
+          latitude: pickupLocation.latitude,
+          longitude: pickupLocation.longitude,
         },
         {
           latitude: driver.lastLocation.latitude,
           longitude: driver.lastLocation.longitude,
         },
-      ),
-    }));
+      );
 
+      driversWithDistance.push({
+        ...driver,
+        distance,
+      });
+    }
+    // Sort drivers by distance to check the closest one, if there are more than one, pick one randomly
     driversWithDistance.sort((a, b) => {
       if (a.distance === b.distance) return 0.5 - Math.random();
       return a.distance - b.distance;
     });
 
-    const closestDriver = driversWithDistance[0];
+    return driversWithDistance[0]!;
+  } catch (error) {
+    throw error;
+  }
+};
 
-    if (!closestDriver) {
-      throw new Error("No drivers available at the moment.");
-    }
-
-    const response = await sendDriverRideRequestNotification({
-      db,
-      input: {
+const sendDriverRideRequestNotification = async (
+  prisma: TransactionalPrismaClient,
+  closestDriver: Driver,
+  rideId: number,
+) => {
+  try {
+    // Notify the closest driver, sending the ride request
+    const response = await prisma.notification.create({
+      data: {
         message: `You have a new ride request`,
-        driverId: closestDriver.id,
-        rideId: input.rideId,
+        driver: {
+          connect: {
+            id: closestDriver.id,
+          },
+        },
+        ride: {
+          connect: {
+            id: rideId,
+          },
+        },
       },
     });
 
     return response;
   } catch (error) {
-    const newDb = new PrismaClient();
-    await cancelExistingRideRequest(newDb, input.rideId);
-    await newDb.$disconnect();
     throw error;
   }
 };
 
-const sendDriverRideRequestNotification = async ({
-  db,
-  input,
-}: {
-  db: TransactionalPrismaClient;
-  input: NotificationInput;
-}): Promise<PrismaPromise<Notification>> => {
-  const response = await db.notification.create({
-    data: {
-      message: input.message,
-      driver: {
-        connect: {
-          id: input.driverId,
-        },
-      },
-      ride: {
-        connect: {
-          id: input.rideId,
-        },
-      },
-    },
-  });
-
-  return response;
+export {
+  findAvailableDrivers,
+  requestClosestDriver,
+  cancelExistingRideRequest,
+  findClosestDriver,
+  sendDriverRideRequestNotification,
 };
-
-const cancelExistingRideRequest = async (
-  db: TransactionalPrismaClient,
-  rideId: number,
-) => {
-  const ride = await db.ride.findUnique({
-    where: {
-      id: rideId,
-    },
-    include: {
-      status: {},
-    },
-  });
-
-  await db.rideStatus.update({
-    where: {
-      id: ride?.statusId,
-    },
-    data: {
-      current: Status.CANCELED,
-      finishedAt: new Date(),
-    },
-  });
-
-  await db.notification.create({
-    data: {
-      message: "No drivers available at the moment, try again later.",
-      rider: {
-        connect: {
-          id: ride?.riderId,
-        },
-      },
-      ride: {
-        connect: {
-          id: ride?.id,
-        },
-      },
-    },
-  });
-};
-
-export { requestClosestDriver, sendDriverRideRequestNotification };

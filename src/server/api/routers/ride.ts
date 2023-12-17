@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Status } from "@prisma/client";
-import { getDistance } from "geolib";
+import { findAvailableDrivers, requestClosestDriver } from "./trigger";
 
 export const rideRouter = createTRPCRouter({
   getRiderRides: publicProcedure
@@ -112,87 +112,36 @@ export const rideRouter = createTRPCRouter({
             },
           });
 
-          // Find available drivers
-          const drivers = await prisma.driver.findMany({
-            where: {
-              onTrip: false,
-              NOT: {
-                declinedRides: {
-                  some: {
-                    rideId: ride.id,
-                  },
-                },
-              },
-            },
-            include: { lastLocation: true },
+          const { pickupLocation } = input;
+          const drivers = await findAvailableDrivers({
+            prisma,
+            input: { rideId: ride.id, pickupLocation },
           });
 
+          // Rollback and inform client that there are no drivers available
           if (drivers.length === 0) {
             throw new Error(
               "No drivers near you at this moment, try again later.",
             );
           }
-          
-          if (drivers.some(driver => driver.lastLocation.latitude === 0 || driver.lastLocation.longitude === 0)) {
+
+          if (
+            drivers.some(
+              (driver) =>
+                driver.lastLocation.latitude === 0 ||
+                driver.lastLocation.longitude === 0,
+            )
+          ) {
             throw new Error(
               "Found drivers but they haven't set their location yet.",
             );
           }
 
-          // Find the closest driver
-          const findClosestDriver = async () => {
-            const driversWithDistance = [];
-
-            for (const driver of drivers) {
-              const distance = getDistance(
-                {
-                  latitude: input.pickupLocation.latitude,
-                  longitude: input.pickupLocation.longitude,
-                },
-                {
-                  latitude: driver.lastLocation.latitude,
-                  longitude: driver.lastLocation.longitude,
-                },
-              );
-
-              driversWithDistance.push({
-                ...driver,
-                distance,
-              });
-            }
-
-            driversWithDistance.sort((a, b) => {
-              if (a.distance === b.distance) return 0.5 - Math.random();
-              return a.distance - b.distance;
-            });
-
-            return driversWithDistance[0] ?? null;
-          };
-
-          const closestDriver = await findClosestDriver();
-
-          if (!closestDriver) {
-            throw new Error("No drivers available at the moment.");
-          }
-
-          // Create a notification for the closest driver
-          const response = await prisma.notification.create({
-            data: {
-              message: `You have a new ride request`,
-              driver: {
-                connect: {
-                  id: closestDriver.id,
-                },
-              },
-              ride: {
-                connect: {
-                  id: ride.id,
-                },
-              },
-            },
+          await requestClosestDriver({
+            prisma,
+            drivers,
+            input: { rideId: ride.id, pickupLocation },
           });
-
-          return response;
         } catch (error) {
           throw error;
         }

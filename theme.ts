@@ -10,6 +10,10 @@ const extendedTheme = {
     ...theme.colors,
     ...tailwindConfig.theme.extend.colors,
   },
+  fonts: {
+    body: "Varela, fallback, sans-serif",
+    heading: "Varela, fallback, sans-serif",
+  },
 };
 
 export default extendTheme(extendedTheme);

@@ -1,16 +1,13 @@
 @font-face {
-  font-family: "Your Font";
-  src:
-    url("/fonts/ZillaSlab-Regular.ttf") format("truetype"),
-    url("/fonts/ZillaSlab-LightItalicd.ttf") format("truetype"),
-    url("/fonts/ZillaSlab-Bold.ttf") format("truetype");
+  font-family: "Varela";
+  src: url("/fonts/VarelaRound-Regular.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 body {
-  font-family: "Zilla Slab", sans-serif;
+  font-family: "Varela", fallback, sans-serif;
 }
 
 @tailwind base;

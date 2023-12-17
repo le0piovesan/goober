@@ -6,14 +6,14 @@ import NotificationCard from "~/components/NotificationCard";
 import NotificationCardSkeleton from "~/components/skeletons/NotificationCardSkeleton";
 
 const NotificationList: NextPage = () => {
-  const { notifications, isLoading } = useUserNotifications();
+  const { notifications, loading } = useUserNotifications();
 
   return (
     <VStack width="100%" mx={2}>
       <Text fontSize="2xl" fontWeight="bold" color={"primary"} m={1}>
         Notification List
       </Text>
-      {isLoading ? (
+      {loading ? (
         <>
           <NotificationCardSkeleton />
           <NotificationCardSkeleton />

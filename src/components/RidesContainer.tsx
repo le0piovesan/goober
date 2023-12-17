@@ -9,7 +9,7 @@ import InputComponent from "./InputComponent";
 import ActiveCard from "./BouncingActiveCard";
 
 const RidesContainer = () => {
-  const { rides, isLoading } = useUserRides();
+  const { rides, loading } = useUserRides();
   const { user } = useAuth();
   const [search, setSearch] = useState("");
 
@@ -31,7 +31,7 @@ const RidesContainer = () => {
         />
       )}
 
-      {isLoading ? (
+      {loading ? (
         <Stack spacing={4}>
           <RideCardSkeleton />
           <RideCardSkeleton />

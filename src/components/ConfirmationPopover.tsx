@@ -14,18 +14,16 @@ import {
 } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
 import { FiInfo } from "react-icons/fi";
-import { useLoading } from "~/hooks/useLoading";
 
 const ConfirmationModal: React.FC<{
   onConfirm: () => void;
 }> = ({ onConfirm }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { loading, startLoading, stopLoading } = useLoading();
 
   return (
     <>
       <HStack justifyContent={"space-between"}>
-        <ButtonComponent loading={loading} declineCancel onClick={onOpen}>
+        <ButtonComponent declineCancel onClick={onOpen}>
           Decline
         </ButtonComponent>
         <Icon as={FiInfo as React.ElementType} color={"primary"} />
@@ -48,12 +46,9 @@ const ConfirmationModal: React.FC<{
               <ButtonComponent onClick={onClose}>Back</ButtonComponent>
               <ButtonComponent
                 declineCancel
-                loading={loading}
                 onClick={() => {
-                  startLoading();
                   onConfirm();
                   onClose();
-                  stopLoading();
                 }}
               >
                 Confirm

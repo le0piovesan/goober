@@ -110,34 +110,32 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       mb={2}
     >
       <CardBody>
-        <HStack>
-          <Icon
-            as={FiCheckCircle as React.ElementType}
-            color={tagStatus(notification.message).color}
-          />
-          <Badge colorScheme={tagStatus(notification.message).color}>
-            {loading ? (
-              <Skeleton height="20px" width="80px" />
-            ) : (
-              tagStatus(notification.message).tag
-            )}
-          </Badge>
-        </HStack>
-        <Text fontSize={"md"} color={"primary"}>
-          {loading ? (
-            <Skeleton height="20px" width="200px" />
-          ) : (
-            `${notification.message}`
-          )}
-        </Text>
+        {loading ? (
+          <Skeleton height="20px" width="80px" />
+        ) : (
+          <HStack>
+            <Icon
+              as={FiCheckCircle as React.ElementType}
+              color={tagStatus(notification.message).color}
+            />
+            <Badge colorScheme={tagStatus(notification.message).color}>
+              {tagStatus(notification.message).tag}
+            </Badge>
+          </HStack>
+        )}
+        {loading ? (
+          <Skeleton height="20px" width="200px" />
+        ) : (
+          <Text fontSize={"md"} color={"primary"}>
+            {notification.message}
+          </Text>
+        )}
         <Divider />
-        <Text fontSize={"sm"}>
-          {loading ? (
-            <Skeleton height="20px" width="200px" />
-          ) : (
-            `In ${notification.ride?.originName}`
-          )}
-        </Text>
+        {loading ? (
+          <Skeleton height="20px" width="200px" />
+        ) : (
+          <Text fontSize={"sm"}>In {notification.ride?.originName}</Text>
+        )}
         <Text fontSize="sm">
           {loading ? (
             <Skeleton height="20px" width="250px" />
@@ -145,16 +143,18 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
             <>
               The trip fee is:{" "}
               <Text as="span" fontWeight={"bold"} color={"green"}>
-                $ {notification.ride?.tripFee}
+                ${notification.ride?.tripFee}
               </Text>
             </>
           )}
         </Text>
-        {user?.type === "Driver" &&
+        {loading ? (
+          <Skeleton height="20px" width="250px" />
+        ) : (
+          user?.type === "Driver" &&
           notification.ride?.status.current === "REQUESTED" && (
             <HStack>
               <ButtonComponent
-                loading={loading}
                 onClick={() =>
                   acceptRide(notification.rideId!, notification.driverId!)
                 }
@@ -172,15 +172,15 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
                 }
               />
             </HStack>
-          )}
+          )
+        )}
+
         <Divider />
-        <Text fontSize="xs">
-          {loading ? (
-            <Skeleton height="20px" width="150px" />
-          ) : (
-            formatDateTime(notification.createdAt)
-          )}
-        </Text>
+        {loading ? (
+          <Skeleton height="20px" width="150px" />
+        ) : (
+          <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
+        )}
       </CardBody>
     </Card>
   );

@@ -72,31 +72,32 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
       className="transform transition-transform duration-300 ease-in-out hover:scale-105"
     >
       <CardBody>
+        {loading ? (
+          <Skeleton height="20px" width="100px" />
+        ) : (
+          <HStack justifyContent={"space-between"}>
+            <Badge colorScheme={tagStatus(ride.status.current).color}>
+              {ride.status.current}
+            </Badge>
+            <Icon as={FiMap as React.ElementType} color={"primary"} />
+          </HStack>
+        )}
+
         <HStack justifyContent={"space-between"}>
-          <Badge colorScheme={tagStatus(ride.status.current).color}>
-            {loading ? (
-              <Skeleton height="20px" width="100px" />
-            ) : (
-              ride.status.current
-            )}
-          </Badge>
-          <Icon as={FiMap as React.ElementType} color={"primary"} />
-        </HStack>
-        <HStack justifyContent={"space-between"}>
-          <Text fontSize={"xs"}>
-            {loading ? (
-              <Skeleton height="20px" width="150px" />
-            ) : (
-              `Requested at: ${formatDateTime(ride.createdAt)}`
-            )}
-          </Text>
-          <Text fontSize={"xs"}>
-            {loading ? (
-              <Skeleton height="20px" width="150px" />
-            ) : (
-              `Updated at: ${formatDateTime(ride.updatedAt)}`
-            )}
-          </Text>
+          {loading ? (
+            <Skeleton height="20px" width="150px" />
+          ) : (
+            <Text fontSize={"xs"}>
+              Requested at: {formatDateTime(ride.createdAt)}
+            </Text>
+          )}
+          {loading ? (
+            <Skeleton height="20px" width="150px" />
+          ) : (
+            <Text fontSize={"xs"}>
+              Updated at: {formatDateTime(ride.updatedAt)}
+            </Text>
+          )}
         </HStack>
         {loading ? (
           <Skeleton height="200px" />
@@ -109,50 +110,57 @@ const RideCard: React.FC<RideCardProps> = ({ ride }) => {
             h="200px"
           />
         )}
+
         <Stack mt="2" spacing="1">
-          <Stack
-            direction={{ base: "column", md: "row" }}
-            spacing={{ base: 2, md: 4 }}
-            justifyContent="space-between"
-          >
-            {ride.status.current === "ONGOING" && (
-              <ConfirmationPopover
-                onConfirm={() => user && ride && cancelRide(ride.id, user.type)}
-              />
-            )}
-          </Stack>
+          {loading ? (
+            <Skeleton height="200px" />
+          ) : (
+            <Stack
+              direction={{ base: "column", md: "row" }}
+              spacing={{ base: 2, md: 4 }}
+              justifyContent="space-between"
+            >
+              {ride.status.current === "ONGOING" && (
+                <ConfirmationPopover
+                  onConfirm={() =>
+                    user && ride && cancelRide(ride.id, user.type)
+                  }
+                />
+              )}
+            </Stack>
+          )}
           <HStack justifyContent={"space-between"}>
             <Box>
-              <Text fontSize="sm" fontWeight={"semibold"} color={"primary"}>
-                {loading ? (
-                  <Skeleton height="20px" width="100px" />
-                ) : (
-                  `From: ${ride.originName}`
-                )}
-              </Text>
-              <Text fontSize="sm" fontWeight={"semibold"} color={"secondary"}>
-                {loading ? (
-                  <Skeleton height="20px" width="100px" />
-                ) : (
-                  `To: ${ride.destinationName}`
-                )}
-              </Text>
+              {loading ? (
+                <Skeleton height="20px" width="100px" />
+              ) : (
+                <Text fontSize="sm" fontWeight={"semibold"} color={"primary"}>
+                  From: {ride.originName}
+                </Text>
+              )}
+              {loading ? (
+                <Skeleton height="20px" width="100px" />
+              ) : (
+                <Text fontSize="sm" fontWeight={"semibold"} color={"secondary"}>
+                  To: {ride.destinationName}
+                </Text>
+              )}
             </Box>
             <Box textAlign="right">
-              <Text fontSize="sm" fontWeight={"semibold"}>
-                {loading ? (
-                  <Skeleton height="20px" width="80px" />
-                ) : (
-                  `Distance: ${ride.distance}`
-                )}
-              </Text>
-              <Text fontSize="sm" fontWeight={"semibold"} color={"green"}>
-                {loading ? (
-                  <Skeleton height="20px" width="80px" />
-                ) : (
-                  `Value: $ ${ride.tripFee}`
-                )}
-              </Text>
+              {loading ? (
+                <Skeleton height="20px" width="80px" />
+              ) : (
+                <Text fontSize="sm" fontWeight={"semibold"}>
+                  Distance: {ride.distance}
+                </Text>
+              )}
+              {loading ? (
+                <Skeleton height="20px" width="80px" />
+              ) : (
+                <Text fontSize="sm" fontWeight={"semibold"} color={"green"}>
+                  Value: ${ride.tripFee}
+                </Text>
+              )}
             </Box>
           </HStack>
         </Stack>

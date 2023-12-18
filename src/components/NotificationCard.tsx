@@ -14,7 +14,6 @@ import { FiCheckCircle } from "react-icons/fi";
 import { useAuth } from "~/context/AuthContext";
 import ButtonComponent from "./ButtonComponent";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
 import { useLoading } from "~/hooks/useLoading";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
@@ -32,7 +31,6 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
   const driverAccept = api.driver.acceptRide.useMutation();
   const driverDecline = api.driver.declineRide.useMutation();
   const toast = useToast();
-  const router = useRouter();
   const { loading, startLoading, stopLoading } = useLoading();
 
   const acceptRide = async (rideId: number, driverId: number) => {
@@ -48,8 +46,6 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         duration: 4000,
         isClosable: true,
       });
-
-      await router.replace("/rides/feed");
     } catch (error) {
       if (error instanceof Error) {
         toast({
@@ -83,7 +79,6 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
         duration: 4000,
         isClosable: true,
       });
-      await router.replace("/rides/feed");
     } catch (error) {
       if (
         error instanceof Error &&

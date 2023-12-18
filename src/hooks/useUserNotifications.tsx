@@ -1,29 +1,46 @@
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import type { UserNotifications } from "~/types/notification";
 import { useLoading } from "./useLoading";
 import supabase from "~/utils/supabaseClient";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
+import { type QueryKey } from "react-query";
 
 interface UseUserNotificationsReturn {
-  notifications: UserNotifications;
+  notifications: UserNotifications | null | undefined;
   loading: boolean;
+  startLoading: () => void;
+  stopLoading: () => void;
 }
 
 const useUserNotifications = (): UseUserNotificationsReturn => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<UserNotifications>(null);
   const { loading, startLoading, stopLoading } = useLoading();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
-  if (!user) return { notifications: null, loading: false };
+  if (!user)
+    return { notifications: null, loading: false, startLoading, stopLoading };
 
   const filter = `${user.type === "Driver" ? "driverId" : "riderId"}=eq.${
     user.id
   }`;
 
-  const { data } =
+  const queryKey: QueryKey =
+    user.type === "Driver"
+      ? getQueryKey(
+          api.notification.getDriverNotifications,
+          { id: user.id },
+          "query",
+        )
+      : getQueryKey(
+          api.notification.getRiderNotifications,
+          { id: user.id },
+          "query",
+        );
+
+  const { data: notifications } =
     user.type === "Driver"
       ? api.notification.getDriverNotifications.useQuery({ id: user.id })
       : api.notification.getRiderNotifications.useQuery({ id: user.id });
@@ -41,25 +58,22 @@ const useUserNotifications = (): UseUserNotificationsReturn => {
           table: "Notification",
           filter,
         },
-        (payload) => {
-          if (payload.new) router.refresh();
+        () => {
+          void queryClient.invalidateQueries(queryKey);
         },
       )
       .subscribe();
 
-    if (data) {
-      setNotifications(data);
-      stopLoading();
-    }
+    if (notifications) stopLoading();
 
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [data, supabase, router]);
+  }, [supabase, queryKey, notifications, startLoading, stopLoading]);
 
   const result = useMemo(
-    () => ({ notifications, loading }),
-    [notifications, loading],
+    () => ({ notifications, loading, startLoading, stopLoading }),
+    [notifications, loading, startLoading, stopLoading],
   );
 
   return result;

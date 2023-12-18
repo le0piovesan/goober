@@ -23,6 +23,7 @@ Goober is a PWA (Progressive Web Application) ride-share taxi service designed t
 - **CSS Framework:** [Tailwind CSS](https://tailwindcss.com/)
 - **JavaScript Engine:** [T3](https://create.t3.gg/)
 - **Type-checking:** [TypeScript](https://www.typescriptlang.org/)
+- **Data Fetching:** [React-Query](https://tanstack.com/query/latest)
 
 ### Backend
 
@@ -44,9 +45,11 @@ While I had previous experience with Firebase, it offered a solid foundation but
 Since we didn't need to waste time implementing any complex authentication/user profiles, instead I've created a simple register/login page with a switch to choose between one of the 2 available personas (riders and drivers). This way, being able to create a corresponding model table for each and making the necessary relationships with the rest of the schema. Also, instead of using a real and complex auth system to validate, I decided instead to create my own simple validation custom hook with React Context, after login it validates the user email/encrypted password on the database, saves it to the context and local browser storage.  
 Ultimately, this decision was made by thinking about flexibillity and scallability of the project.
 
-The find driver algorithm was really fun to build, it took me back to the times where I worked at a startup and we used to brainstorm lots of ideas. The algorithm works in a way to ensure fair competition between drivers. It searches for the last location of the available drivers that are not in a ride, then filters and looks for the closest ones to the pickup location coords. If the are more than one in certain radius, it randomly chooses one.
+The find driver algorithm was really fun to build, it took me back to the times where I worked at a startup and we used to brainstorm lots of ideas. The algorithm works in a way to ensure fair competition between drivers. It searches for the last location of the available drivers that are not in a ride, then filters and looks for the closest ones to the pickup location coords. If the are more than one in certain radius, it randomly chooses one. If a driver declines, it saves his id to a list of no-interest and runs the algorithm again searching for the next available driver.
 
 I also decided to focus more on the front-end and design. The feature I found to be the most impressive was the responsiveness of the UX/UI layout in the WepApp. I consistently strive to prioritize accessibility in my development process.
+
+Features reusable components, utils, custom hooks built with memoization techniques, caching, automatic re-fetching, end to end type-safe communication.
 
 I've developed the project within a week + couple days for bug fixes/refactoring/refining and estimate that it took about 44 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
 
@@ -111,6 +114,7 @@ I've developed the project within a week + couple days for bug fixes/refactoring
   - [x] Create initial pages
   - [x] Create initial components
   - [x] Implement user interactions and navigation
+  - [x] tRPC + React Query for client-side data fetching
   - [x] Create some concept arts in Figma for the application and documentation
   - [x] Style frontend components
   - [x] Optimize for responsive design

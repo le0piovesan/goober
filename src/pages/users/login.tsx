@@ -68,6 +68,9 @@ const Login: NextPage = () => {
     <ContainerForm>
       <VStack
         as="form"
+        onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) =>
+          event.key === "Enter" && event.preventDefault()
+        }
         onSubmit={handleSubmit(onSubmit)}
         spacing={4}
         w="full"

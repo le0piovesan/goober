@@ -38,9 +38,6 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const user = localStorage.getItem("user");
     if (user) {
       dispatch({ type: "LOGIN", payload: JSON.parse(user) as User });
-      void router.replace("/rides/feed");
-    } else {
-      void router.replace("/");
     }
     stopLoading();
   }, []);

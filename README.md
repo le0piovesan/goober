@@ -48,7 +48,7 @@ The find driver algorithm was really fun to build, it took me back to the times 
 
 I also decided to focus more on the front-end and design. The feature I found to be the most impressive was the responsiveness of the UX/UI layout in the WepApp. I consistently strive to prioritize accessibility in my development process.
 
-I've developed the project within a week and estimate that it took about 42 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
+I've developed the project within a week and estimate that it took about 44 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
 
 - **Ride Request Process:**
 
@@ -121,6 +121,7 @@ I've developed the project within a week and estimate that it took about 42 hour
   - [x] Define Prisma data model
   - [x] Implement backend logic using tRPC
   - [x] Add Image to Storage
+  - [x] Realtime updates
 
 - [x] **Documentation and Deployment**
 
@@ -130,7 +131,6 @@ I've developed the project within a week and estimate that it took about 42 hour
 
 - **Future Implementations**
   - Add Cron to expired/completed rides
-  - Subs to Ride / Notification DB
   - Set up OneSignal for notification
   - Implement some kind of offline support
 
@@ -138,7 +138,7 @@ I've developed the project within a week and estimate that it took about 42 hour
 
 > In order to run locally download the .env file from the gist, or copy all its content and place in a .env file in the root of the project.
 
-[Here is the .env file to run the app locally](https://gist.github.com/le0piovesan/52ae22edbd8b0b75f2d1fdb894bf460e) 🔐
+[Here is the .env file to run the app locally](https://gist.github.com/le0piovesan/666b6b96e89484987bcd60bf5b83c6f6) 🔐
 
 Then run the following script to install dependencies, build and start the app:
 
@@ -151,3 +151,5 @@ npm install && npm run build-start
 [Here is the link of the deployable app](https://goober-three.vercel.app/) 🚀
 
 [Here is a quick video showing the features](https://youtu.be/tfvZpwec8tE) 👀
+
+[Here is the new updated video with a few improvements](https://youtu.be/CJAqwuggcM4) 👀

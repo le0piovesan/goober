@@ -48,7 +48,7 @@ The find driver algorithm was really fun to build, it took me back to the times 
 
 I also decided to focus more on the front-end and design. The feature I found to be the most impressive was the responsiveness of the UX/UI layout in the WepApp. I consistently strive to prioritize accessibility in my development process.
 
-I've developed the project within a week and estimate that it took about 44 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
+I've developed the project within a week + couple days for bug fixes/refactoring/refining and estimate that it took about 44 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
 
 - **Ride Request Process:**
 
@@ -150,6 +150,4 @@ npm install && npm run build-start
 
 [Here is the link of the deployable app](https://goober-three.vercel.app/) 🚀
 
-[Here is a quick video showing the features](https://youtu.be/tfvZpwec8tE) 👀
-
-[Here is the new updated video with a few improvements](https://youtu.be/CJAqwuggcM4) 👀
+[Here is a quick video showing the features](https://youtu.be/w_8UuD_2oKA) 👀

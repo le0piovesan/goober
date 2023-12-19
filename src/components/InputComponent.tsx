@@ -68,6 +68,7 @@ const InputComponent = <TFormValues extends FieldValues>({
               <Input
                 id={name as string}
                 type="file"
+                accept="image/*"
                 display="none"
                 onChange={onChange}
               />

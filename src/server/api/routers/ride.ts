@@ -57,7 +57,7 @@ export const rideRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.$transaction(async (prisma) => {
+      await ctx.db.$transaction(async (prisma) => {
         try {
           // Check if the rider has an existing ride
           const existingRide = await prisma.ride.findFirst({

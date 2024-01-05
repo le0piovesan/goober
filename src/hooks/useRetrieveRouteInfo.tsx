@@ -62,8 +62,6 @@ const useRetrieveRouteInfo = (
 
       setAvailableDrivers(response);
 
-      console.log(response);
-
       setDirections(result);
       const legs = result.routes[0]?.legs[0];
 

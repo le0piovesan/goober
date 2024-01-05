@@ -10,7 +10,7 @@ const getRequestClosestDriverInputSchema = z.object({
     latitude: z.number(),
     longitude: z.number(),
   }),
-  type: z.string(),
+  type: z.enum(["Regular", "Luxury"]),
 });
 
 type DriverInput = z.infer<typeof getRequestClosestDriverInputSchema>;
@@ -79,16 +79,16 @@ const cancelExistingRideRequest = async (
   prisma: TransactionalPrismaClient,
   rideId: number,
 ) => {
-  // Update the status of ride to cancelled
-  await prisma.rideStatus.update({
-    where: { id: rideId },
-    data: { current: Status.CANCELED, finishedAt: new Date() },
-  });
-
-  // Look for the ride requested to get the rider id
+  // Look for the ride requested to get the rider id and the RideStatus id
   const ride = await prisma.ride.findUnique({
     where: { id: rideId },
     include: { rider: true },
+  });
+
+  // Update the status of ride to cancelled
+  await prisma.rideStatus.update({
+    where: { id: ride?.statusId },
+    data: { current: Status.CANCELED, finishedAt: new Date() },
   });
 
   // Notify the rider that his ride was cancelled

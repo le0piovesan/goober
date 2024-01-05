@@ -12,7 +12,7 @@ type NotificationWithRide = Notification & {
     originName: string;
     pickupLocation: Location;
     updatedAt: Date;
-    type: "Regular" | "Luxury";
+    type: string;
   } | null;
 };
 

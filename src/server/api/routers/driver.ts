@@ -23,7 +23,7 @@ export const driverRouter = createTRPCRouter({
         name: z.string(),
         email: z.string(),
         password: z.string(),
-        type: z.string(),
+        type: z.enum(["Regular", "Luxury"]),
         image: z.string(),
       }),
     )
@@ -195,56 +195,52 @@ export const driverRouter = createTRPCRouter({
           latitude: z.number(),
           longitude: z.number(),
         }),
-        type: z.string(),
+        type: z.enum(["Regular", "Luxury"]),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.$transaction(async (prisma) => {
-        try {
-          // Decline the ride
-          await prisma.declinedRide.create({
-            data: {
-              driver: {
-                connect: {
-                  id: input.driverId,
-                },
-              },
-              ride: {
-                connect: {
-                  id: input.rideId,
-                },
+        // Decline the ride
+        await prisma.declinedRide.create({
+          data: {
+            driver: {
+              connect: {
+                id: input.driverId,
               },
             },
-          });
+            ride: {
+              connect: {
+                id: input.rideId,
+              },
+            },
+          },
+        });
 
-          // Notify the driver that he has declined this ride
-          await prisma.notification.create({
-            data: {
-              message: "You have declined this ride",
-              driver: {
-                connect: {
-                  id: input.driverId,
-                },
-              },
-              ride: {
-                connect: {
-                  id: input.rideId,
-                },
+        // Notify the driver that he has declined this ride
+        await prisma.notification.create({
+          data: {
+            message: "You have declined this ride",
+            driver: {
+              connect: {
+                id: input.driverId,
               },
             },
-          });
+            ride: {
+              connect: {
+                id: input.rideId,
+              },
+            },
+          },
+        });
 
-          await requestClosestDriver({
-            prisma,
-            input: {
-              rideId: input.rideId,
-              pickupLocation: input.pickupLocation,
-              type: input.type,
-            },
-          });
-        } catch (error) {
-          throw error;
-        }
+        await requestClosestDriver({
+          prisma,
+          input: {
+            rideId: input.rideId,
+            pickupLocation: input.pickupLocation,
+            type: input.type,
+          },
+        });
       });
     }),
 });

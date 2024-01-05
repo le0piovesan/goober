@@ -105,7 +105,7 @@ export const rideRouter = createTRPCRouter({
         distance: z.string(),
         originName: z.string(),
         destinationName: z.string(),
-        type: z.string(),
+        type: z.enum(["Regular", "Luxury"]),
         pickupLocation: z.object({
           latitude: z.number(),
           longitude: z.number(),
@@ -118,50 +118,43 @@ export const rideRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.$transaction(async (prisma) => {
-        try {
-          // Create a new ride
-          const ride = await prisma.ride.create({
-            data: {
-              tripFee: input.tripFee,
-              distance: input.distance,
-              originName: input.originName,
-              destinationName: input.destinationName,
-              type: input.type,
-              pickupLocation: {
-                create: {
-                  latitude: input.pickupLocation.latitude,
-                  longitude: input.pickupLocation.longitude,
-                },
-              },
-              dropoffLocation: {
-                create: {
-                  latitude: input.dropoffLocation.latitude,
-                  longitude: input.dropoffLocation.longitude,
-                },
-              },
-              rider: {
-                connect: {
-                  id: input.riderId,
-                },
-              },
-              status: {
-                create: {},
-              },
+      const ride = await ctx.db.ride.create({
+        data: {
+          tripFee: input.tripFee,
+          distance: input.distance,
+          originName: input.originName,
+          destinationName: input.destinationName,
+          type: input.type,
+          pickupLocation: {
+            create: {
+              latitude: input.pickupLocation.latitude,
+              longitude: input.pickupLocation.longitude,
             },
-          });
+          },
+          dropoffLocation: {
+            create: {
+              latitude: input.dropoffLocation.latitude,
+              longitude: input.dropoffLocation.longitude,
+            },
+          },
+          rider: {
+            connect: {
+              id: input.riderId,
+            },
+          },
+          status: {
+            create: {},
+          },
+        },
+      });
 
-          await requestClosestDriver({
-            prisma,
-            input: {
-              rideId: ride.id,
-              pickupLocation: input.pickupLocation,
-              type: input.type,
-            },
-          });
-        } catch (error) {
-          throw error;
-        }
+      await requestClosestDriver({
+        prisma: ctx.db,
+        input: {
+          rideId: ride.id,
+          pickupLocation: input.pickupLocation,
+          type: input.type,
+        },
       });
     }),
 

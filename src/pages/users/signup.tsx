@@ -19,6 +19,7 @@ type FormData = {
   password: string;
   confirmPassword: string;
   role: "Rider" | "Driver";
+  type: "Regular" | "Luxury";
   image: File;
 };
 
@@ -32,6 +33,7 @@ const schema = z.object({
     .string()
     .min(8, { message: "Password must be at least 8 characters" }),
   role: z.enum(["Rider", "Driver"]),
+  type: z.enum(["Regular", "Luxury"]),
   image: z.instanceof(File).refine((file) => file !== null, {
     message: "A file must be uploaded",
   }),
@@ -51,6 +53,7 @@ const SignUp: NextPage = () => {
     handleSubmit,
     control,
     getValues,
+    watch,
     formState: { errors },
   } = useForm<FormInputsProps>({
     resolver: zodResolver(schema),
@@ -60,9 +63,12 @@ const SignUp: NextPage = () => {
       password: "",
       confirmPassword: "",
       role: "Rider",
+      type: "Regular",
       image: undefined,
     },
   });
+
+  const role = watch("role");
 
   const uploadImage = async (email: string, image: File) => {
     const { data, error } = await supabase.storage
@@ -97,13 +103,19 @@ const SignUp: NextPage = () => {
 
     try {
       startLoading();
-      const { name, email, password, role, image }: FormData = data;
+      const { name, email, password, role, type, image }: FormData = data;
 
       const path = await uploadImage(email, image);
 
       role === "Rider"
         ? await rider.mutateAsync({ name, email, password, image: path })
-        : await driver.mutateAsync({ name, email, password, image: path });
+        : await driver.mutateAsync({
+            name,
+            email,
+            password,
+            type,
+            image: path,
+          });
 
       toast({
         title: "Account Created! 🎉",
@@ -202,6 +214,19 @@ const SignUp: NextPage = () => {
             { value: "Driver", label: "Driver" },
           ]}
         />
+
+        {role === "Driver" && (
+          <RadioComponent
+            label="Do you prefer to work with regular or luxury cars?"
+            control={control}
+            name="type"
+            defaultValue="Regular"
+            options={[
+              { value: "Regular", label: "Regular" },
+              { value: "Luxury", label: "Luxury" },
+            ]}
+          />
+        )}
 
         <ButtonComponent type="submit" loading={loading}>
           Create Account

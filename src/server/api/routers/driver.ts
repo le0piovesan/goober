@@ -2,11 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
 import { Status } from "@prisma/client";
-import {
-  findAvailableDrivers,
-  cancelExistingRideRequest,
-  requestClosestDriver,
-} from "./trigger";
+import { cancelExistingRideRequest, requestClosestDriver } from "./trigger";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -27,6 +23,7 @@ export const driverRouter = createTRPCRouter({
         name: z.string(),
         email: z.string(),
         password: z.string(),
+        type: z.string(),
         image: z.string(),
       }),
     )
@@ -54,6 +51,7 @@ export const driverRouter = createTRPCRouter({
               longitude: 0,
             },
           },
+          type: input.type,
           image: input.image,
         },
       });
@@ -235,16 +233,25 @@ export const driverRouter = createTRPCRouter({
             },
           });
 
-          const { rideId, pickupLocation } = input;
-          const drivers = await findAvailableDrivers({
-            prisma,
-            input: { rideId, pickupLocation },
+          // Find all drivers who have not declined this ride yet and are not on ride
+          const drivers = await prisma.driver.findMany({
+            where: {
+              onTrip: false,
+              NOT: {
+                declinedRides: {
+                  some: {
+                    rideId: input.rideId,
+                  },
+                },
+              },
+            },
+            include: { lastLocation: true },
           });
 
           // If there are no other drivers available, update the status of ride to cancelled
           if (
             drivers.length === 0 ||
-            drivers.some(
+            drivers.every(
               (driver) =>
                 driver.lastLocation.latitude === 0 ||
                 driver.lastLocation.longitude === 0,
@@ -255,7 +262,10 @@ export const driverRouter = createTRPCRouter({
             await requestClosestDriver({
               prisma,
               drivers,
-              input: { rideId, pickupLocation },
+              input: {
+                rideId: input.rideId,
+                pickupLocation: input.pickupLocation,
+              },
             });
           }
         } catch (error) {

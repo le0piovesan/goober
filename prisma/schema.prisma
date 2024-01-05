@@ -23,6 +23,7 @@ model Driver {
   email          String         @unique
   password       String
   image          String
+  type           String         @default("Regular")
   onTrip         Boolean        @default(false)
   lastLocation   Location       @relation("DriverLastLocation", fields: [lastLocationId], references: [id])
   lastLocationId Int            @unique

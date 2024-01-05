@@ -25,6 +25,11 @@ type Coordinates = {
   lng: number;
 };
 
+type DriverTypes = {
+  id: number;
+  type: string;
+};
+
 type FormInputsProps = z.infer<typeof schema>;
 
 const Map: React.FC = () => {
@@ -39,6 +44,7 @@ const Map: React.FC = () => {
     value: 0,
     distance: "",
   });
+  const [availableDrivers, setAvailableDrivers] = useState<DriverTypes[]>([]);
   const [directions, setDirections] =
     useState<google.maps.DirectionsResult | null>(null);
   const typedSetDirections: React.Dispatch<
@@ -51,6 +57,10 @@ const Map: React.FC = () => {
     dropoffLocationRef,
     typedSetDirections,
     setDistanceDetails,
+    setAvailableDrivers,
+    loading,
+    startLoading,
+    stopLoading,
   );
   const router = useRouter();
 
@@ -170,7 +180,9 @@ const Map: React.FC = () => {
                 w="full"
                 maxW="md"
               >
-                {!distanceDetails.distance || (!tripValue && !directions) ? (
+                {!distanceDetails.distance ||
+                (!tripValue && !directions) ||
+                !availableDrivers ? (
                   <MapSearch
                     register={register}
                     loading={loading}
@@ -183,7 +195,10 @@ const Map: React.FC = () => {
                   <MapDetails
                     distanceDetails={distanceDetails.distance}
                     setDistanceDetails={setDistanceDetails}
+                    pickupLocationRef={pickupLocationRef}
                     tripValue={tripValue}
+                    availableDrivers={availableDrivers}
+                    setAvailableDrivers={setAvailableDrivers}
                     loading={loading}
                   />
                 )}

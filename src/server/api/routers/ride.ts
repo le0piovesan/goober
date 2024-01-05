@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { Status } from "@prisma/client";
-import { findAvailableDrivers, requestClosestDriver } from "./trigger";
+import { requestClosestDriver } from "./trigger";
 
 export const rideRouter = createTRPCRouter({
   getRiderRides: publicProcedure
@@ -38,6 +38,66 @@ export const rideRouter = createTRPCRouter({
       return driverRides;
     }),
 
+  searchDrivers: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        pickupLocation: z.object({
+          latitude: z.number(),
+          longitude: z.number(),
+        }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      // Check if the rider has an existing ride
+      const existingRide = await ctx.db.ride.findFirst({
+        where: {
+          riderId: input.id,
+          status: {
+            OR: [
+              {
+                current: Status.REQUESTED,
+              },
+              {
+                current: Status.ONGOING,
+              },
+            ],
+          },
+        },
+      });
+
+      if (existingRide) {
+        throw new Error("You already have an open or ongoing ride request.");
+      }
+
+      // Find all drivers who are currently not on a ride
+      const drivers = await ctx.db.driver.findMany({
+        where: {
+          onTrip: false,
+        },
+        include: { lastLocation: true },
+      });
+
+      // Rollback and inform client that there are no drivers available
+      if (
+        drivers.length === 0 ||
+        drivers.every(
+          (driver) =>
+            driver.lastLocation.latitude === 0 ||
+            driver.lastLocation.longitude === 0,
+        )
+      ) {
+        throw new Error(
+          "No available drivers at this moment, try again later.",
+        );
+      }
+
+      return drivers.map((driver) => ({
+        id: driver.id,
+        type: driver.type,
+      }));
+    }),
+
   createRide: publicProcedure
     .input(
       z.object({
@@ -59,29 +119,6 @@ export const rideRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.$transaction(async (prisma) => {
         try {
-          // Check if the rider has an existing ride
-          const existingRide = await prisma.ride.findFirst({
-            where: {
-              riderId: input.riderId,
-              status: {
-                OR: [
-                  {
-                    current: Status.REQUESTED,
-                  },
-                  {
-                    current: Status.ONGOING,
-                  },
-                ],
-              },
-            },
-          });
-
-          if (existingRide) {
-            throw new Error(
-              "You already have an open or ongoing ride request.",
-            );
-          }
-
           // Create a new ride
           const ride = await prisma.ride.create({
             data: {
@@ -111,31 +148,6 @@ export const rideRouter = createTRPCRouter({
               },
             },
           });
-
-          const { pickupLocation } = input;
-          const drivers = await findAvailableDrivers({
-            prisma,
-            input: { rideId: ride.id, pickupLocation },
-          });
-
-          // Rollback and inform client that there are no drivers available
-          if (drivers.length === 0) {
-            throw new Error(
-              "No drivers near you at this moment, try again later.",
-            );
-          }
-
-          if (
-            drivers.some(
-              (driver) =>
-                driver.lastLocation.latitude === 0 ||
-                driver.lastLocation.longitude === 0,
-            )
-          ) {
-            throw new Error(
-              "Found drivers but they haven't set their location yet.",
-            );
-          }
 
           await requestClosestDriver({
             prisma,

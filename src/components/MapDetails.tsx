@@ -1,5 +1,11 @@
-import { Box, Heading, Flex, Text } from "@chakra-ui/react";
+import { Box, Heading, Text, HStack } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
+import MapDriversCard from "./MapDriversCard";
+
+type DriverTypes = {
+  id: number;
+  type: string;
+};
 
 type MapDetailsProps = {
   distanceDetails: string;
@@ -11,49 +17,73 @@ type MapDetailsProps = {
   >;
   tripValue: number;
   loading: boolean;
+  pickupLocationRef: React.MutableRefObject<google.maps.LatLngLiteral | null>;
+  availableDrivers: DriverTypes[];
+  setAvailableDrivers: React.Dispatch<React.SetStateAction<DriverTypes[]>>;
 };
 
 const MapDetails: React.FC<MapDetailsProps> = ({
   distanceDetails,
   setDistanceDetails,
   tripValue,
+  availableDrivers,
+  setAvailableDrivers,
   loading,
-}) => (
-  <>
-    <Flex align={"center"}>
-      <Box p={2}>
-        <Heading size="sm" fontWeight={""}>
-          Distance
-        </Heading>
-        <Text fontSize="md" fontWeight={"bold"} color={"primary"}>
-          {distanceDetails}
+}) => {
+  return (
+    <>
+      <Heading size="sm" color={"primary"}>
+        Goober Driver Availables:
+      </Heading>
+      <Box textAlign="left">
+        <HStack>
+          <Heading size="sm" fontWeight={""}>
+            Distance:
+          </Heading>
+          <Text fontSize="md" fontWeight={"bold"} color={"primary"}>
+            {distanceDetails}
+          </Text>
+        </HStack>
+
+        <Text fontSize={"xs"} mb={2}>
+          Available:
         </Text>
+        {availableDrivers && availableDrivers.length > 0 ? (
+          <>
+            <MapDriversCard
+              type="Regular"
+              drivers={availableDrivers}
+              tripValue={tripValue}
+              loading={loading}
+            />
+            <MapDriversCard
+              type="Luxury"
+              drivers={availableDrivers}
+              tripValue={tripValue}
+              loading={loading}
+            />
+          </>
+        ) : (
+          <Text fontSize={"xs"} mb={2}>
+            No drivers available, try again later
+          </Text>
+        )}
       </Box>
 
-      <Box p={2}>
-        <Heading size="sm" fontWeight={""}>
-          Value
-        </Heading>
-        <Text fontSize="md" fontWeight={"bold"} color={"green"}>
-          ${tripValue}
-        </Text>
-      </Box>
-    </Flex>
-    <ButtonComponent type="submit" loading={loading}>
-      Request Goober Driver
-    </ButtonComponent>
-    <ButtonComponent
-      textOnly
-      onClick={() => {
-        setDistanceDetails({
-          value: 0,
-          distance: "",
-        });
-      }}
-    >
-      Go Back
-    </ButtonComponent>
-  </>
-);
+      <ButtonComponent
+        textOnly
+        onClick={() => {
+          setDistanceDetails({
+            value: 0,
+            distance: "",
+          });
+          setAvailableDrivers([]);
+        }}
+      >
+        Go Back
+      </ButtonComponent>
+    </>
+  );
+};
 
 export default MapDetails;

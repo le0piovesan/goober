@@ -1,10 +1,16 @@
 import { useCallback } from "react";
-import { useLoading } from "./useLoading";
 import { useToast } from "@chakra-ui/react";
+import { api } from "~/utils/api";
+import { useAuth } from "~/context/AuthContext";
 
 type DistanceDetails = {
   value: number;
   distance: string;
+};
+
+type DriverTypes = {
+  id: number;
+  type: string;
 };
 
 const useRetrieveRouteInfo = (
@@ -14,12 +20,16 @@ const useRetrieveRouteInfo = (
     React.SetStateAction<google.maps.DirectionsResult | null>
   >,
   setDistanceDetails: React.Dispatch<React.SetStateAction<DistanceDetails>>,
+  setAvailableDrivers: React.Dispatch<React.SetStateAction<DriverTypes[]>>,
+  loading: boolean,
+  startLoading: () => void,
+  stopLoading: () => void,
 ) => {
-  const { startLoading, stopLoading } = useLoading();
   const toast = useToast();
+  const { user } = useAuth();
+  const drivers = api.ride.searchDrivers.useMutation();
 
   return useCallback(async () => {
-    startLoading();
     const directionService = new google.maps.DirectionsService();
 
     if (!pickupLocationRef.current || !dropoffLocationRef.current) {
@@ -35,11 +45,24 @@ const useRetrieveRouteInfo = (
     }
 
     try {
+      startLoading();
       const result = await directionService.route({
         origin: pickupLocationRef.current,
         destination: dropoffLocationRef.current,
         travelMode: google.maps.TravelMode.DRIVING,
       });
+
+      const response = await drivers.mutateAsync({
+        id: user?.id ?? 0,
+        pickupLocation: {
+          latitude: pickupLocationRef?.current?.lat ?? 0,
+          longitude: pickupLocationRef?.current?.lng ?? 0,
+        },
+      });
+
+      setAvailableDrivers(response);
+
+      console.log(response);
 
       setDirections(result);
       const legs = result.routes[0]?.legs[0];
@@ -49,14 +72,15 @@ const useRetrieveRouteInfo = (
         distance: legs?.distance?.text ?? "",
       });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: `No route found 😢`,
-        status: "error",
-        position: "top",
-        duration: 4000,
-        isClosable: true,
-      });
+      if (error instanceof Error)
+        toast({
+          title: "Error",
+          description: `${error.message ? error.message : `No route found`} 😢`,
+          status: "info",
+          position: "top",
+          duration: 4000,
+          isClosable: true,
+        });
     } finally {
       stopLoading();
     }
@@ -65,6 +89,7 @@ const useRetrieveRouteInfo = (
     dropoffLocationRef,
     setDirections,
     setDistanceDetails,
+    loading,
   ]);
 };
 

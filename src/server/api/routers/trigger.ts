@@ -27,31 +27,6 @@ type TransactionalPrismaClient = Omit<
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >;
 
-const findAvailableDrivers = async ({
-  prisma,
-  input,
-}: {
-  prisma: TransactionalPrismaClient;
-  input: DriverInput;
-}) => {
-  // Find all drivers who have not declined this ride yet and are not on ride
-  const drivers = await prisma.driver.findMany({
-    where: {
-      onTrip: false,
-      NOT: {
-        declinedRides: {
-          some: {
-            rideId: input.rideId,
-          },
-        },
-      },
-    },
-    include: { lastLocation: true },
-  });
-
-  return drivers;
-};
-
 const requestClosestDriver = async ({
   prisma,
   drivers,
@@ -158,7 +133,6 @@ const sendDriverRideRequestNotification = async (
 };
 
 export {
-  findAvailableDrivers,
   requestClosestDriver,
   cancelExistingRideRequest,
   findClosestDriver,

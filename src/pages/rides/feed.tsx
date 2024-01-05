@@ -10,8 +10,13 @@ const Feed: NextPage = () => {
 
   return (
     <VStack width="100%" mx={2}>
+      <Text fontSize="xl" fontWeight="bold" color={"secondary"} m={1}>
+        {user && user.type === "Driver"
+          ? "Hello Driver, how are you feeling today?"
+          : "Hello Rider, where are you going today?"}
+      </Text>
       <Text fontSize="2xl" fontWeight="bold" color={"primary"} m={1}>
-        {user && user.type === "Driver" ? "Rides Feed" : "My Rides"}
+        My Rides
       </Text>
       <RidesContainer />
     </VStack>

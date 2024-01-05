@@ -2,7 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
 import { Status } from "@prisma/client";
-import { cancelExistingRideRequest, requestClosestDriver } from "./trigger";
+import { requestClosestDriver } from "./trigger";
 
 export const driverRouter = createTRPCRouter({
   getDriver: publicProcedure
@@ -195,6 +195,7 @@ export const driverRouter = createTRPCRouter({
           latitude: z.number(),
           longitude: z.number(),
         }),
+        type: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -233,41 +234,14 @@ export const driverRouter = createTRPCRouter({
             },
           });
 
-          // Find all drivers who have not declined this ride yet and are not on ride
-          const drivers = await prisma.driver.findMany({
-            where: {
-              onTrip: false,
-              NOT: {
-                declinedRides: {
-                  some: {
-                    rideId: input.rideId,
-                  },
-                },
-              },
+          await requestClosestDriver({
+            prisma,
+            input: {
+              rideId: input.rideId,
+              pickupLocation: input.pickupLocation,
+              type: input.type,
             },
-            include: { lastLocation: true },
           });
-
-          // If there are no other drivers available, update the status of ride to cancelled
-          if (
-            drivers.length === 0 ||
-            drivers.every(
-              (driver) =>
-                driver.lastLocation.latitude === 0 ||
-                driver.lastLocation.longitude === 0,
-            )
-          ) {
-            await cancelExistingRideRequest(prisma, input.rideId);
-          } else {
-            await requestClosestDriver({
-              prisma,
-              drivers,
-              input: {
-                rideId: input.rideId,
-                pickupLocation: input.pickupLocation,
-              },
-            });
-          }
         } catch (error) {
           throw error;
         }

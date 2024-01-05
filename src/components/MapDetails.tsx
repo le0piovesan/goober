@@ -8,26 +8,29 @@ type DriverTypes = {
 };
 
 type MapDetailsProps = {
-  distanceDetails: string;
+  distanceDetails: { value: number; distance: string };
   setDistanceDetails: React.Dispatch<
     React.SetStateAction<{
       value: number;
       distance: string;
     }>
   >;
-  tripValue: number;
   loading: boolean;
   pickupLocationRef: React.MutableRefObject<google.maps.LatLngLiteral | null>;
   availableDrivers: DriverTypes[];
   setAvailableDrivers: React.Dispatch<React.SetStateAction<DriverTypes[]>>;
+  onSubmit: (
+    rideType: "Regular" | "Luxury",
+    tripValue: number,
+  ) => Promise<void>;
 };
 
 const MapDetails: React.FC<MapDetailsProps> = ({
   distanceDetails,
   setDistanceDetails,
-  tripValue,
   availableDrivers,
   setAvailableDrivers,
+  onSubmit,
   loading,
 }) => {
   return (
@@ -41,7 +44,7 @@ const MapDetails: React.FC<MapDetailsProps> = ({
             Distance:
           </Heading>
           <Text fontSize="md" fontWeight={"bold"} color={"primary"}>
-            {distanceDetails}
+            {distanceDetails.distance}
           </Text>
         </HStack>
 
@@ -53,13 +56,15 @@ const MapDetails: React.FC<MapDetailsProps> = ({
             <MapDriversCard
               type="Regular"
               drivers={availableDrivers}
-              tripValue={tripValue}
+              distanceValue={distanceDetails.value}
+              onSubmit={onSubmit}
               loading={loading}
             />
             <MapDriversCard
               type="Luxury"
               drivers={availableDrivers}
-              tripValue={tripValue}
+              distanceValue={distanceDetails.value}
+              onSubmit={onSubmit}
               loading={loading}
             />
           </>

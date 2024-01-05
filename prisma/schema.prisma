@@ -38,6 +38,7 @@ model Ride {
   distance        String
   originName      String
   destinationName String
+  type            String @default("Regular")
 
   pickupLocation    Location @relation("PickupLocation", fields: [pickupLocationId], references: [id])
   pickupLocationId  Int      @unique

@@ -10,6 +10,7 @@ const getRequestClosestDriverInputSchema = z.object({
     latitude: z.number(),
     longitude: z.number(),
   }),
+  type: z.string(),
 });
 
 type DriverInput = z.infer<typeof getRequestClosestDriverInputSchema>;
@@ -29,16 +30,49 @@ type TransactionalPrismaClient = Omit<
 
 const requestClosestDriver = async ({
   prisma,
-  drivers,
   input,
 }: {
   prisma: TransactionalPrismaClient;
-  drivers: Driver[];
   input: DriverInput;
 }) => {
-  const closestDriver = await findClosestDriver(drivers, input.pickupLocation);
+  // Find all drivers who have not declined this ride yet and are not on ride
+  const drivers = await prisma.driver.findMany({
+    where: {
+      onTrip: false,
+      type: input.type,
+      NOT: {
+        declinedRides: {
+          some: {
+            rideId: input.rideId,
+          },
+        },
+      },
+    },
+    include: { lastLocation: true },
+  });
 
-  await sendDriverRideRequestNotification(prisma, closestDriver, input.rideId);
+  // If there are no other drivers available, update the status of ride to cancelled
+  if (
+    drivers.length === 0 ||
+    drivers.every(
+      (driver) =>
+        driver.lastLocation.latitude === 0 ||
+        driver.lastLocation.longitude === 0,
+    )
+  )
+    await cancelExistingRideRequest(prisma, input.rideId);
+  else {
+    const closestDriver = await findClosestDriver(
+      drivers,
+      input.pickupLocation,
+    );
+
+    await sendDriverRideRequestNotification(
+      prisma,
+      closestDriver,
+      input.rideId,
+    );
+  }
 };
 
 const cancelExistingRideRequest = async (

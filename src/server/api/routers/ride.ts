@@ -105,6 +105,7 @@ export const rideRouter = createTRPCRouter({
         distance: z.string(),
         originName: z.string(),
         destinationName: z.string(),
+        type: z.string(),
         pickupLocation: z.object({
           latitude: z.number(),
           longitude: z.number(),
@@ -126,6 +127,7 @@ export const rideRouter = createTRPCRouter({
               distance: input.distance,
               originName: input.originName,
               destinationName: input.destinationName,
+              type: input.type,
               pickupLocation: {
                 create: {
                   latitude: input.pickupLocation.latitude,
@@ -151,8 +153,11 @@ export const rideRouter = createTRPCRouter({
 
           await requestClosestDriver({
             prisma,
-            drivers,
-            input: { rideId: ride.id, pickupLocation },
+            input: {
+              rideId: ride.id,
+              pickupLocation: input.pickupLocation,
+              type: input.type,
+            },
           });
         } catch (error) {
           throw error;

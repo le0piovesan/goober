@@ -4,11 +4,10 @@ import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useLoading } from "~/hooks/useLoading";
 import useCurrentPosition from "~/hooks/useCurrentPosition";
 import { useRef, useState } from "react";
-import useCalculateTripValue from "~/hooks/useCalculateTripValue";
 import useRetrieveRouteInfo from "~/hooks/useRetrieveRouteInfo";
 import MapDetails from "./MapDetails";
 import MapSearch from "./MapSearch";
@@ -51,7 +50,6 @@ const Map: React.FC = () => {
     React.SetStateAction<google.maps.DirectionsResult | null>
   > = setDirections;
 
-  const tripValue = useCalculateTripValue(distanceDetails.value);
   const retrieveRouteInfo = useRetrieveRouteInfo(
     pickupLocationRef,
     dropoffLocationRef,
@@ -66,7 +64,7 @@ const Map: React.FC = () => {
 
   const {
     register,
-    handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm<FormInputsProps>({
     resolver: zodResolver(schema),
@@ -76,7 +74,10 @@ const Map: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<FormInputsProps> = async (data) => {
+  const onSubmit = async (
+    rideType: "Regular" | "Luxury" = "Regular",
+    tripValue: number,
+  ) => {
     if (
       !pickupLocationRef.current ||
       !dropoffLocationRef.current ||
@@ -92,14 +93,16 @@ const Map: React.FC = () => {
       });
       return;
     }
+    const { pickupLocation, dropoffLocation } = getValues();
 
     try {
       startLoading();
       await ride.mutateAsync({
         tripFee: tripValue,
         distance: distanceDetails.distance,
-        originName: data.pickupLocation,
-        destinationName: data.dropoffLocation,
+        originName: pickupLocation,
+        destinationName: dropoffLocation,
+        type: rideType,
         pickupLocation: {
           latitude: pickupLocationRef.current.lat,
           longitude: pickupLocationRef.current.lng,
@@ -173,15 +176,9 @@ const Map: React.FC = () => {
             borderRadius="10px"
           >
             <CardBody>
-              <VStack
-                as="form"
-                onSubmit={handleSubmit(onSubmit)}
-                spacing={4}
-                w="full"
-                maxW="md"
-              >
+              <VStack spacing={4} w="full" maxW="md">
                 {!distanceDetails.distance ||
-                (!tripValue && !directions) ||
+                !directions ||
                 !availableDrivers ? (
                   <MapSearch
                     register={register}
@@ -193,12 +190,12 @@ const Map: React.FC = () => {
                   />
                 ) : (
                   <MapDetails
-                    distanceDetails={distanceDetails.distance}
+                    distanceDetails={distanceDetails}
                     setDistanceDetails={setDistanceDetails}
                     pickupLocationRef={pickupLocationRef}
-                    tripValue={tripValue}
                     availableDrivers={availableDrivers}
                     setAvailableDrivers={setAvailableDrivers}
+                    onSubmit={onSubmit}
                     loading={loading}
                   />
                 )}

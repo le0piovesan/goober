@@ -66,10 +66,16 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     rideId: number,
     driverId: number,
     pickupLocation: Location,
+    type: "Regular" | "Luxury",
   ) => {
     startLoading();
     try {
-      await driverDecline.mutateAsync({ rideId, driverId, pickupLocation });
+      await driverDecline.mutateAsync({
+        rideId,
+        driverId,
+        pickupLocation,
+        type,
+      });
 
       toast({
         title: "Success",
@@ -163,6 +169,7 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
                     notification.rideId!,
                     notification.driverId!,
                     notification.ride.pickupLocation,
+                    notification.ride.type as "Regular" | "Luxury",
                   )
                 }
               />

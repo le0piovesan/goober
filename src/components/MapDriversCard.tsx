@@ -1,7 +1,16 @@
 import React from "react";
-import { Box, Card, CardBody, HStack, Heading, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  CardBody,
+  HStack,
+  Heading,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
 import { IoCarSharp, IoCarSportSharp } from "react-icons/io5";
+import useCalculateTripValue from "~/hooks/useCalculateTripValue";
 
 type DriverTypes = {
   id: number;
@@ -9,28 +18,55 @@ type DriverTypes = {
 };
 
 type MapDriversCardProps = {
-  type: string;
+  type: RideType;
   drivers: DriverTypes[];
-  tripValue: number;
   loading: boolean;
+  distanceValue: number;
+  onSubmit: (
+    rideType: "Regular" | "Luxury",
+    tripValue: number,
+  ) => Promise<void>;
 };
+
+type RideType = "Regular" | "Luxury" | undefined;
 
 const MapDriversCard: React.FC<MapDriversCardProps> = ({
   type,
   drivers,
-  tripValue,
   loading,
+  distanceValue,
+  onSubmit,
 }) => {
+  const toast = useToast();
   const driversOfType = drivers.filter((driver) => driver.type === type);
 
   if (driversOfType.length === 0) {
     return null;
   }
 
+  const tripValue = useCalculateTripValue(distanceValue, type);
+
   return (
     <Card
       bgColor={"light"}
       boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
+      as={"form"}
+      onSubmit={async (event) => {
+        event.preventDefault();
+        if (type) {
+          await onSubmit(type, tripValue);
+        } else {
+          toast({
+            title: "Error",
+            description: "This type of ride is not available anymore.",
+            status: "error",
+            position: "top",
+            duration: 4000,
+            isClosable: true,
+          });
+          return;
+        }
+      }}
       mb={2}
     >
       <HStack>
@@ -50,8 +86,11 @@ const MapDriversCard: React.FC<MapDriversCardProps> = ({
           <HStack>
             <Text size="xs">Value:</Text>
             <Text fontSize="md" fontWeight={"bold"} color={"green"}>
-              ${type === "Regular" ? tripValue : (tripValue * 1.2).toFixed(2)}
+              ${tripValue}
             </Text>
+            {/* <Text fontSize="md" fontWeight={"bold"} color={"green"}>
+              ${type === "Regular" ? tripValue : (tripValue * 1.2).toFixed(2)}
+            </Text> */}
           </HStack>
           <ButtonComponent
             type="submit"

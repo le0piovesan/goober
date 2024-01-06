@@ -16,7 +16,8 @@ import {
   type FieldValues,
   type Path,
 } from "react-hook-form";
-import { useState } from "react";
+import React, { useState } from "react";
+import InputMask from "react-input-mask";
 
 type InputComponentProps<TFormValues extends FieldValues> = {
   label?: string;
@@ -28,6 +29,8 @@ type InputComponentProps<TFormValues extends FieldValues> = {
   value?: string | number;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   mb?: number;
+  mask?: string;
+  maskChar?: string | null;
 };
 
 const InputComponent = <TFormValues extends FieldValues>({
@@ -40,6 +43,8 @@ const InputComponent = <TFormValues extends FieldValues>({
   value,
   onChange,
   mb,
+  mask,
+  maskChar = null,
 }: InputComponentProps<TFormValues>) => {
   const [show, setShow] = useState<boolean>(false);
   const handleShowPassword = () => setShow(!show);
@@ -85,6 +90,9 @@ const InputComponent = <TFormValues extends FieldValues>({
                 : {})}
               placeholder={placeholder}
               type={type === "password" && show ? "text" : type}
+              as={mask ? (InputMask as React.ElementType) : Input}
+              mask={mask}
+              maskChar={maskChar}
               ringColor={error ? "red.500" : "border"}
               borderColor={"primary"}
               bgColor={"#dfe3ef"}

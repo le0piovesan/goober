@@ -15,6 +15,12 @@ export const rideRouter = createTRPCRouter({
           pickupLocation: true,
           dropoffLocation: true,
           status: {},
+          driver: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
         },
       });
 
@@ -32,6 +38,12 @@ export const rideRouter = createTRPCRouter({
           pickupLocation: true,
           dropoffLocation: true,
           status: {},
+          rider: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
         },
       });
 

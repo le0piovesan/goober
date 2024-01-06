@@ -16,6 +16,7 @@ const ActiveCard: React.FC<ActiveCardProps> = ({ children }) => {
       animation="pulse 1.5s infinite"
       boxSizing="border-box"
       padding={4}
+      mt={2}
     >
       {children}
     </Box>

@@ -4,6 +4,7 @@ const RideCardSkeleton: React.FC = () => {
   return (
     <Card
       bgColor={"light"}
+      mt={4}
       mb={2}
       boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
     >

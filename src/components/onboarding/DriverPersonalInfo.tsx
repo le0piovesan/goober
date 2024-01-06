@@ -3,22 +3,9 @@ import React from "react";
 import DateInput from "~/components/DateInput";
 import InputComponent from "~/components/InputComponent";
 import RadioComponent from "~/components/RadioComponent";
-import type { Control, FieldErrors, UseFormRegister } from "react-hook-form";
+import type { OnboardingStepProps } from "~/types/onboarding";
 
-type DriverPersonalInfoProps = {
-  register: UseFormRegister<FormOnboardingData>;
-  errors: FieldErrors<FormOnboardingData>;
-  control: Control<FormOnboardingData>;
-};
-
-type FormOnboardingData = {
-  fullName: string;
-  SSN: string;
-  dateOfBirth: Date;
-  gender: "Male" | "Female" | "Other" | "Non-Binary" | "Prefer not to say";
-};
-
-const DriverPersonalInfo: React.FC<DriverPersonalInfoProps> = ({
+const DriverPersonalInfo: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,

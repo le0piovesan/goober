@@ -31,6 +31,8 @@ type InputComponentProps<TFormValues extends FieldValues> = {
   mb?: number;
   mask?: string;
   maskChar?: string | null;
+  maxLength?: number;
+  multiple?: boolean;
 };
 
 const InputComponent = <TFormValues extends FieldValues>({
@@ -45,6 +47,8 @@ const InputComponent = <TFormValues extends FieldValues>({
   mb,
   mask,
   maskChar = null,
+  maxLength,
+  multiple,
 }: InputComponentProps<TFormValues>) => {
   const [show, setShow] = useState<boolean>(false);
   const handleShowPassword = () => setShow(!show);
@@ -93,6 +97,8 @@ const InputComponent = <TFormValues extends FieldValues>({
               as={mask ? (InputMask as React.ElementType) : Input}
               mask={mask}
               maskChar={maskChar}
+              maxLength={maxLength}
+              multiple={multiple}
               ringColor={error ? "red.500" : "border"}
               borderColor={"primary"}
               bgColor={"#dfe3ef"}

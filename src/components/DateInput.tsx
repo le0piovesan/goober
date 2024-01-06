@@ -50,7 +50,7 @@ const DateInput = <TFormValues extends FieldValues>({
               yearDropdownItemNumber={80}
               maxDate={new Date()}
               scrollableYearDropdown
-              className="w-full rounded-md border-[1.5px] border-primary bg-[#dfe3ef] p-2 text-primary"
+              className="w-full rounded-md border-[1.5px] border-primary bg-[#dfe3ef] p-2 text-primary focus:outline-none focus:ring-2 focus:ring-secondary"
             />
           )}
         />

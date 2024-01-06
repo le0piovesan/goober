@@ -10,6 +10,7 @@ import { FiArrowRightCircle, FiArrowLeftCircle } from "react-icons/fi";
 import { useState } from "react";
 import { useAuth } from "~/context/AuthContext";
 import DriverPersonalInfo from "~/components/onboarding/DriverPersonalInfo";
+import VehicleInformation from "~/components/onboarding/VehicleInformation";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -22,6 +23,12 @@ const schema = z.object({
     "Non-Binary",
     "Prefer not to say",
   ]),
+  type: z.enum(["Sedan", "SUV", "Truck", "Van"]),
+  licensePlate: z.string().min(5).max(7),
+  photos: z.array(z.instanceof(File)).refine((files) => files.length > 0, {
+    message: "At least one file must be uploaded",
+  }),
+  features: z.array(z.string()),
 });
 
 type FormInputsProps = z.infer<typeof schema>;
@@ -32,7 +39,7 @@ const Onboarding: NextPage = () => {
   const nextStep = async () => {
     const result = await trigger(["fullName", "SSN", "dateOfBirth", "gender"]);
     const values = getValues();
-    console.log(values.SSN.length);
+    console.log(values);
     if (result) setStep(step + 1);
   };
   const prevStep = () => setStep(step - 1);
@@ -53,6 +60,10 @@ const Onboarding: NextPage = () => {
       SSN: "",
       dateOfBirth: undefined,
       gender: undefined,
+      type: undefined,
+      licensePlate: "",
+      photos: [],
+      features: [],
     },
   });
 
@@ -66,6 +77,13 @@ const Onboarding: NextPage = () => {
         <VStack mb={4}>
           {step === 1 && (
             <DriverPersonalInfo
+              register={register}
+              errors={errors}
+              control={control}
+            />
+          )}
+          {step === 2 && (
+            <VehicleInformation
               register={register}
               errors={errors}
               control={control}

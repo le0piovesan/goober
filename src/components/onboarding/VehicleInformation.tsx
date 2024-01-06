@@ -1,5 +1,5 @@
-import { Box, HStack, Text } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { HStack, Text } from "@chakra-ui/react";
+import React from "react";
 import { Controller } from "react-hook-form";
 import InputComponent from "~/components/InputComponent";
 import RadioComponent from "~/components/RadioComponent";
@@ -11,8 +11,6 @@ const VehicleInformation: React.FC<OnboardingStepProps> = ({
   errors,
   control,
 }) => {
-  const [files, setFiles] = useState<File[]>([]);
-
   return (
     <>
       <Text textAlign={"center"}>

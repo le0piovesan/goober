@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
+import { File } from "@web-std/file";
 import ContainerForm from "~/components/ContainerForm";
 import ButtonComponent from "~/components/ButtonComponent";
 import { FiArrowRightCircle, FiArrowLeftCircle } from "react-icons/fi";

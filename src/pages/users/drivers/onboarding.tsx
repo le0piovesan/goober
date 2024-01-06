@@ -3,21 +3,13 @@ import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import InputComponent from "~/components/InputComponent";
+
 import ContainerForm from "~/components/ContainerForm";
 import ButtonComponent from "~/components/ButtonComponent";
 import { FiArrowRightCircle, FiArrowLeftCircle } from "react-icons/fi";
 import { useState } from "react";
 import { useAuth } from "~/context/AuthContext";
-import DateInput from "~/components/DateInput";
-import RadioComponent from "~/components/RadioComponent";
-
-type FormOnboardingData = {
-  fullName: string;
-  SSN: string;
-  dateOfBirth: Date;
-  gender: string;
-};
+import DriverPersonalInfo from "~/components/onboarding/DriverPersonalInfo";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -73,49 +65,11 @@ const Onboarding: NextPage = () => {
         <Heading color={"primary"}>Onboarding</Heading>
         <VStack mb={4}>
           {step === 1 && (
-            <>
-              <Text textAlign={"center"}>
-                Before you become eligible to receive ride requests, we need
-                some additional information to ensure that we provide the best
-                service for all our users.
-              </Text>
-
-              <InputComponent
-                label="Full Name"
-                name="fullName"
-                placeholder="Full Name"
-                register={register}
-                error={errors.fullName}
-              />
-              <InputComponent
-                label="Social Security Number (SSN)"
-                name="SSN"
-                placeholder="___-__-____"
-                mask="999-99-9999"
-                maskChar={null}
-                register={register}
-                error={errors.SSN}
-              />
-              <DateInput
-                label="Date of Birth"
-                control={control}
-                name="dateOfBirth"
-                error={errors.dateOfBirth}
-              />
-              <RadioComponent
-                label="Gender"
-                control={control}
-                name="gender"
-                defaultValue="Male"
-                options={[
-                  { value: "Male", label: "Male" },
-                  { value: "Female", label: "Female" },
-                  { value: "Other", label: "Other" },
-                  { value: "Non-Binary", label: "Non-Binary" },
-                  { value: "Prefer not to say", label: "Prefer not to say" },
-                ]}
-              />
-            </>
+            <DriverPersonalInfo
+              register={register}
+              errors={errors}
+              control={control}
+            />
           )}
         </VStack>
 

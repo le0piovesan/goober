@@ -6,7 +6,6 @@ import {
   Card,
   Icon,
   CardBody,
-  Skeleton,
   Divider,
 } from "@chakra-ui/react";
 import type { NotificationWithRide } from "~/types/notification";
@@ -14,7 +13,6 @@ import { FiCheckCircle } from "react-icons/fi";
 import { useAuth } from "~/context/AuthContext";
 import ButtonComponent from "./ButtonComponent";
 import { api } from "~/utils/api";
-import { useLoading } from "~/hooks/useLoading";
 import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
 import { tagStatus } from "~/utils/tagStatusFormatter";
@@ -22,20 +20,23 @@ import ConfirmationPopover from "./ConfirmationPopover";
 
 type NotificationCardProps = {
   notification: NotificationWithRide;
+  startLoading: () => void;
+  stopLoading: () => void;
 };
 
 const NotificationCard: React.FC<NotificationCardProps> = ({
   notification,
+  startLoading,
+  stopLoading,
 }) => {
   const { user } = useAuth();
   const driverAccept = api.driver.acceptRide.useMutation();
   const driverDecline = api.driver.declineRide.useMutation();
   const toast = useToast();
-  const { loading, startLoading, stopLoading } = useLoading();
 
   const acceptRide = async (rideId: number, driverId: number) => {
-    startLoading();
     try {
+      startLoading();
       await driverAccept.mutateAsync({ rideId, driverId });
 
       toast({
@@ -68,8 +69,8 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
     pickupLocation: Location,
     type: "Regular" | "Luxury",
   ) => {
-    startLoading();
     try {
+      startLoading();
       await driverDecline.mutateAsync({
         rideId,
         driverId,
@@ -111,48 +112,29 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       mb={2}
     >
       <CardBody>
-        {loading ? (
-          <Skeleton height="20px" width="80px" />
-        ) : (
-          <HStack>
-            <Icon
-              as={FiCheckCircle as React.ElementType}
-              color={tagStatus(notification.message).color}
-            />
-            <Badge colorScheme={tagStatus(notification.message).color}>
-              {tagStatus(notification.message).tag}
-            </Badge>
-          </HStack>
-        )}
-        {loading ? (
-          <Skeleton height="20px" width="200px" />
-        ) : (
-          <Text fontSize={"md"} color={"primary"}>
-            {notification.message}
-          </Text>
-        )}
-        <Divider />
-        {loading ? (
-          <Skeleton height="20px" width="200px" />
-        ) : (
-          <Text fontSize={"sm"}>In {notification.ride?.originName}</Text>
-        )}
-        <Text fontSize="sm">
-          {loading ? (
-            <Skeleton height="20px" width="250px" />
-          ) : (
-            <>
-              The trip fee is:{" "}
-              <Text as="span" fontWeight={"bold"} color={"green"}>
-                ${notification.ride?.tripFee}
-              </Text>
-            </>
-          )}
+        <HStack>
+          <Icon
+            as={FiCheckCircle as React.ElementType}
+            color={tagStatus(notification.message).color}
+          />
+          <Badge colorScheme={tagStatus(notification.message).color}>
+            {tagStatus(notification.message).tag}
+          </Badge>
+        </HStack>
+
+        <Text fontSize={"md"} color={"primary"}>
+          {notification.message}
         </Text>
-        {loading ? (
-          <Skeleton height="20px" width="250px" />
-        ) : (
-          user?.type === "Driver" &&
+        <Divider />
+
+        <Text fontSize={"sm"}>In {notification.ride?.originName}</Text>
+        <Text fontSize="sm">
+          The trip fee is:{" "}
+          <Text as="span" fontWeight={"bold"} color={"green"}>
+            ${notification.ride?.tripFee}
+          </Text>
+        </Text>
+        {user?.type === "Driver" &&
           notification.ride?.status.current === "REQUESTED" && (
             <HStack>
               <ButtonComponent
@@ -174,15 +156,11 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
                 }
               />
             </HStack>
-          )
-        )}
+          )}
 
         <Divider />
-        {loading ? (
-          <Skeleton height="20px" width="150px" />
-        ) : (
-          <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
-        )}
+
+        <Text fontSize="xs">{formatDateTime(notification.createdAt)}</Text>
       </CardBody>
     </Card>
   );

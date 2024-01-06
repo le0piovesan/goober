@@ -2,7 +2,6 @@ import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { useEffect, useMemo } from "react";
 import type { UserRides } from "~/types/ride";
-import { useLoading } from "./useLoading";
 import supabase from "~/utils/supabaseClient";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
@@ -10,17 +9,14 @@ import { type QueryKey } from "react-query";
 
 interface UseUserRidesReturn {
   rides: UserRides | null | undefined;
-  loading: boolean;
-  startLoading: () => void;
-  stopLoading: () => void;
+  isFetching: boolean;
 }
 
 const useUserRides = (): UseUserRidesReturn => {
   const { user } = useAuth();
-  const { loading, startLoading, stopLoading } = useLoading();
   const queryClient = useQueryClient();
 
-  if (!user) return { rides: null, loading: false, startLoading, stopLoading };
+  if (!user) return { rides: null, isFetching: false };
 
   const filter = `${user.type === "Driver" ? "driverId" : "riderId"}=eq.${
     user.id
@@ -31,7 +27,7 @@ const useUserRides = (): UseUserRidesReturn => {
       ? getQueryKey(api.ride.getDriverRides, { id: user.id }, "query")
       : getQueryKey(api.ride.getRiderRides, { id: user.id }, "query");
 
-  const { data: rides } =
+  const { data: rides, isLoading: isFetching } =
     user.type === "Driver"
       ? api.ride.getDriverRides.useQuery({
           id: user.id,
@@ -41,8 +37,6 @@ const useUserRides = (): UseUserRidesReturn => {
         });
 
   useEffect(() => {
-    startLoading();
-
     const channel = supabase
       .channel("user rides")
       .on(
@@ -59,17 +53,12 @@ const useUserRides = (): UseUserRidesReturn => {
       )
       .subscribe();
 
-    if (rides) stopLoading();
-
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [supabase, queryKey, rides, startLoading, stopLoading]);
+  }, [supabase, queryKey, rides]);
 
-  const result = useMemo(
-    () => ({ rides, loading, startLoading, stopLoading }),
-    [rides, loading, startLoading, stopLoading],
-  );
+  const result = useMemo(() => ({ rides, isFetching }), [rides, isFetching]);
 
   return result;
 };

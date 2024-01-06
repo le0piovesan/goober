@@ -4,16 +4,18 @@ import EmptyState from "~/components/EmptyState";
 import { Flex, Text, VStack } from "@chakra-ui/react";
 import NotificationCard from "~/components/NotificationCard";
 import NotificationCardSkeleton from "~/components/skeletons/NotificationCardSkeleton";
+import { useLoading } from "~/hooks/useLoading";
 
 const NotificationList: NextPage = () => {
-  const { notifications, loading } = useUserNotifications();
+  const { notifications, isFetching } = useUserNotifications();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   return (
     <VStack width="100%" mx={2}>
       <Text fontSize="2xl" fontWeight="bold" color={"primary"} m={1}>
         Notification List
       </Text>
-      {loading ? (
+      {isFetching || loading ? (
         <>
           <NotificationCardSkeleton />
           <NotificationCardSkeleton />
@@ -27,6 +29,8 @@ const NotificationList: NextPage = () => {
               <NotificationCard
                 key={notification.id}
                 notification={notification}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
               />
             ))}
         </Flex>

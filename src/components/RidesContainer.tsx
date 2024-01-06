@@ -7,10 +7,12 @@ import RideCardSkeleton from "./skeletons/RideCardSkeleton";
 import { useState } from "react";
 import InputComponent from "./InputComponent";
 import ActiveCard from "./BouncingActiveCard";
+import { useLoading } from "~/hooks/useLoading";
 
 const RidesContainer = () => {
-  const { rides, loading } = useUserRides();
+  const { rides, isFetching } = useUserRides();
   const { user } = useAuth();
+  const { loading, startLoading, stopLoading } = useLoading();
   const [search, setSearch] = useState("");
 
   const filteredRides = rides
@@ -31,7 +33,7 @@ const RidesContainer = () => {
         />
       )}
 
-      {loading ? (
+      {isFetching || loading ? (
         <Stack spacing={4}>
           <RideCardSkeleton />
           <RideCardSkeleton />
@@ -43,10 +45,19 @@ const RidesContainer = () => {
           .map((ride) =>
             ride.status.current === "ONGOING" ? (
               <ActiveCard key={ride.id}>
-                <RideCard ride={ride} />
+                <RideCard
+                  ride={ride}
+                  startLoading={startLoading}
+                  stopLoading={stopLoading}
+                />
               </ActiveCard>
             ) : (
-              <RideCard key={ride.id} ride={ride} />
+              <RideCard
+                key={ride.id}
+                ride={ride}
+                startLoading={startLoading}
+                stopLoading={stopLoading}
+              />
             ),
           )
       ) : (

@@ -2,7 +2,6 @@ import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { useEffect, useMemo } from "react";
 import type { UserNotifications } from "~/types/notification";
-import { useLoading } from "./useLoading";
 import supabase from "~/utils/supabaseClient";
 import { useQueryClient } from "@tanstack/react-query";
 import { getQueryKey } from "@trpc/react-query";
@@ -10,18 +9,14 @@ import { type QueryKey } from "react-query";
 
 interface UseUserNotificationsReturn {
   notifications: UserNotifications | null | undefined;
-  loading: boolean;
-  startLoading: () => void;
-  stopLoading: () => void;
+  isFetching: boolean;
 }
 
 const useUserNotifications = (): UseUserNotificationsReturn => {
   const { user } = useAuth();
-  const { loading, startLoading, stopLoading } = useLoading();
   const queryClient = useQueryClient();
 
-  if (!user)
-    return { notifications: null, loading: false, startLoading, stopLoading };
+  if (!user) return { notifications: null, isFetching: false };
 
   const filter = `${user.type === "Driver" ? "driverId" : "riderId"}=eq.${
     user.id
@@ -40,14 +35,12 @@ const useUserNotifications = (): UseUserNotificationsReturn => {
           "query",
         );
 
-  const { data: notifications } =
+  const { data: notifications, isLoading: isFetching } =
     user.type === "Driver"
       ? api.notification.getDriverNotifications.useQuery({ id: user.id })
       : api.notification.getRiderNotifications.useQuery({ id: user.id });
 
   useEffect(() => {
-    startLoading();
-
     const channel = supabase
       .channel("user notifications")
       .on(
@@ -64,16 +57,14 @@ const useUserNotifications = (): UseUserNotificationsReturn => {
       )
       .subscribe();
 
-    if (notifications) stopLoading();
-
     return () => {
       void supabase.removeChannel(channel);
     };
-  }, [supabase, queryKey, notifications, startLoading, stopLoading]);
+  }, [supabase, queryKey, notifications]);
 
   const result = useMemo(
-    () => ({ notifications, loading, startLoading, stopLoading }),
-    [notifications, loading, startLoading, stopLoading],
+    () => ({ notifications, isFetching }),
+    [notifications, isFetching],
   );
 
   return result;

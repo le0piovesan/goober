@@ -15,11 +15,11 @@ type RideStatusLocation = Ride & {
   rider?: {
     name: string;
     email: string;
-  };
+  } | null;
   driver?: {
     name: string;
     email: string;
-  };
+  } | null;
 };
 
 type UserRides = RideStatusLocation[] | null;

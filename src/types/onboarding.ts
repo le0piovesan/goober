@@ -13,6 +13,12 @@ type FormOnboardingData = {
   licensePlate: string;
   photos: File[];
   features: string[];
+  license: File;
+  insurance: File;
+  backgroundCheckDocuments: File[];
+  professionalCertificate?: File;
+  experiences: string[];
+  referenceLetters: File[];
 };
 
 type OnboardingStepProps = {

@@ -81,7 +81,7 @@ const VehicleInformation: React.FC<OnboardingStepProps> = ({
       />
       {errors.photos && (
         <Text fontSize="xs" color="red">
-          At least one file must be uploaded
+          At least one photo must be uploaded
         </Text>
       )}
 

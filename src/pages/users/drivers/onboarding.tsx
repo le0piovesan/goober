@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useAuth } from "~/context/AuthContext";
 import DriverPersonalInfo from "~/components/onboarding/DriverPersonalInfo";
 import VehicleInformation from "~/components/onboarding/VehicleInformation";
+import Documents from "~/components/onboarding/Documents";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -25,19 +26,38 @@ const schema = z.object({
   ]),
   type: z.enum(["Sedan", "SUV", "Truck", "Van"]),
   licensePlate: z.string().min(5).max(7),
-  photos: z.array(z.instanceof(File)).refine((files) => files.length > 0, {
-    message: "At least one file must be uploaded",
-  }),
+  photos: z.array(z.instanceof(File)).refine((files) => files.length > 0),
   features: z.array(z.string()),
+  license: z.instanceof(File).refine((file) => file !== null),
+  insurance: z.instanceof(File).refine((file) => file !== null),
+  backgroundCheckDocuments: z
+    .array(z.instanceof(File))
+    .refine((files) => files.length > 0),
+  professionalCertificate: z.instanceof(File).optional(),
+  experiences: z.array(z.string()),
+  referenceLetters: z.array(z.instanceof(File)),
 });
 
 type FormInputsProps = z.infer<typeof schema>;
+type FieldNames = keyof FormInputsProps;
+
+const fieldsPerStep: FieldNames[][] = [
+  ["fullName", "SSN", "dateOfBirth", "gender"],
+  ["type", "licensePlate", "photos", "features"],
+  [
+    "license",
+    "insurance",
+    "backgroundCheckDocuments",
+    "professionalCertificate",
+  ],
+  ["experiences", "referenceLetters"],
+];
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
 
   const nextStep = async () => {
-    const result = await trigger(["fullName", "SSN", "dateOfBirth", "gender"]);
+    const result = await trigger(fieldsPerStep[step - 1]);
     const values = getValues();
     console.log(values);
     if (result) setStep(step + 1);
@@ -64,6 +84,10 @@ const Onboarding: NextPage = () => {
       licensePlate: "",
       photos: [],
       features: [],
+      license: undefined,
+      insurance: undefined,
+      backgroundCheckDocuments: [],
+      professionalCertificate: undefined,
     },
   });
 
@@ -88,6 +112,9 @@ const Onboarding: NextPage = () => {
               errors={errors}
               control={control}
             />
+          )}
+          {step === 3 && (
+            <Documents register={register} errors={errors} control={control} />
           )}
         </VStack>
 

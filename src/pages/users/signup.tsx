@@ -34,9 +34,7 @@ const schema = z.object({
     .min(8, { message: "Password must be at least 8 characters" }),
   role: z.enum(["Rider", "Driver"]),
   type: z.enum(["Regular", "Luxury"]),
-  image: z.instanceof(File).refine((file) => file !== null, {
-    message: "A file must be uploaded",
-  }),
+  image: z.instanceof(File).refine((file) => file !== null),
 });
 
 type FormInputsProps = z.infer<typeof schema>;
@@ -185,22 +183,25 @@ const SignUp: NextPage = () => {
           control={control}
           name="image"
           render={({ field }) => (
-            <InputComponent
-              label="Upload Image"
-              name="image"
-              placeholder="Upload Image"
-              type="file"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  field.onChange(e.target.files[0]);
-                }
-              }}
-            />
+            <>
+              <InputComponent
+                label="Upload Image"
+                name="image"
+                placeholder="Upload Image"
+                type="file"
+                onChange={(e) => {
+                  if (e.target.files && e.target.files.length > 0) {
+                    field.onChange(e.target.files[0]);
+                  }
+                }}
+              />
+              {field.value && <Text>{field.value.name}</Text>}
+            </>
           )}
         />
         {errors.image && (
           <Text fontSize="xs" color="red">
-            A file must be uploaded
+            An avatar must be uploaded
           </Text>
         )}
 

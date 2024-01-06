@@ -88,9 +88,6 @@ const MapDriversCard: React.FC<MapDriversCardProps> = ({
             <Text fontSize="md" fontWeight={"bold"} color={"green"}>
               ${tripValue}
             </Text>
-            {/* <Text fontSize="md" fontWeight={"bold"} color={"green"}>
-              ${type === "Regular" ? tripValue : (tripValue * 1.2).toFixed(2)}
-            </Text> */}
           </HStack>
           <ButtonComponent
             type="submit"
@@ -107,6 +104,9 @@ const MapDriversCard: React.FC<MapDriversCardProps> = ({
           >
             Request
           </ButtonComponent>
+          {type === "Luxury" && (
+            <Text fontSize="xs">Includes Wi-Fi and Water.</Text>
+          )}
         </CardBody>
       </HStack>
     </Card>

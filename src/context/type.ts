@@ -6,6 +6,7 @@ type User = {
   type: string;
   image: string;
   email: string;
+  profileCompleted: boolean;
   isLoggedIn: boolean;
 };
 

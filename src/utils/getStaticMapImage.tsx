@@ -8,8 +8,8 @@ export const getStaticMapImage = (
   const parameters: Record<string, string[]> = {
     size: ["1000x250"],
     markers: [
-      `color:0x845ec2|label:O|${startLocation.latitude},${startLocation.longitude}`,
-      `color:0x4ffbdF|label:D|${endLocation.latitude},${endLocation.longitude}`,
+      `color:0x845ec2|label:F|${startLocation.latitude},${startLocation.longitude}`,
+      `color:0x4ffbdF|label:T|${endLocation.latitude},${endLocation.longitude}`,
     ],
     path: [
       `color:0x0000ff|weight:2|${startLocation.latitude},${startLocation.longitude}|${endLocation.latitude},${endLocation.longitude}`,

@@ -8,28 +8,44 @@ datasource db {
 }
 
 model Rider {
-  id            Int            @id @default(autoincrement())
-  name          String
-  email         String         @unique
-  password      String
-  image         String
-  rides         Ride[]
-  notifications Notification[]
+  id               Int            @id @default(autoincrement())
+  name             String
+  email            String         @unique
+  password         String
+  image            String
+  profileCompleted Boolean        @default(true)
+  rides            Ride[]
+  notifications    Notification[]
 }
 
 model Driver {
-  id             Int            @id @default(autoincrement())
-  name           String
-  email          String         @unique
-  password       String
-  image          String
-  type           String         @default("Regular")
-  onTrip         Boolean        @default(false)
+  id               Int       @id @default(autoincrement())
+  name             String
+  fullName         String?
+  email            String    @unique
+  password         String
+  image            String
+  SSN              String?   @unique
+  dateOfBirth      DateTime?
+  gender           String?
+  type             String    @default("Regular")
+  onTrip           Boolean   @default(false)
+  profileCompleted Boolean   @default(false)
+
   lastLocation   Location       @relation("DriverLastLocation", fields: [lastLocationId], references: [id])
   lastLocationId Int            @unique
   rides          Ride[]
   declinedRides  DeclinedRide[]
   notifications  Notification[]
+
+  vehicle          Vehicle?        @relation("DriverVehicle", fields: [vehicleId], references: [id])
+  vehicleId        Int?            @unique
+  documents        Documents?      @relation("DriverDocuments", fields: [documentsId], references: [id])
+  documentsId      Int?            @unique
+  drivingHistory   DrivingHistory? @relation("DriverDrivingHistory", fields: [drivingHistoryId], references: [id])
+  drivingHistoryId Int?            @unique
+  bank             Bank?           @relation("DriverBank", fields: [bankId], references: [id])
+  bankId           Int?            @unique
 }
 
 model Ride {
@@ -107,4 +123,37 @@ model DeclinedRide {
   driverId Int
 
   @@unique([rideId, driverId])
+}
+
+model Vehicle {
+  id            Int      @id @default(autoincrement())
+  type          String
+  licensePlate  String
+  photos        String[]
+  features      String[]
+  driverVehicle Driver?  @relation("DriverVehicle")
+}
+
+model Documents {
+  id                       Int      @id @default(autoincrement())
+  license                  String
+  insurance                String
+  backgroundCheckDocuments String[]
+  professionalCertificate  String?
+  driverDocuments          Driver?  @relation("DriverDocuments")
+}
+
+model DrivingHistory {
+  id                   Int      @id @default(autoincrement())
+  experiences          String[]
+  referenceLetters     String[]
+  driverDrivingHistory Driver?  @relation("DriverDrivingHistory")
+}
+
+model Bank {
+  id            Int     @id @default(autoincrement())
+  accountNumber String
+  routingNumber String
+  bankName      String
+  driverBank    Driver? @relation("DriverBank")
 }

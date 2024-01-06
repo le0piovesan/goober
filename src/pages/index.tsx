@@ -11,7 +11,11 @@ const Home: NextPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    if (user && user.isLoggedIn) void router.replace("/rides/feed");
+    if (user && user.isLoggedIn && user.profileCompleted)
+      void router.replace("/rides/feed");
+    else if (user && user.isLoggedIn && !user.profileCompleted)
+      void router.replace("/users/drivers/onboarding");
+    else void router.replace("/");
   }, []);
 
   return (

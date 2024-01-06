@@ -44,6 +44,10 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
 
   const login = async (user: User) => {
     dispatch({ type: "LOGIN", payload: user });
+    if (user.type === "Driver" && user.profileCompleted === false) {
+      await router.replace("/users/drivers/onboarding");
+      return;
+    }
     await router.replace("/rides/feed");
   };
 

@@ -10,7 +10,7 @@ const UserContent = ({ children }: { children: React.ReactNode }) => {
   return (
     <Flex direction="row" align="start" className="container mx-auto">
       <Box flexGrow={1} minHeight="100vh">
-        {!loading && user && user.isLoggedIn ? (
+        {!loading && user && user.isLoggedIn && user.profileCompleted ? (
           <Layout>{children}</Layout>
         ) : (
           children

@@ -47,6 +47,7 @@ const Login: NextPage = () => {
         type: response.type,
         image: response.image,
         email,
+        profileCompleted: response.profileCompleted,
         isLoggedIn: true,
       });
     } catch (error) {

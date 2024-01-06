@@ -199,48 +199,46 @@ export const driverRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.$transaction(async (prisma) => {
-        // Decline the ride
-        await prisma.declinedRide.create({
-          data: {
-            driver: {
-              connect: {
-                id: input.driverId,
-              },
-            },
-            ride: {
-              connect: {
-                id: input.rideId,
-              },
+      // Decline the ride
+      await ctx.db.declinedRide.create({
+        data: {
+          driver: {
+            connect: {
+              id: input.driverId,
             },
           },
-        });
+          ride: {
+            connect: {
+              id: input.rideId,
+            },
+          },
+        },
+      });
 
-        // Notify the driver that he has declined this ride
-        await prisma.notification.create({
-          data: {
-            message: "You have declined this ride",
-            driver: {
-              connect: {
-                id: input.driverId,
-              },
-            },
-            ride: {
-              connect: {
-                id: input.rideId,
-              },
+      // Notify the driver that he has declined this ride
+      await ctx.db.notification.create({
+        data: {
+          message: "You have declined this ride",
+          driver: {
+            connect: {
+              id: input.driverId,
             },
           },
-        });
+          ride: {
+            connect: {
+              id: input.rideId,
+            },
+          },
+        },
+      });
 
-        await requestClosestDriver({
-          prisma,
-          input: {
-            rideId: input.rideId,
-            pickupLocation: input.pickupLocation,
-            type: input.type,
-          },
-        });
+      await requestClosestDriver({
+        prisma: ctx.db,
+        input: {
+          rideId: input.rideId,
+          pickupLocation: input.pickupLocation,
+          type: input.type,
+        },
       });
     }),
 });

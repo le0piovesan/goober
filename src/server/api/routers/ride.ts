@@ -174,6 +174,11 @@ export const rideRouter = createTRPCRouter({
         throw new Error("Ride not found.");
       }
 
+      await ctx.db.ride.update({
+        where: { id: ride.id },
+        data: { updatedAt: new Date() },
+      });
+
       const updatedRide = await ctx.db.rideStatus.update({
         where: {
           id: ride.id,

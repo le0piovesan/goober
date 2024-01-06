@@ -91,6 +91,12 @@ const cancelExistingRideRequest = async (
     data: { current: Status.CANCELED, finishedAt: new Date() },
   });
 
+  // Update the updatedAt field of ride
+  await prisma.ride.update({
+    where: { id: rideId },
+    data: { updatedAt: new Date() },
+  });
+
   // Notify the rider that his ride was cancelled
   await prisma.notification.create({
     data: {

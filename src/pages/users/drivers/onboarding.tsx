@@ -13,6 +13,7 @@ import DriverPersonalInfo from "~/components/onboarding/DriverPersonalInfo";
 import VehicleInformation from "~/components/onboarding/VehicleInformation";
 import Documents from "~/components/onboarding/Documents";
 import DrivingHistory from "~/components/onboarding/DrivingHistory";
+import BankInformation from "~/components/onboarding/BankInformation";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -37,6 +38,16 @@ const schema = z.object({
   professionalCertificate: z.instanceof(File).optional(),
   experience: z.string().min(1),
   referenceLetters: z.array(z.instanceof(File)),
+  accountNumber: z.string().min(10).max(12),
+  routingNumber: z.string().length(9),
+  checkNumber: z.string().length(4),
+  bankName: z.enum([
+    "JPMorgan Chase",
+    "Bank of America",
+    "Wells Fargo",
+    "Citigroup",
+    "Goldman Sachs",
+  ]),
 });
 
 type FormInputsProps = z.infer<typeof schema>;
@@ -52,6 +63,7 @@ const fieldsPerStep: FieldNames[][] = [
     "professionalCertificate",
   ],
   ["experience", "referenceLetters"],
+  ["accountNumber", "routingNumber", "checkNumber", "bankName"],
 ];
 
 const Onboarding: NextPage = () => {
@@ -91,6 +103,10 @@ const Onboarding: NextPage = () => {
       professionalCertificate: undefined,
       experience: "",
       referenceLetters: [],
+      accountNumber: "",
+      routingNumber: "",
+      checkNumber: "",
+      bankName: undefined,
     },
   });
 
@@ -121,6 +137,13 @@ const Onboarding: NextPage = () => {
           )}
           {step === 4 && (
             <DrivingHistory
+              register={register}
+              errors={errors}
+              control={control}
+            />
+          )}
+          {step === 5 && (
+            <BankInformation
               register={register}
               errors={errors}
               control={control}

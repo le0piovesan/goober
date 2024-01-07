@@ -19,6 +19,15 @@ type FormOnboardingData = {
   professionalCertificate?: File;
   experience: string;
   referenceLetters: File[];
+  accountNumber: string;
+  routingNumber: string;
+  checkNumber: string;
+  bankName:
+    | "JPMorgan Chase"
+    | "Bank of America"
+    | "Wells Fargo"
+    | "Citigroup"
+    | "Goldman Sachs";
 };
 
 type OnboardingStepProps = {

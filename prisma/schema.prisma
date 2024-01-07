@@ -155,6 +155,7 @@ model Bank {
   id            Int     @id @default(autoincrement())
   accountNumber String
   routingNumber String
+  checkNumber   String
   bankName      String
   driverBank    Driver? @relation("DriverBank")
 }

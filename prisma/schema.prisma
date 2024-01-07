@@ -159,3 +159,14 @@ model Bank {
   bankName      String
   driverBank    Driver? @relation("DriverBank")
 }
+
+model Quiz {
+  id            Int    @id @default(autoincrement())
+  question      String
+  answerA       String
+  answerB       String
+  answerC       String
+  answerD       String
+  answerE       String
+  correctAnswer String
+}

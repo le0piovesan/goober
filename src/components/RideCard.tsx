@@ -41,8 +41,6 @@ const RideCard: React.FC<RideCardProps> = ({
     return imageUrl.data.publicUrl;
   };
 
-  console.log(ride);
-
   const cancelRide = async (rideId: number, userType: string) => {
     try {
       startLoading();

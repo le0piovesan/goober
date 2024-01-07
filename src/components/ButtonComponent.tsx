@@ -9,6 +9,7 @@ type ButtonComponentProps = {
   loading?: boolean;
   leftIcon?: React.ReactElement;
   declineCancel?: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
@@ -19,6 +20,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
   loading,
   leftIcon,
   declineCancel,
+  disabled,
   children,
   ...props
 }) => {
@@ -41,6 +43,8 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
       color: textOnly ? "primary" : "light",
       borderColor: outline ? "primary" : declineCancel ? "red" : "none",
     },
+    opacity: disabled ? 0.5 : 1,
+    cursor: disabled ? "not-allowed" : "pointer",
   };
 
   return href ? (
@@ -55,6 +59,7 @@ const ButtonComponent: FC<ButtonComponentProps> = ({
       {...props}
       isLoading={loading}
       leftIcon={leftIcon}
+      disabled={disabled}
     >
       {children}
     </Button>

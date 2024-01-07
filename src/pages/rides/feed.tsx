@@ -21,7 +21,7 @@ const Feed: NextPage = () => {
   return (
     <VStack width="100%" mx={2}>
       {isDriver && !tutorialCompleted ? (
-        <Training />
+        <Training userId={user.id} />
       ) : (
         <>
           <Text fontSize="xl" fontWeight="bold" color={"secondary"} m={1}>

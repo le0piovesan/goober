@@ -1,4 +1,4 @@
-import { VStack, Text, Heading, HStack } from "@chakra-ui/react";
+import { VStack, Text, Heading, HStack, useToast } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,8 @@ import VehicleInformation from "~/components/onboarding/VehicleInformation";
 import Documents from "~/components/onboarding/Documents";
 import DrivingHistory from "~/components/onboarding/DrivingHistory";
 import BankInformation from "~/components/onboarding/BankInformation";
+import ReviewAndSubmit from "~/components/onboarding/ReviewAndSubmit";
+import { useLoading } from "~/hooks/useLoading";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -68,21 +70,13 @@ const fieldsPerStep: FieldNames[][] = [
 
 const Onboarding: NextPage = () => {
   const [step, setStep] = useState(1);
-
-  const nextStep = async () => {
-    const result = await trigger(fieldsPerStep[step - 1]);
-    const values = getValues();
-    console.log(values);
-    if (result) setStep(step + 1);
-  };
-  const prevStep = () => setStep(step - 1);
-
+  const toast = useToast();
   const { user } = useAuth();
+  const { loading, startLoading, stopLoading } = useLoading();
 
   const {
     register,
     handleSubmit,
-    getValues,
     control,
     trigger,
     formState: { errors },
@@ -110,9 +104,54 @@ const Onboarding: NextPage = () => {
     },
   });
 
+  const nextStep = async () => {
+    const result = await trigger(fieldsPerStep[step - 1]);
+    if (result) setStep(step + 1);
+  };
+
+  const prevStep = () => {
+    if (step > 1) setStep(step - 1);
+  };
+
+  const onSubmit: SubmitHandler<FormInputsProps> = async (data, event) => {
+    try {
+      event?.preventDefault();
+
+      startLoading();
+      console.log(data);
+
+      toast({
+        title: "Onboarding Completed! 🎉",
+        description: "You can now log in.",
+        status: "success",
+        position: "top",
+        duration: 4000,
+        isClosable: true,
+      });
+    } catch (error) {
+      if (error instanceof Error)
+        toast({
+          title: "Error",
+          description: `${error.message} 😢`,
+          status: "error",
+          position: "top",
+          duration: 4000,
+          isClosable: true,
+        });
+    } finally {
+      stopLoading();
+    }
+  };
+
   return (
     <ContainerForm>
-      <VStack as="form" spacing={4} w="full" maxW="md">
+      <VStack
+        as="form"
+        onSubmit={handleSubmit(onSubmit)}
+        spacing={4}
+        w="full"
+        maxW="md"
+      >
         <Text fontSize="xl" fontWeight="bold" color={"secondary"} m={1}>
           Welcome {user?.name}!
         </Text>
@@ -149,31 +188,40 @@ const Onboarding: NextPage = () => {
               control={control}
             />
           )}
+          {step === 6 && (
+            <ReviewAndSubmit
+              register={register}
+              errors={errors}
+              control={control}
+            />
+          )}
         </VStack>
 
-        <HStack>
-          <ButtonComponent
-            onClick={prevStep}
-            textOnly
-            color="secondary"
-            style={{
-              pointerEvents: step === 1 ? "none" : "auto",
-              opacity: step === 1 ? 0.4 : 1,
-            }}
-          >
-            <FiArrowLeftCircle size={40} />
+        {step === 6 ? (
+          <ButtonComponent type="submit" loading={loading}>
+            Finish Profile
           </ButtonComponent>
+        ) : (
+          <HStack>
+            <ButtonComponent
+              onClick={prevStep}
+              textOnly
+              color="secondary"
+              style={{
+                pointerEvents: step === 1 ? "none" : "auto",
+                opacity: step === 1 ? 0.4 : 1,
+              }}
+            >
+              <FiArrowLeftCircle size={40} />
+            </ButtonComponent>
 
-          <Text>{step}/6</Text>
+            <Text>{step}/5</Text>
 
-          {step === 6 ? (
-            <ButtonComponent type="submit">Finish Profile</ButtonComponent>
-          ) : (
             <ButtonComponent onClick={nextStep} textOnly>
               <FiArrowRightCircle size={60} />
             </ButtonComponent>
-          )}
-        </HStack>
+          </HStack>
+        )}
       </VStack>
     </ContainerForm>
   );

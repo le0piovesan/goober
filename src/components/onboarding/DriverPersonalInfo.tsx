@@ -9,14 +9,17 @@ const DriverPersonalInfo: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,
+  review,
 }) => {
   return (
     <>
-      <Text textAlign={"center"}>
-        Before you become eligible to receive ride requests, we need some
-        additional information to ensure that we provide the best service for
-        all our users.
-      </Text>
+      {!review && (
+        <Text textAlign={"center"}>
+          Before you become eligible to receive ride requests, we need some
+          additional information to ensure that we provide the best service for
+          all our users.
+        </Text>
+      )}
 
       <InputComponent
         label="Full Name"

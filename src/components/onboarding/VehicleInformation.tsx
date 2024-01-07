@@ -10,13 +10,16 @@ const VehicleInformation: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,
+  review,
 }) => {
   return (
     <>
-      <Text textAlign={"center"}>
-        For now you can have only vehicle, so fill out the information about the
-        vehicle you will be using.
-      </Text>
+      {!review && (
+        <Text textAlign={"center"}>
+          For now you can have only vehicle, so fill out the information about
+          the vehicle you will be using.
+        </Text>
+      )}
 
       <RadioComponent
         label="Vehicle Type"

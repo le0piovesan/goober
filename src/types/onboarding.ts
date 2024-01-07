@@ -34,6 +34,7 @@ type OnboardingStepProps = {
   register: UseFormRegister<FormOnboardingData>;
   errors: FieldErrors<FormOnboardingData>;
   control: Control<FormOnboardingData>;
+  review?: boolean;
 };
 
 export type { FormOnboardingData, OnboardingStepProps };

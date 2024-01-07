@@ -5,12 +5,18 @@ import InputComponent from "~/components/InputComponent";
 import type { OnboardingStepProps } from "~/types/onboarding";
 import ButtonComponent from "../ButtonComponent";
 
-const Documents: React.FC<OnboardingStepProps> = ({ errors, control }) => {
+const Documents: React.FC<OnboardingStepProps> = ({
+  errors,
+  control,
+  review,
+}) => {
   return (
     <>
-      <Text textAlign={"center"}>
-        Necessary documents so we can provide the safest service.
-      </Text>
+      {!review && (
+        <Text textAlign={"center"}>
+          Necessary documents so we can provide the safest service.
+        </Text>
+      )}
 
       <Controller
         control={control}

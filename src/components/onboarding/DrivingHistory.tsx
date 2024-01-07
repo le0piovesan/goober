@@ -9,13 +9,16 @@ const DrivingHistory: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,
+  review,
 }) => {
   return (
     <>
-      <Text textAlign={"center"}>
-        Describe your past driving experience and optionally upload reference
-        letters.
-      </Text>
+      {!review && (
+        <Text textAlign={"center"}>
+          Describe your past driving experience and optionally upload reference
+          letters.
+        </Text>
+      )}
 
       <InputComponent
         label="Past Driving Experiences"

@@ -8,12 +8,15 @@ const BankInformation: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,
+  review,
 }) => {
   return (
     <>
-      <Text textAlign={"center"}>
-        In order to receive payments, a bank account must be provided.
-      </Text>
+      {!review && (
+        <Text textAlign={"center"}>
+          In order to receive payments, a bank account must be provided.
+        </Text>
+      )}
 
       <InputComponent
         label="Account Number"

@@ -5,16 +5,11 @@ import InputComponent from "~/components/InputComponent";
 import type { OnboardingStepProps } from "~/types/onboarding";
 import ButtonComponent from "../ButtonComponent";
 
-const Documents: React.FC<OnboardingStepProps> = ({
-  register,
-  errors,
-  control,
-}) => {
+const Documents: React.FC<OnboardingStepProps> = ({ errors, control }) => {
   return (
     <>
       <Text textAlign={"center"}>
-        Necessary documents and past experiences so our algorithm can provide
-        the best service.
+        Necessary documents so we can provide the safest service.
       </Text>
 
       <Controller
@@ -119,7 +114,7 @@ const Documents: React.FC<OnboardingStepProps> = ({
         render={({ field }) => (
           <>
             <InputComponent
-              label="Professional Certificate"
+              label="Professional Certificate for Luxury Drivers"
               name="professionalCertificate"
               placeholder="Professional Certificate"
               type="file"

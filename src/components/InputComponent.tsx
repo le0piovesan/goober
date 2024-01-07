@@ -7,8 +7,8 @@ import {
   InputRightElement,
   InputGroup,
   Box,
-  Text,
   HStack,
+  Textarea,
 } from "@chakra-ui/react";
 import {
   type UseFormRegister,
@@ -33,6 +33,8 @@ type InputComponentProps<TFormValues extends FieldValues> = {
   maskChar?: string | null;
   maxLength?: number;
   multiple?: boolean;
+  docs?: boolean;
+  textarea?: boolean;
 };
 
 const InputComponent = <TFormValues extends FieldValues>({
@@ -49,6 +51,8 @@ const InputComponent = <TFormValues extends FieldValues>({
   maskChar = null,
   maxLength,
   multiple,
+  docs,
+  textarea,
 }: InputComponentProps<TFormValues>) => {
   const [show, setShow] = useState<boolean>(false);
   const handleShowPassword = () => setShow(!show);
@@ -77,15 +81,30 @@ const InputComponent = <TFormValues extends FieldValues>({
               <Input
                 id={name as string}
                 type="file"
-                accept="image/*"
+                accept={
+                  docs
+                    ? ".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.pdf"
+                    : "image/*"
+                }
                 display="none"
                 onChange={onChange}
               />
             </Box>
-            <Text fontSize={"xs"}>
-              We demand an image due to security reasons{" "}
-            </Text>
           </HStack>
+        ) : textarea ? (
+          <Textarea
+            {...(register && name
+              ? register(name as string as Path<TFormValues>)
+              : {})}
+            placeholder={placeholder}
+            ringColor={error ? "red.500" : "border"}
+            borderColor={"primary"}
+            bgColor={"#dfe3ef"}
+            _hover={{
+              borderColor: "secondary",
+            }}
+            focusBorderColor="secondary"
+          />
         ) : (
           <>
             <Input

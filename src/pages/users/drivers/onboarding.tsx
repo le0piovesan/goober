@@ -12,6 +12,7 @@ import { useAuth } from "~/context/AuthContext";
 import DriverPersonalInfo from "~/components/onboarding/DriverPersonalInfo";
 import VehicleInformation from "~/components/onboarding/VehicleInformation";
 import Documents from "~/components/onboarding/Documents";
+import DrivingHistory from "~/components/onboarding/DrivingHistory";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -34,7 +35,7 @@ const schema = z.object({
     .array(z.instanceof(File))
     .refine((files) => files.length > 0),
   professionalCertificate: z.instanceof(File).optional(),
-  experiences: z.array(z.string()),
+  experience: z.string().min(1),
   referenceLetters: z.array(z.instanceof(File)),
 });
 
@@ -50,7 +51,7 @@ const fieldsPerStep: FieldNames[][] = [
     "backgroundCheckDocuments",
     "professionalCertificate",
   ],
-  ["experiences", "referenceLetters"],
+  ["experience", "referenceLetters"],
 ];
 
 const Onboarding: NextPage = () => {
@@ -88,6 +89,8 @@ const Onboarding: NextPage = () => {
       insurance: undefined,
       backgroundCheckDocuments: [],
       professionalCertificate: undefined,
+      experience: "",
+      referenceLetters: [],
     },
   });
 
@@ -116,6 +119,13 @@ const Onboarding: NextPage = () => {
           {step === 3 && (
             <Documents register={register} errors={errors} control={control} />
           )}
+          {step === 4 && (
+            <DrivingHistory
+              register={register}
+              errors={errors}
+              control={control}
+            />
+          )}
         </VStack>
 
         <HStack>
@@ -131,9 +141,9 @@ const Onboarding: NextPage = () => {
             <FiArrowLeftCircle size={40} />
           </ButtonComponent>
 
-          <Text>{step}/5</Text>
+          <Text>{step}/6</Text>
 
-          {step === 5 ? (
+          {step === 6 ? (
             <ButtonComponent type="submit">Finish Profile</ButtonComponent>
           ) : (
             <ButtonComponent onClick={nextStep} textOnly>

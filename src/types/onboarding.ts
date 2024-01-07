@@ -17,7 +17,7 @@ type FormOnboardingData = {
   insurance: File;
   backgroundCheckDocuments: File[];
   professionalCertificate?: File;
-  experiences: string[];
+  experience: string;
   referenceLetters: File[];
 };
 

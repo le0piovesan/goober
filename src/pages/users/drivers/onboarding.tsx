@@ -205,7 +205,7 @@ const Onboarding: NextPage = () => {
           duration: 4000,
           isClosable: true,
         });
-        await router.replace("/rides/feed");
+        await router.replace("/users/login");
       }
     } catch (error) {
       if (error instanceof Error)

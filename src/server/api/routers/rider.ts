@@ -3,18 +3,6 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import bcrypt from "bcrypt";
 
 export const riderRouter = createTRPCRouter({
-  getRider: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .query(async ({ ctx, input }) => {
-      const rider = await ctx.db.rider.findUnique({
-        where: {
-          id: input.id,
-        },
-      });
-
-      return rider;
-    }),
-
   createRider: publicProcedure
     .input(
       z.object({

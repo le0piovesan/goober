@@ -5,12 +5,15 @@ import { Status } from "@prisma/client";
 import { requestClosestDriver } from "./trigger";
 
 export const driverRouter = createTRPCRouter({
-  getDriver: publicProcedure
+  checkDriverTutorialStatus: publicProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const driver = await ctx.db.driver.findUnique({
         where: {
           id: input.id,
+        },
+        select: {
+          tutorialCompleted: true,
         },
       });
 

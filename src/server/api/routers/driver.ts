@@ -94,7 +94,6 @@ export const driverRouter = createTRPCRouter({
           SSN: input.SSN,
           dateOfBirth: input.dateOfBirth,
           gender: input.gender,
-          type: input.type,
           profileCompleted: true,
           vehicle: {
             create: {

@@ -16,6 +16,10 @@ import DrivingHistory from "~/components/onboarding/DrivingHistory";
 import BankInformation from "~/components/onboarding/BankInformation";
 import ReviewAndSubmit from "~/components/onboarding/ReviewAndSubmit";
 import { useLoading } from "~/hooks/useLoading";
+import { useFileUpload } from "~/hooks/useFileUpload";
+import { type FormOnboardingData } from "~/types/onboarding";
+import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 const schema = z.object({
   fullName: z.string().min(1),
@@ -73,6 +77,9 @@ const Onboarding: NextPage = () => {
   const toast = useToast();
   const { user } = useAuth();
   const { loading, startLoading, stopLoading } = useLoading();
+  const { fileUpload } = useFileUpload();
+  const driver = api.driver.completeDriverProfile.useMutation();
+  const router = useRouter();
 
   const {
     register,
@@ -116,18 +123,90 @@ const Onboarding: NextPage = () => {
   const onSubmit: SubmitHandler<FormInputsProps> = async (data, event) => {
     try {
       event?.preventDefault();
-
       startLoading();
-      console.log(data);
 
-      toast({
-        title: "Onboarding Completed! 🎉",
-        description: "You can now log in.",
-        status: "success",
-        position: "top",
-        duration: 4000,
-        isClosable: true,
-      });
+      const {
+        fullName,
+        SSN,
+        dateOfBirth,
+        gender,
+        type,
+        licensePlate,
+        photos,
+        features,
+        license,
+        insurance,
+        backgroundCheckDocuments,
+        professionalCertificate,
+        experience,
+        referenceLetters,
+        accountNumber,
+        routingNumber,
+        checkNumber,
+        bankName,
+      }: FormOnboardingData = data;
+
+      if (user) {
+        const photosPaths = await fileUpload(user.id, photos, "photos");
+        const [licensePath] = await fileUpload(user.id, [license], "license");
+        const [insurancePath] = await fileUpload(
+          user.id,
+          [insurance],
+          "insurance",
+        );
+        const backgroundCheckDocumentsPaths = await fileUpload(
+          user.id,
+          backgroundCheckDocuments,
+          "backgroundCheckDocuments",
+        );
+        let professionalCertificatePath;
+        if (professionalCertificate)
+          [professionalCertificatePath] = await fileUpload(
+            user.id,
+            [professionalCertificate],
+            "professionalCertificate",
+          );
+        const referenceLettersPaths = await fileUpload(
+          user.id,
+          referenceLetters,
+          "referenceLetters",
+        );
+
+        if (!licensePath || !insurancePath)
+          throw new Error("License and Insurance are required");
+
+        await driver.mutateAsync({
+          id: user.id,
+          fullName,
+          SSN,
+          dateOfBirth,
+          gender,
+          type,
+          licensePlate,
+          photosPaths,
+          features,
+          licensePath,
+          insurancePath,
+          backgroundCheckDocumentsPaths,
+          professionalCertificatePath,
+          experience,
+          referenceLettersPaths,
+          accountNumber,
+          routingNumber,
+          checkNumber,
+          bankName,
+        });
+
+        toast({
+          title: "Onboarding Completed! 🎉",
+          description: "You can now log in.",
+          status: "success",
+          position: "top",
+          duration: 4000,
+          isClosable: true,
+        });
+        await router.replace("/rides/feed");
+      }
     } catch (error) {
       if (error instanceof Error)
         toast({

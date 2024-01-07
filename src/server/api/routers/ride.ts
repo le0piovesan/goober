@@ -86,6 +86,8 @@ export const rideRouter = createTRPCRouter({
       const drivers = await ctx.db.driver.findMany({
         where: {
           onTrip: false,
+          profileCompleted: true,
+          tutorialCompleted: true,
         },
         include: { lastLocation: true },
       });

@@ -39,6 +39,8 @@ const requestClosestDriver = async ({
   const drivers = await prisma.driver.findMany({
     where: {
       onTrip: false,
+      profileCompleted: true,
+      tutorialCompleted: true,
       type: input.type,
       NOT: {
         declinedRides: {

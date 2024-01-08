@@ -18,7 +18,7 @@ type RideStatusLocation = Ride & {
   } | null;
   driver?: {
     name: string;
-    fullName: string;
+    fullName: string | null;
     email: string;
     vehicle?: {
       id: number;
@@ -26,10 +26,10 @@ type RideStatusLocation = Ride & {
       licensePlate: string;
       photos: string[];
       features: string[];
-    };
+    } | null;
     drivingHistory?: {
       experience: string;
-    };
+    } | null;
   } | null;
 };
 

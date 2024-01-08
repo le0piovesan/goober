@@ -21,7 +21,7 @@ const BankInformation: React.FC<OnboardingStepProps> = ({
       <InputComponent
         label="Account Number"
         name="accountNumber"
-        placeholder="Account Number"
+        placeholder={review ? "************" : "Account Number"}
         mask="999999999999"
         register={register}
         error={errors.accountNumber}
@@ -30,7 +30,7 @@ const BankInformation: React.FC<OnboardingStepProps> = ({
       <InputComponent
         label="Routing Number"
         name="routingNumber"
-        placeholder="Routing Number"
+        placeholder={review ? "*********" : "Routing Number"}
         mask="999999999"
         register={register}
         error={errors.routingNumber}
@@ -39,7 +39,7 @@ const BankInformation: React.FC<OnboardingStepProps> = ({
       <InputComponent
         label="Check Number"
         name="checkNumber"
-        placeholder="Check Number"
+        placeholder={review ? "****" : "Check Number"}
         mask="9999"
         register={register}
         error={errors.checkNumber}

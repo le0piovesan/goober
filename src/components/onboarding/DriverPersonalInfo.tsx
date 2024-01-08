@@ -31,7 +31,7 @@ const DriverPersonalInfo: React.FC<OnboardingStepProps> = ({
       <InputComponent
         label="Social Security Number (SSN)"
         name="SSN"
-        placeholder="___-__-____"
+        placeholder={review ? "***-**-****" : "___-__-____"}
         mask="999-99-9999"
         maskChar={null}
         register={register}

@@ -20,6 +20,7 @@ import ConfirmationPopover from "./ConfirmationPopover";
 import { getStaticMapImage } from "~/utils/getStaticMapImage";
 import { tagStatus } from "~/utils/tagStatusFormatter";
 import { FiMap } from "react-icons/fi";
+import RideDetailsModal from "./RideDetailsModal";
 
 interface RideCardProps {
   ride: RideStatusLocation;
@@ -40,6 +41,8 @@ const RideCard: React.FC<RideCardProps> = ({
     const imageUrl = supabase.storage.from("avatar").getPublicUrl(path);
     return imageUrl.data.publicUrl;
   };
+
+  const avatarUrl = getAvatar(ride.driver?.email ?? ride.rider?.email ?? "");
 
   const cancelRide = async (rideId: number, userType: string) => {
     try {
@@ -87,7 +90,7 @@ const RideCard: React.FC<RideCardProps> = ({
             zIndex={1}
           >
             <Image
-              src={getAvatar(ride.driver?.email ?? ride.rider?.email ?? "")}
+              src={avatarUrl}
               fill
               sizes="200px"
               alt="User avatar"
@@ -165,32 +168,63 @@ const RideCard: React.FC<RideCardProps> = ({
               justifyContent="space-between"
             >
               {ride.status.current === "ONGOING" && (
-                <ConfirmationPopover
-                  onConfirm={() =>
-                    user && ride && cancelRide(ride.id, user.type)
-                  }
-                />
+                <HStack justifyContent={"space-between"}>
+                  {user?.type === "Rider" && (
+                    <RideDetailsModal ride={ride} avatarUrl={avatarUrl} />
+                  )}
+
+                  <ConfirmationPopover
+                    onConfirm={() =>
+                      user && ride && cancelRide(ride.id, user.type)
+                    }
+                  />
+                </HStack>
               )}
             </Stack>
             <HStack justifyContent={"space-between"}>
               <Box>
-                <Text fontSize="sm" fontWeight={"semibold"} color={"primary"}>
-                  From: {ride.originName}
+                <Text fontSize="sm">
+                  From:{" "}
+                  <Text as="span" fontWeight={"semibold"} color={"primary"}>
+                    {ride.originName}
+                  </Text>
                 </Text>
-
-                <Text fontSize="sm" fontWeight={"semibold"} color={"secondary"}>
-                  To: {ride.destinationName}
+                <Text fontSize="sm">
+                  To:{" "}
+                  <Text as="span" fontWeight={"semibold"} color={"secondary"}>
+                    {ride.destinationName}
+                  </Text>
+                </Text>
+                <Text fontSize="sm">
+                  Distance:{" "}
+                  <Text as="span" fontWeight={"semibold"}>
+                    {ride.distance}
+                  </Text>
+                </Text>
+                <Text fontSize="sm">
+                  Value:{" "}
+                  <Text as="span" fontWeight={"semibold"} color={"green"}>
+                    ${ride.tripFee}
+                  </Text>
                 </Text>
               </Box>
-              <Box textAlign="right">
-                <Text fontSize="sm" fontWeight={"semibold"}>
-                  Distance: {ride.distance}
-                </Text>
 
-                <Text fontSize="sm" fontWeight={"semibold"} color={"green"}>
-                  Value: ${ride.tripFee}
-                </Text>
-              </Box>
+              {user?.type === "Rider" && (
+                <Box textAlign="right">
+                  <Text fontSize="sm">
+                    Vehicle:{" "}
+                    <Text as="span" fontWeight={"semibold"}>
+                      {ride.driver?.vehicle?.type}
+                    </Text>
+                  </Text>
+                  <Text fontSize="sm">
+                    License Plate:{" "}
+                    <Text as="span" fontWeight={"semibold"}>
+                      {ride.driver?.vehicle?.licensePlate}
+                    </Text>
+                  </Text>
+                </Box>
+              )}
             </HStack>
           </Stack>
         </CardBody>

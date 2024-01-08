@@ -18,7 +18,10 @@ export const rideRouter = createTRPCRouter({
           driver: {
             select: {
               name: true,
+              fullName: true,
               email: true,
+              vehicle: true,
+              drivingHistory: true,
             },
           },
         },

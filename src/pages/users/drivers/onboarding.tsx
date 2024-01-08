@@ -1,4 +1,11 @@
-import { VStack, Text, Heading, HStack, useToast } from "@chakra-ui/react";
+import {
+  VStack,
+  Text,
+  Heading,
+  HStack,
+  useToast,
+  SlideFade,
+} from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -237,35 +244,49 @@ const Onboarding: NextPage = () => {
         <Heading color={"primary"}>Onboarding</Heading>
         <VStack mb={4}>
           {step === 1 && (
-            <DriverPersonalInfo
-              register={register}
-              errors={errors}
-              control={control}
-            />
+            <SlideFade in offsetX="80px">
+              <DriverPersonalInfo
+                register={register}
+                errors={errors}
+                control={control}
+              />
+            </SlideFade>
           )}
           {step === 2 && (
-            <VehicleInformation
-              register={register}
-              errors={errors}
-              control={control}
-            />
+            <SlideFade in offsetX="80px">
+              <VehicleInformation
+                register={register}
+                errors={errors}
+                control={control}
+              />
+            </SlideFade>
           )}
           {step === 3 && (
-            <Documents register={register} errors={errors} control={control} />
+            <SlideFade in offsetX="80px">
+              <Documents
+                register={register}
+                errors={errors}
+                control={control}
+              />
+            </SlideFade>
           )}
           {step === 4 && (
-            <DrivingHistory
-              register={register}
-              errors={errors}
-              control={control}
-            />
+            <SlideFade in offsetX="80px">
+              <DrivingHistory
+                register={register}
+                errors={errors}
+                control={control}
+              />
+            </SlideFade>
           )}
           {step === 5 && (
-            <BankInformation
-              register={register}
-              errors={errors}
-              control={control}
-            />
+            <SlideFade in offsetX="80px">
+              <BankInformation
+                register={register}
+                errors={errors}
+                control={control}
+              />
+            </SlideFade>
           )}
           {step === 6 && (
             <ReviewAndSubmit

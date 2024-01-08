@@ -27,6 +27,21 @@ const Training: React.FC<{ userId: number }> = ({ userId }) => {
   );
 
   const finishTraining = async () => {
+    if (
+      !stepsCompleted.first ||
+      !stepsCompleted.second ||
+      !allQuestionsAnsweredCorrectly
+    ) {
+      toast({
+        title: "You must complete all steps!",
+        status: "info",
+        position: "top",
+        duration: 4000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
       startLoading();
 

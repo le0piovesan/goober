@@ -51,7 +51,7 @@ I also decided to focus more on the front-end and design. The feature I found to
 
 Features reusable components, utils, custom hooks built with memoization techniques, caching, automatic re-fetching, end to end type-safe communication.
 
-I've developed the project within a week + couple days for bug fixes/refactoring/refining and estimate that it took about 44 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
+I've developed the initial project within a week + couple days for bug fixes/refactoring/refining and estimate that it took about 44 hours in total, split between studying which tools to use, developing, and testing. Having to attend work while also taking care of some development and deployments at the same time made this challenge a bit more difficult. There is still room for improvement, but overall, I am really glad for what has already been accomplished.
 
 - **Ride Request Process:**
 
@@ -79,6 +79,7 @@ I've developed the project within a week + couple days for bug fixes/refactoring
   - Clear communication of ride details, including pickup and dropoff locations.
   - Notifications about the ride status changes.
   - Minimal user interactions to ensure a smooth experience.
+  - Multi-step onboarding and training flow for drivers.
 
 ## Risk and Unknowns
 
@@ -142,7 +143,7 @@ I've developed the project within a week + couple days for bug fixes/refactoring
 
 > In order to run locally download the .env file from the gist, or copy all its content and place in a .env file in the root of the project.
 
-[Here is the .env file to run the app locally](https://gist.github.com/le0piovesan/666b6b96e89484987bcd60bf5b83c6f6) 🔐
+[Here is the .env file to run the app locally](https://gist.github.com/le0piovesan/52ae22edbd8b0b75f2d1fdb894bf460e) 🔐
 
 Then run the following script to install dependencies, build and start the app:
 
@@ -155,3 +156,5 @@ npm install && npm run build-start
 [Here is the link of the deployable app](https://goober-three.vercel.app/) 🚀
 
 [Here is a quick video showing the features](https://youtu.be/w_8UuD_2oKA) 👀
+
+[Here is another video displaying the new onboarding/training features](https://www.youtube.com/watch?v=cJZIwk_HUQw) 👀

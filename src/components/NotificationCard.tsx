@@ -7,6 +7,7 @@ import {
   Icon,
   CardBody,
   Divider,
+  Box,
 } from "@chakra-ui/react";
 import type { NotificationWithRide } from "~/types/notification";
 import { FiCheckCircle } from "react-icons/fi";
@@ -17,6 +18,7 @@ import { formatDateTime } from "~/utils/dateFormatter";
 import { type Location } from "@prisma/client";
 import { tagStatus } from "~/utils/tagStatusFormatter";
 import ConfirmationPopover from "./ConfirmationPopover";
+import { formatDistanceToNowStrict } from "date-fns";
 
 type NotificationCardProps = {
   notification: NotificationWithRide;
@@ -112,14 +114,19 @@ const NotificationCard: React.FC<NotificationCardProps> = ({
       mb={2}
     >
       <CardBody>
-        <HStack>
-          <Icon
-            as={FiCheckCircle as React.ElementType}
-            color={tagStatus(notification.message).color}
-          />
-          <Badge colorScheme={tagStatus(notification.message).color}>
-            {tagStatus(notification.message).tag}
-          </Badge>
+        <HStack justifyContent={"space-between"}>
+          <Box>
+            <Icon
+              as={FiCheckCircle as React.ElementType}
+              color={tagStatus(notification.message).color}
+            />
+            <Badge colorScheme={tagStatus(notification.message).color}>
+              {tagStatus(notification.message).tag}
+            </Badge>
+          </Box>
+          <Text fontSize={"xs"}>
+            {formatDistanceToNowStrict(new Date(notification.createdAt))} ago
+          </Text>
         </HStack>
 
         <Text fontSize={"md"} color={"primary"}>

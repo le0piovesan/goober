@@ -21,6 +21,7 @@ import { getStaticMapImage } from "~/utils/getStaticMapImage";
 import { tagStatus } from "~/utils/tagStatusFormatter";
 import { FiMap } from "react-icons/fi";
 import RideDetailsModal from "./RideDetailsModal";
+import { formatDistanceToNow } from "date-fns";
 
 interface RideCardProps {
   ride: RideStatusLocation;
@@ -149,7 +150,7 @@ const RideCard: React.FC<RideCardProps> = ({
             </Text>
 
             <Text fontSize={"xs"}>
-              Updated at: {formatDateTime(ride.updatedAt)}
+              Updated {formatDistanceToNow(new Date(ride.updatedAt))} ago
             </Text>
           </HStack>
 

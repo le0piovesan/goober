@@ -79,7 +79,7 @@ I've developed the initial project within a week + couple days for bug fixes/ref
   - Clear communication of ride details, including pickup and dropoff locations.
   - Notifications about the ride status changes.
   - Minimal user interactions to ensure a smooth experience.
-  - Multi-step onboarding and training flow for drivers.
+  - Multi-step onboarding with state persistance and training flow for drivers.
 
 ## Risk and Unknowns
 
@@ -155,6 +155,8 @@ npm install && npm run build-start
 
 [Here is the link of the deployable app](https://goober-three.vercel.app/) 🚀
 
-[Here is a quick video showing the features](https://youtu.be/w_8UuD_2oKA) 👀
+[Video - Initial Project](https://youtu.be/w_8UuD_2oKA) 👀
 
-[Here is another video displaying the new onboarding/training features](https://www.youtube.com/watch?v=cJZIwk_HUQw) 👀
+[Video - Onboarding Training Flow + Features](https://youtu.be/cJZIwk_HUQw) 👀
+
+[Video - State Persistance + Available Drivers Realtime Refetching](https://youtu.be/dxrereyM8Bk) 👀

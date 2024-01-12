@@ -5,7 +5,9 @@ import type { AppRouter } from "~/server/api/root";
 export const client = createTRPCProxyClient<AppRouter>({
   links: [
     httpBatchLink({
-      url: "http://localhost:3000/api/trpc",
+      url:
+        "https://goober-le0piovesan.vercel.app/api/trpc" ||
+        "http://localhost:3000/api/trpc",
     }),
   ],
   transformer: SuperJSON,

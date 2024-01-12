@@ -5,6 +5,7 @@ import { createTRPCRouter } from "~/server/api/trpc";
 import { authRouter } from "./routers/auth";
 import { notificationRouter } from "./routers/notification";
 import { quizRouter } from "./routers/quiz";
+import { onboardingRouter } from "./routers/onboarding";
 
 export const appRouter = createTRPCRouter({
   rider: riderRouter,
@@ -13,6 +14,7 @@ export const appRouter = createTRPCRouter({
   auth: authRouter,
   notification: notificationRouter,
   quiz: quizRouter,
+  onboarding: onboardingRouter,
 });
 
 export type AppRouter = typeof appRouter;

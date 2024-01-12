@@ -1,6 +1,7 @@
 import { Box, Heading, Text, HStack } from "@chakra-ui/react";
 import ButtonComponent from "./ButtonComponent";
 import MapDriversCard from "./MapDriversCard";
+import MapDetailsSkeleton from "./skeletons/MapDetailsSkeleton";
 
 type DriverTypes = {
   id: number;
@@ -16,9 +17,9 @@ type MapDetailsProps = {
     }>
   >;
   loading: boolean;
+  isFetching: boolean;
   pickupLocationRef: React.MutableRefObject<google.maps.LatLngLiteral | null>;
   availableDrivers: DriverTypes[];
-  setAvailableDrivers: React.Dispatch<React.SetStateAction<DriverTypes[]>>;
   onSubmit: (
     rideType: "Regular" | "Luxury",
     tripValue: number,
@@ -29,10 +30,12 @@ const MapDetails: React.FC<MapDetailsProps> = ({
   distanceDetails,
   setDistanceDetails,
   availableDrivers,
-  setAvailableDrivers,
   onSubmit,
   loading,
+  isFetching,
 }) => {
+  if (isFetching || loading) return <MapDetailsSkeleton />;
+
   return (
     <>
       <Heading size="sm" color={"primary"}>
@@ -48,25 +51,31 @@ const MapDetails: React.FC<MapDetailsProps> = ({
           </Text>
         </HStack>
 
-        <Text fontSize={"xs"} mb={2}>
-          Available:
-        </Text>
         {availableDrivers && availableDrivers.length > 0 ? (
           <>
-            <MapDriversCard
-              type="Regular"
-              drivers={availableDrivers}
-              distanceValue={distanceDetails.value}
-              onSubmit={onSubmit}
-              loading={loading}
-            />
-            <MapDriversCard
-              type="Luxury"
-              drivers={availableDrivers}
-              distanceValue={distanceDetails.value}
-              onSubmit={onSubmit}
-              loading={loading}
-            />
+            <Text fontSize={"xs"} mb={2}>
+              Available:
+            </Text>
+            {availableDrivers.filter((driver) => driver.type === "Regular")
+              .length > 0 && (
+              <MapDriversCard
+                type="Regular"
+                drivers={availableDrivers}
+                distanceValue={distanceDetails.value}
+                onSubmit={onSubmit}
+                loading={loading}
+              />
+            )}
+            {availableDrivers.filter((driver) => driver.type === "Luxury")
+              .length > 0 && (
+              <MapDriversCard
+                type="Luxury"
+                drivers={availableDrivers}
+                distanceValue={distanceDetails.value}
+                onSubmit={onSubmit}
+                loading={loading}
+              />
+            )}
           </>
         ) : (
           <Text fontSize={"xs"} mb={2}>
@@ -82,7 +91,6 @@ const MapDetails: React.FC<MapDetailsProps> = ({
             value: 0,
             distance: "",
           });
-          setAvailableDrivers([]);
         }}
       >
         Go Back

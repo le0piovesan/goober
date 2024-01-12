@@ -40,10 +40,6 @@ const MapDriversCard: React.FC<MapDriversCardProps> = ({
   const toast = useToast();
   const driversOfType = drivers.filter((driver) => driver.type === type);
 
-  if (driversOfType.length === 0) {
-    return null;
-  }
-
   const tripValue = useCalculateTripValue(distanceValue, type);
 
   return (
@@ -104,9 +100,6 @@ const MapDriversCard: React.FC<MapDriversCardProps> = ({
           >
             Request
           </ButtonComponent>
-          {type === "Luxury" && (
-            <Text fontSize="xs">Includes Wi-Fi and Water.</Text>
-          )}
         </CardBody>
       </HStack>
     </Card>

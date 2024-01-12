@@ -63,7 +63,7 @@ export const rideRouter = createTRPCRouter({
         }),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       // Check if the rider has an existing ride
       const existingRide = await ctx.db.ride.findFirst({
         where: {
@@ -104,9 +104,7 @@ export const rideRouter = createTRPCRouter({
             driver.lastLocation.longitude === 0,
         )
       ) {
-        throw new Error(
-          "No available drivers at this moment, try again later.",
-        );
+        return [];
       }
 
       return drivers.map((driver) => ({

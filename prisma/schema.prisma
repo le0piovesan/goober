@@ -19,19 +19,20 @@ model Rider {
 }
 
 model Driver {
-  id                Int       @id @default(autoincrement())
-  name              String
-  fullName          String?
-  email             String    @unique
-  password          String
-  image             String
-  SSN               String?   @unique
-  dateOfBirth       DateTime?
-  gender            String?
-  type              String    @default("Regular")
-  onTrip            Boolean   @default(false)
-  profileCompleted  Boolean   @default(false)
-  tutorialCompleted Boolean   @default(false)
+  id                    Int       @id @default(autoincrement())
+  name                  String
+  fullName              String?
+  email                 String    @unique
+  password              String
+  image                 String
+  SSN                   String?   @unique
+  dateOfBirth           DateTime?
+  gender                String?
+  type                  String    @default("Regular")
+  onTrip                Boolean   @default(false)
+  currentOnboardingStep Int?      @default(1)
+  profileCompleted      Boolean   @default(false)
+  tutorialCompleted     Boolean   @default(false)
 
   lastLocation   Location       @relation("DriverLastLocation", fields: [lastLocationId], references: [id])
   lastLocationId Int            @unique

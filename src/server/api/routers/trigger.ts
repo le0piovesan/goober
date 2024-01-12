@@ -1,17 +1,9 @@
-import { z } from "zod";
+import { type z } from "zod";
 import { getDistance } from "geolib";
 import { Status } from "@prisma/client";
 import { type PrismaClient } from "@prisma/client";
 import type { Driver as PrismaDriver, Location } from "@prisma/client";
-
-const getRequestClosestDriverInputSchema = z.object({
-  rideId: z.number(),
-  pickupLocation: z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-  }),
-  type: z.enum(["Regular", "Luxury"]),
-});
+import { type getRequestClosestDriverInputSchema } from "~/utils/schemas/routers/trigger";
 
 type DriverInput = z.infer<typeof getRequestClosestDriverInputSchema>;
 

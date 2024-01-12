@@ -3,7 +3,7 @@ import { Card, CardBody, VStack, useToast } from "@chakra-ui/react";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { useForm } from "react-hook-form";
 import { useLoading } from "~/hooks/useLoading";
 import useCurrentPosition from "~/hooks/useCurrentPosition";
@@ -13,11 +13,7 @@ import MapDetails from "./MapDetails";
 import MapSearch from "./MapSearch";
 import MapMarkerDirections from "./MapMarkerDirections";
 import { useRouter } from "next/router";
-
-const schema = z.object({
-  pickupLocation: z.string(),
-  dropoffLocation: z.string(),
-});
+import { schema } from "~/utils/schemas/map";
 
 type Coordinates = {
   lat: number;

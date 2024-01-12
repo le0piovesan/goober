@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { type z } from "zod";
 import { api } from "~/utils/api";
 import InputComponent from "~/components/InputComponent";
 import RadioComponent from "~/components/RadioComponent";
@@ -11,7 +11,7 @@ import { useLoading } from "~/hooks/useLoading";
 import ContainerForm from "~/components/ContainerForm";
 import ButtonComponent from "~/components/ButtonComponent";
 import supabase from "~/utils/supabaseClient";
-import { File } from "@web-std/file";
+import { schema } from "~/utils/schemas/signup";
 
 type FormData = {
   name: string;
@@ -22,20 +22,6 @@ type FormData = {
   type: "Regular" | "Luxury";
   image: File;
 };
-
-const schema = z.object({
-  name: z.string().min(1),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-  confirmPassword: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-  role: z.enum(["Rider", "Driver"]),
-  type: z.enum(["Regular", "Luxury"]),
-  image: z.instanceof(File).refine((file) => file !== null),
-});
 
 type FormInputsProps = z.infer<typeof schema>;
 

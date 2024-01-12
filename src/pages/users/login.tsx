@@ -2,7 +2,6 @@ import { VStack, useToast, Heading } from "@chakra-ui/react";
 import { type NextPage } from "next";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { api } from "~/utils/api";
 import { useAuth } from "~/context/AuthContext";
 import { type AuthContextType } from "~/context/type";
@@ -10,11 +9,8 @@ import ButtonComponent from "~/components/ButtonComponent";
 import InputComponent from "~/components/InputComponent";
 import { useLoading } from "~/hooks/useLoading";
 import ContainerForm from "~/components/ContainerForm";
-
-const schema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z.string(),
-});
+import { type z } from "zod";
+import { schema } from "~/utils/schemas/login";
 
 type FormInputsProps = z.infer<typeof schema>;
 

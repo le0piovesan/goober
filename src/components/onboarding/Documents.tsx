@@ -1,14 +1,15 @@
-import { HStack, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import React from "react";
-import { Controller } from "react-hook-form";
-import InputComponent from "~/components/InputComponent";
 import type { OnboardingStepProps } from "~/types/onboarding";
-import ButtonComponent from "../ButtonComponent";
+import FileUpload from "../FileUploadInput";
 
 const Documents: React.FC<OnboardingStepProps> = ({
   errors,
   control,
   review,
+  driverId,
+  startLoading,
+  stopLoading,
 }) => {
   return (
     <>
@@ -18,25 +19,15 @@ const Documents: React.FC<OnboardingStepProps> = ({
         </Text>
       )}
 
-      <Controller
+      <FileUpload
         control={control}
         name="license"
-        render={({ field }) => (
-          <>
-            <InputComponent
-              label="Driver's License"
-              name="license"
-              placeholder="Driver's License"
-              type="file"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  field.onChange(e.target.files[0]);
-                }
-              }}
-            />
-            {field.value && <Text>{field.value.name}</Text>}
-          </>
-        )}
+        label="Driver's License"
+        placeholder="Driver's License"
+        required={true}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        driverId={driverId}
       />
       {errors.license && (
         <Text fontSize="xs" color="red">
@@ -44,25 +35,15 @@ const Documents: React.FC<OnboardingStepProps> = ({
         </Text>
       )}
 
-      <Controller
+      <FileUpload
         control={control}
         name="insurance"
-        render={({ field }) => (
-          <>
-            <InputComponent
-              label="Vehicle Insurance"
-              name="insurance"
-              placeholder="Vehicle Insurance"
-              type="file"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  field.onChange(e.target.files[0]);
-                }
-              }}
-            />
-            {field.value && <Text>{field.value.name}</Text>}
-          </>
-        )}
+        label="Vehicle Insurance"
+        placeholder="Vehicle Insurance"
+        required={true}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        driverId={driverId}
       />
       {errors.insurance && (
         <Text fontSize="xs" color="red">
@@ -70,43 +51,16 @@ const Documents: React.FC<OnboardingStepProps> = ({
         </Text>
       )}
 
-      <Controller
+      <FileUpload
         control={control}
         name="backgroundCheckDocuments"
-        rules={{ required: true }}
-        render={({ field }) => (
-          <>
-            <InputComponent
-              label="Background Check Documents"
-              name="backgroundCheckDocuments"
-              placeholder="Background Check Documents"
-              type="file"
-              multiple
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  const newFiles = Array.from(e.target.files);
-                  field.onChange([...field.value, ...newFiles]);
-                }
-              }}
-            />
-            {field.value.map((file: File, index: number) => (
-              <HStack key={index}>
-                <Text>{file.name}</Text>
-                <ButtonComponent
-                  textOnly
-                  onClick={() => {
-                    const newFiles = field.value.filter(
-                      (_: File, i: number) => i !== index,
-                    );
-                    field.onChange(newFiles);
-                  }}
-                >
-                  Remove
-                </ButtonComponent>
-              </HStack>
-            ))}
-          </>
-        )}
+        label="Background Check Documents"
+        placeholder="Background Check Documents"
+        required={true}
+        multiple={true}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        driverId={driverId}
       />
       {errors.backgroundCheckDocuments && (
         <Text fontSize="xs" color="red">
@@ -114,25 +68,15 @@ const Documents: React.FC<OnboardingStepProps> = ({
         </Text>
       )}
 
-      <Controller
+      <FileUpload
         control={control}
         name="professionalCertificate"
-        render={({ field }) => (
-          <>
-            <InputComponent
-              label="Professional Certificate for Luxury Drivers"
-              name="professionalCertificate"
-              placeholder="Professional Certificate"
-              type="file"
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  field.onChange(e.target.files[0]);
-                }
-              }}
-            />
-            {field.value && <Text>{field.value.name}</Text>}
-          </>
-        )}
+        label="Professional Certificate for Luxury Drivers"
+        placeholder="Professional Certificate"
+        required={false}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        driverId={driverId}
       />
     </>
   );

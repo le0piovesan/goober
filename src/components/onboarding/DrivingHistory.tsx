@@ -1,15 +1,17 @@
-import { HStack, Text } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 import React from "react";
-import { Controller } from "react-hook-form";
 import InputComponent from "~/components/InputComponent";
 import type { OnboardingStepProps } from "~/types/onboarding";
-import ButtonComponent from "../ButtonComponent";
+import FileUpload from "../FileUploadInput";
 
 const DrivingHistory: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,
   review,
+  driverId,
+  startLoading,
+  stopLoading,
 }) => {
   return (
     <>
@@ -29,43 +31,16 @@ const DrivingHistory: React.FC<OnboardingStepProps> = ({
         error={errors.experience}
       />
 
-      <Controller
+      <FileUpload
         control={control}
         name="referenceLetters"
-        render={({ field }) => (
-          <>
-            <InputComponent
-              label="Reference Letters"
-              name="referenceLetters"
-              placeholder="Reference Letters"
-              type="file"
-              multiple
-              docs
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  const newFiles = Array.from(e.target.files);
-                  field.onChange([...field.value, ...newFiles]);
-                }
-              }}
-            />
-            {field.value.map((file: File, index: number) => (
-              <HStack key={index}>
-                <Text>{file.name}</Text>
-                <ButtonComponent
-                  textOnly
-                  onClick={() => {
-                    const newFiles = field.value.filter(
-                      (_: File, i: number) => i !== index,
-                    );
-                    field.onChange(newFiles);
-                  }}
-                >
-                  Remove
-                </ButtonComponent>
-              </HStack>
-            ))}
-          </>
-        )}
+        label="Reference Letters"
+        placeholder="Reference Letters"
+        required={true}
+        multiple={true}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+        driverId={driverId}
       />
     </>
   );

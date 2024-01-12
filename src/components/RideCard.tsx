@@ -22,6 +22,7 @@ import { tagStatus } from "~/utils/tagStatusFormatter";
 import { FiMap } from "react-icons/fi";
 import RideDetailsModal from "./RideDetailsModal";
 import { formatDistanceToNow } from "date-fns";
+import Link from "next/link";
 
 interface RideCardProps {
   ride: RideStatusLocation;
@@ -154,13 +155,25 @@ const RideCard: React.FC<RideCardProps> = ({
             </Text>
           </HStack>
 
-          <MapImage
-            src={getStaticMapImage(ride.pickupLocation, ride.dropoffLocation)}
-            alt="Map Route"
-            borderRadius="md"
-            maxW="100%"
-            h="200px"
-          />
+          <Link
+            href={{
+              pathname: `/rides/details/${ride.id}`,
+              query: {
+                pickupLat: ride.pickupLocation.latitude,
+                pickupLng: ride.pickupLocation.longitude,
+                dropoffLat: ride.dropoffLocation.latitude,
+                dropoffLng: ride.dropoffLocation.longitude,
+              },
+            }}
+          >
+            <MapImage
+              src={getStaticMapImage(ride.pickupLocation, ride.dropoffLocation)}
+              alt="Map Route"
+              borderRadius="md"
+              maxW="100%"
+              h="200px"
+            />
+          </Link>
 
           <Stack mt="2" spacing="1">
             <Stack

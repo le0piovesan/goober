@@ -20,6 +20,7 @@ type RideStatusLocation = Ride & {
     name: string;
     fullName: string | null;
     email: string;
+    gender: string;
     vehicle?: {
       id: number;
       type: string;

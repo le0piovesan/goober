@@ -12,7 +12,6 @@ import {
   Box,
   Flex,
   Card,
-  HStack,
 } from "@chakra-ui/react";
 import type { RideStatusLocation } from "~/types/ride";
 import { useState } from "react";
@@ -41,39 +40,43 @@ const RideDetailsModal: React.FC<{
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent maxW="70vw">
-          <ModalHeader color={"primary"} textAlign={"center"}>
-            Driver Details
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box my={4}>
-              <HStack justifyContent={"space-between"}>
-                <Box flex={1}>
-                  <Skeleton isLoaded={isLoaded}>
-                    <Box
-                      borderWidth="4px"
-                      borderColor="primary"
-                      rounded="md"
-                      overflow="hidden"
-                      display="inline-block"
-                      mb={2}
-                    >
-                      <Image
-                        src={avatarUrl}
-                        width={120}
-                        height={80}
-                        alt="Driver Photo"
-                        onLoad={() => setIsLoaded(true)}
-                        objectFit="cover"
-                      />
-                    </Box>
-                  </Skeleton>
-
+        <ModalContent
+          maxW="80vw"
+          bgColor={"light"}
+          boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
+        >
+          <ModalHeader textAlign={"center"}>
+            <Flex>
+              <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
+                <Skeleton isLoaded={isLoaded}>
+                  <Box
+                    borderWidth="4px"
+                    borderColor="primary"
+                    rounded="md"
+                    overflow="hidden"
+                    display="inline-block"
+                  >
+                    <Image
+                      src={avatarUrl}
+                      width={120}
+                      height={80}
+                      alt="Driver Photo"
+                      onLoad={() => setIsLoaded(true)}
+                      objectFit="cover"
+                    />
+                  </Box>
+                </Skeleton>
+                <Box textAlign={"left"}>
                   <Text fontSize="sm">
                     Full Name:{" "}
                     <Text as="span" fontWeight={"semibold"} color={"primary"}>
                       {ride.driver?.fullName}
+                    </Text>
+                  </Text>
+                  <Text fontSize="sm">
+                    Gender:{" "}
+                    <Text as="span" fontWeight={"semibold"} color={"primary"}>
+                      {ride.driver?.gender}
                     </Text>
                   </Text>
                   <Text fontSize="sm">
@@ -94,19 +97,27 @@ const RideDetailsModal: React.FC<{
                       {ride.driver?.vehicle?.features.join(", ")}
                     </Text>
                   </Text>
-                </Box>
-                <Box flex={1}>
                   <Text fontSize="sm">
-                    Experience:{" "}
-                    <Text as="span" fontWeight={"semibold"}>
-                      {ride.driver?.drivingHistory?.experience}
+                    Contact:{" "}
+                    <Text as="span" fontWeight={"semibold"} color={"primary"}>
+                      {ride.driver?.email}
                     </Text>
                   </Text>
                 </Box>
-              </HStack>
-            </Box>
+              </Flex>
+            </Flex>
+          </ModalHeader>
 
-            <Flex wrap={"wrap"} gap={4} justifyContent={"center"} my={4}>
+          <ModalCloseButton />
+
+          <ModalBody>
+            <Flex
+              wrap={"wrap"}
+              gap={4}
+              justifyContent={"center"}
+              width={"100%"}
+              my={2}
+            >
               {ride.driver?.vehicle?.photos?.map((photo, idx) => (
                 <Skeleton isLoaded={isLoaded} key={idx}>
                   <Card
@@ -129,9 +140,12 @@ const RideDetailsModal: React.FC<{
           </ModalBody>
 
           <ModalFooter>
-            <ButtonComponent textOnly onClick={onClose}>
-              Close
-            </ButtonComponent>
+            <Text fontSize="sm">
+              Experience:{" "}
+              <Text as="span" fontWeight={"semibold"}>
+                {ride.driver?.drivingHistory?.experience}
+              </Text>
+            </Text>
           </ModalFooter>
         </ModalContent>
       </Modal>

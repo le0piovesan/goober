@@ -210,7 +210,7 @@ const RideCard: React.FC<RideCardProps> = ({
                 </Text>
               </Box>
 
-              {user?.type === "Rider" && (
+              {user?.type === "Rider" && ride.status.current === "ONGOING" && (
                 <Box textAlign="right">
                   <Text fontSize="sm">
                     Vehicle:{" "}

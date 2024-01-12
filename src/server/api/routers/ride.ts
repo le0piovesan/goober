@@ -20,6 +20,7 @@ export const rideRouter = createTRPCRouter({
               name: true,
               fullName: true,
               email: true,
+              gender: true,
               vehicle: true,
               drivingHistory: true,
             },

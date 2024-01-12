@@ -14,21 +14,30 @@ export const useFileUpload = () => {
       const paths = [];
 
       for (const file of fileList) {
-        const { data, error } = await supabase.storage
+        const { data: existingFile } = await supabase.storage
           .from(folderName)
-          .upload(`/${id}/${file.name}`, file);
+          .download(`${id}/${file.name}`);
 
-        if (error) {
-          toast({
-            title: "Error",
-            description: error.message,
-            status: "error",
-            duration: 4000,
-            isClosable: true,
-          });
-          throw error;
+        if (!existingFile) {
+          const { data, error: uploadError } = await supabase.storage
+            .from(folderName)
+            .upload(`${id}/${file.name}`, file);
+
+          if (uploadError) {
+            toast({
+              title: "Error",
+              description: uploadError.message,
+              status: "error",
+              duration: 4000,
+              isClosable: true,
+            });
+            throw uploadError;
+          }
+
+          paths.push(data.path);
+        } else {
+          paths.push(`${id}/${file.name}`);
         }
-        paths.push(data.path);
       }
 
       return paths;
@@ -36,6 +45,5 @@ export const useFileUpload = () => {
       throw new Error("File upload failed");
     }
   };
-
   return { fileUpload };
 };

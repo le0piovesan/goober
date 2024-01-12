@@ -79,7 +79,7 @@ I've developed the initial project within a week + couple days for bug fixes/ref
   - Clear communication of ride details, including pickup and dropoff locations.
   - Notifications about the ride status changes.
   - Minimal user interactions to ensure a smooth experience.
-  - Multi-step onboarding with state persistance and training flow for drivers.
+  - Multi-step onboarding with state persistence and training flow for drivers.
 
 ## Risk and Unknowns
 
@@ -159,4 +159,4 @@ npm install && npm run build-start
 
 [Video - Onboarding Training Flow + Features](https://youtu.be/cJZIwk_HUQw) 👀
 
-[Video - State Persistance + Available Drivers Realtime Refetching](https://youtu.be/dxrereyM8Bk) 👀
+[Video - State Persistence + Available Drivers Realtime Refetching](https://youtu.be/dxrereyM8Bk) 👀

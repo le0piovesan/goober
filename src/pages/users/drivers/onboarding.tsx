@@ -28,6 +28,7 @@ import { type FormOnboardingData } from "~/types/onboarding";
 import useOnboardingState from "~/hooks/useOnboardingState";
 import OnboardingSkeleton from "~/components/onboarding/OnboardingSkeleton";
 import { useEffect } from "react";
+import _ from "lodash";
 
 type FieldNames = keyof FormOnboardingData;
 type StepFunction = (
@@ -50,8 +51,14 @@ const fieldsPerStep: FieldNames[][] = [
 
 const Onboarding: NextPage = () => {
   const { user } = useAuth();
-  const { onboardingState, defaultOnboardingData, step, setStep, isFetching } =
-    useOnboardingState();
+  const {
+    onboardingState,
+    defaultOnboardingData,
+    step,
+    setStep,
+    isFetching,
+    refetch,
+  } = useOnboardingState();
   const toast = useToast();
   const { loading, startLoading, stopLoading } = useLoading();
   const { fileUpload } = useFileUpload();
@@ -97,6 +104,7 @@ const Onboarding: NextPage = () => {
       dateOfBirth: data.dateOfBirth!,
       gender: data.gender!,
     });
+    refetch();
   };
 
   const updateVehicleInfoData = async (
@@ -112,6 +120,7 @@ const Onboarding: NextPage = () => {
       photosPaths,
       features: data.features!,
     });
+    refetch();
   };
 
   const updateDocumentsInfoData = async (
@@ -151,6 +160,7 @@ const Onboarding: NextPage = () => {
       backgroundCheckDocumentsPaths,
       professionalCertificatePath,
     });
+    refetch();
   };
 
   const updateExperienceInfoData = async (
@@ -167,6 +177,7 @@ const Onboarding: NextPage = () => {
       experience: data.experience!,
       referenceLettersPaths,
     });
+    refetch();
   };
 
   const updateBankInfoData = async (
@@ -180,6 +191,7 @@ const Onboarding: NextPage = () => {
       checkNumber: data.checkNumber!,
       bankName: data.bankName!,
     });
+    refetch();
   };
 
   const reviewAndSubmitInfoData = async (
@@ -214,27 +226,24 @@ const Onboarding: NextPage = () => {
   };
 
   const nextStep = async () => {
-    const fieldsForCurrentStep = fieldsPerStep[step - 1];
+    const fieldsForCurrentStep =
+      step === 6 ? fieldsPerStep.flat() : fieldsPerStep[step - 1] ?? [];
     const result = await trigger(fieldsForCurrentStep);
+
     const updateFunction = stepFunctions[step];
     if (result && updateFunction && user) {
       try {
         startLoading();
         const data = getValues();
-        const dataHasChanged = fieldsForCurrentStep!.some((field) => {
-          const dataValue = data[field];
-          const stateValue = onboardingState![field];
-
-          if (
-            typeof dataValue === "object" &&
-            dataValue !== null &&
-            typeof stateValue === "object" &&
-            stateValue !== null
-          )
-            return JSON.stringify(dataValue) !== JSON.stringify(stateValue);
-
-          return String(dataValue) !== String(stateValue);
-        });
+        const dataForCurrentStep = _.pick(data, fieldsForCurrentStep);
+        const stateForCurrentStep = _.pick(
+          onboardingState,
+          fieldsForCurrentStep,
+        );
+        const dataHasChanged = !_.isEqual(
+          dataForCurrentStep,
+          stateForCurrentStep,
+        );
         if (
           dataHasChanged &&
           JSON.stringify(data) !== JSON.stringify(onboardingState)
@@ -330,6 +339,9 @@ const Onboarding: NextPage = () => {
               register={register}
               errors={errors}
               control={control}
+              driverId={user?.id ?? 0}
+              startLoading={startLoading}
+              stopLoading={stopLoading}
             />
           )}
         </VStack>

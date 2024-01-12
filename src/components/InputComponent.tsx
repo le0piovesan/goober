@@ -115,7 +115,7 @@ const InputComponent = <TFormValues extends FieldValues>({
               type={type === "password" && show ? "text" : type}
               as={mask ? (InputMask as React.ElementType) : Input}
               mask={mask}
-              maskChar={maskChar}
+              maskChar={maskChar ?? undefined}
               maxLength={maxLength}
               multiple={multiple}
               ringColor={error ? "red.500" : "border"}

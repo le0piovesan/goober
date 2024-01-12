@@ -38,6 +38,7 @@ const DrivingHistory: React.FC<OnboardingStepProps> = ({
         placeholder="Reference Letters"
         required={true}
         multiple={true}
+        docs={true}
         startLoading={startLoading}
         stopLoading={stopLoading}
         driverId={driverId}

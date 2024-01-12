@@ -10,6 +10,7 @@ interface useOnboardingStateReturn {
   isFetching: boolean;
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
+  refetch: () => void;
 }
 
 const useOnboardingState = (): useOnboardingStateReturn => {
@@ -41,7 +42,11 @@ const useOnboardingState = (): useOnboardingStateReturn => {
     [],
   );
 
-  const { data: onboardingData, isLoading } = useQuery(
+  const {
+    data: onboardingData,
+    isLoading,
+    refetch,
+  } = useQuery(
     ["getDriverOnboardingData", { id: user?.id ?? 0 }],
     () =>
       client.onboarding.getDriverOnboardingData.query({ id: user?.id ?? 0 }),
@@ -66,8 +71,9 @@ const useOnboardingState = (): useOnboardingStateReturn => {
       isFetching: isLoading,
       step,
       setStep,
+      refetch,
     }),
-    [onboardingData, defaultOnboardingData, step, setStep],
+    [onboardingData, defaultOnboardingData, step, setStep, refetch],
   );
 
   return result;

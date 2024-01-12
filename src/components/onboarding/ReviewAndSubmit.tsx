@@ -11,6 +11,9 @@ const ReviewAndSubmit: React.FC<OnboardingStepProps> = ({
   register,
   errors,
   control,
+  driverId,
+  startLoading,
+  stopLoading,
 }) => {
   return (
     <>
@@ -31,15 +34,29 @@ const ReviewAndSubmit: React.FC<OnboardingStepProps> = ({
         register={register}
         errors={errors}
         control={control}
+        driverId={driverId}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
       />
 
-      <Documents review register={register} errors={errors} control={control} />
+      <Documents
+        review
+        register={register}
+        errors={errors}
+        control={control}
+        driverId={driverId}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
+      />
 
       <DrivingHistory
         review
         register={register}
         errors={errors}
         control={control}
+        driverId={driverId}
+        startLoading={startLoading}
+        stopLoading={stopLoading}
       />
 
       <BankInformation

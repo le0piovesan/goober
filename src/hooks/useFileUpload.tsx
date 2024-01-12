@@ -14,11 +14,20 @@ export const useFileUpload = () => {
       const paths = [];
 
       for (const file of fileList) {
-        const { data: existingFile } = await supabase.storage
+        const { data: existingFiles } = await supabase.storage
           .from(folderName)
-          .download(`${id}/${file.name}`);
+          .list(`${id}/`);
 
-        if (!existingFile) {
+        const fullPathFiles = existingFiles?.map(
+          (file) => `${id}/${file.name}`,
+        );
+
+        const fileExists =
+          typeof file === "string"
+            ? fullPathFiles?.some((file: string) => file === file)
+            : existingFiles?.some(({ name }) => name === file.name);
+
+        if (!fileExists) {
           const { data, error: uploadError } = await supabase.storage
             .from(folderName)
             .upload(`${id}/${file.name}`, file);
@@ -35,9 +44,8 @@ export const useFileUpload = () => {
           }
 
           paths.push(data.path);
-        } else {
-          paths.push(`${id}/${file.name}`);
-        }
+        } else
+          paths.push(typeof file === "string" ? file : `${id}/${file.name}`);
       }
 
       return paths;

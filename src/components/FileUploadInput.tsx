@@ -12,6 +12,7 @@ interface FileUploadProps {
   placeholder: string;
   required?: boolean;
   multiple?: boolean;
+  docs?: boolean;
   startLoading?: () => void;
   stopLoading?: () => void;
   driverId?: number;
@@ -24,14 +25,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
   placeholder,
   required = false,
   multiple = false,
+  docs = false,
   startLoading,
   stopLoading,
   driverId,
 }) => {
-  const [selectedFile, setSelectedFile] = React.useState<
-    File | null | undefined
-  >(null);
-
   return (
     <Controller
       control={control}
@@ -44,42 +42,24 @@ const FileUpload: React.FC<FileUploadProps> = ({
             name={name}
             placeholder={placeholder}
             type="file"
+            docs={docs}
             multiple={multiple}
             onChange={(e) => {
               if (multiple) {
-                onChange(e.target.files ? Array.from(e.target.files) : null);
+                const newFiles = e.target.files
+                  ? Array.from(e.target.files)
+                  : [];
+                onChange([...((value as File[]) || []), ...newFiles]);
               } else {
                 const file: File | null | undefined =
                   e.target.files && e.target.files.length > 0
                     ? e.target.files[0]
                     : null;
-                setSelectedFile(file);
                 onChange(file);
               }
             }}
           />
-          {selectedFile && (
-            <HStack>
-              <Text>{selectedFile.name}</Text>
-              <ButtonComponent
-                textOnly
-                onClick={async () => {
-                  setSelectedFile(null);
-                  onChange(null);
-                  if (driverId && selectedFile) {
-                    startLoading && startLoading();
-                    await supabase.storage
-                      .from("photos")
-                      .remove([`${driverId}/${selectedFile.name}`]);
-                    stopLoading && stopLoading();
-                  }
-                }}
-              >
-                Remove
-              </ButtonComponent>
-            </HStack>
-          )}
-          {multiple &&
+          {multiple ? (
             (value as File[]).map((file: File, index: number) => (
               <HStack key={index}>
                 <Text>{typeof file === "string" ? file : file.name}</Text>
@@ -94,7 +74,11 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
                     await supabase.storage
                       .from("photos")
-                      .remove([`${driverId}/${file.name}`]);
+                      .remove(
+                        typeof file === "string"
+                          ? [file]
+                          : [`${driverId}/${file.name}`],
+                      );
 
                     stopLoading && stopLoading();
                   }}
@@ -102,7 +86,12 @@ const FileUpload: React.FC<FileUploadProps> = ({
                   Remove
                 </ButtonComponent>
               </HStack>
-            ))}
+            ))
+          ) : (
+            <Text>
+              {typeof value === "string" ? value : (value as File)?.name}
+            </Text>
+          )}
         </>
       )}
     />

@@ -35,12 +35,10 @@ export const schema = z.object({
         files.length > 0 &&
         files.every((file) => typeof file === "string" || file instanceof File),
     ),
-
   professionalCertificate: z
     .any()
-    .optional()
-    .refine((file) => typeof file === "string" || file instanceof File),
-
+    .refine((file) => typeof file === "string" || file instanceof File)
+    .optional(),
   experience: z.string().min(1),
   referenceLetters: z
     .array(z.any())

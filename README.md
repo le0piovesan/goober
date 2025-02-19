@@ -141,9 +141,9 @@ I've developed the initial project within a week + couple days for bug fixes/ref
 
 ## Installation and Guide
 
-> In order to run locally download the .env file from the gist, or copy all its content and place in a .env file in the root of the project.
+> In order to run locally add the environment keys to the `.env` file in the root of the project.
 
-[Here is the .env file to run the app locally](https://gist.github.com/le0piovesan/52ae22edbd8b0b75f2d1fdb894bf460e) 🔐
+> The `.env.example` file contains the credentials needed. 🔐
 
 Then run the following script to install dependencies, build and start the app:
 
